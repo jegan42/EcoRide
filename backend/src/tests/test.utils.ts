@@ -27,10 +27,12 @@ export const adminMail = 'testAdmin@example.mail';
 
 export const cookies: string[] = [];
 
+export const tripIds: string[] = [];
 export const vehicleIds: string[] = [];
 export const userIds: string[] = [];
 
 export const resetDB = async (): Promise<void> => {
+  await prismaNewClient.trip.deleteMany();
   await prismaNewClient.vehicle.deleteMany();
   await prismaNewClient.user.deleteMany();
 };
@@ -79,3 +81,21 @@ export const createVehicleAndGetId = async (
       })
   ).body.id;
 };
+
+export const createTripAndGetId = async (
+  vehicleId: string,
+  cookies: string,
+  departureDate: string = '2125-12-01T08:00:00Z',
+  arrivalDate: string = '2125-12-01T10:00:00Z'
+): Promise<string> =>
+  (
+    await request(app).post('/api/trips').set('Cookie', cookies).send({
+      vehicleId: vehicleId,
+      departureCity: `Paris`,
+      arrivalCity: `Lyon`,
+      departureDate,
+      arrivalDate,
+      availableSeats: 3,
+      price: 45.5,
+    })
+  ).body.id;

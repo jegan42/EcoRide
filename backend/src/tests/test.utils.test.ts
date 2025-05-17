@@ -13,6 +13,8 @@ import {
   createVehicleAndGetId,
   vehicleIds,
   testPassword,
+  createTripAndGetId,
+  tripIds,
 } from './test.utils';
 
 beforeAll(async () => {
@@ -158,7 +160,7 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
     expect(res.body).toHaveProperty('seatCount', 4);
   });
 
-  it('FUNCTION: createVehicleAndGetId: 200<> return VEHICLE.ID with POST /api/vehicles', async () => {
+  it('FUNCTION: createVehicleAndGetId: <> return VEHICLE.ID with POST /api/vehicles', async () => {
     const name = testEmails[0].split('@')[0];
     const nbVehicle = '0';
     vehicleIds[0] = await createVehicleAndGetId(
@@ -186,5 +188,59 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
     expect(vehicle).toHaveProperty('licensePlate', `LP_${name}${nbVehicle}`);
     expect(vehicle).toHaveProperty('energy', 'petrol');
     expect(vehicle).toHaveProperty('seatCount', 4);
+  });
+});
+
+describe('Test Utils Funtions createTripAndGetId', () => {
+  it('ROUTE_USED: POST /api/trips: 201<> return TRIP', async () => {
+    const res = await request(app)
+      .post('/api/trips')
+      .set('Cookie', cookies[0])
+      .send({
+        vehicleId: vehicleIds[0],
+        departureCity: 'Paris',
+        arrivalCity: 'Lyon',
+        departureDate: '2126-05-01T08:00:00.000Z',
+        arrivalDate: '2126-05-01T12:00:00.000Z',
+        availableSeats: 3,
+        price: 45.5,
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty('id');
+    expect(res.body.id).toMatch(UUID_REGEX);
+    expect(res.body).toHaveProperty('departureCity', 'Paris');
+    expect(res.body).toHaveProperty('arrivalCity', 'Lyon');
+    expect(res.body).toHaveProperty('availableSeats', 3);
+    expect(res.body).toHaveProperty('price', 45.5);
+    expect(res.body).toHaveProperty('status', 'open');
+  });
+
+  it('FUNCTION: createTripAndGetId: <> RETURN trip ID with POST /api/trips', async () => {
+    tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
+    expect(tripIds[0]).toBeDefined();
+    expect(tripIds[0]).toHaveLength(36);
+    expect(tripIds[0]).toMatch(UUID_REGEX);
+
+    const trip = await prismaNewClient.trip.findUnique({
+      where: { id: tripIds[0] },
+    });
+    expect(trip).toBeDefined();
+    expect(trip?.id).toBeDefined();
+    expect(trip?.id).toHaveLength(36);
+    expect(trip?.id).toMatch(UUID_REGEX);
+    expect(trip).toHaveProperty('vehicleId', vehicleIds[0]);
+    expect(trip).toHaveProperty('departureCity', 'Paris');
+    expect(trip).toHaveProperty('arrivalCity', 'Lyon');
+    expect(trip).toHaveProperty(
+      'departureDate',
+      new Date('2125-12-01T08:00:00Z')
+    );
+    expect(trip).toHaveProperty(
+      'arrivalDate',
+      new Date('2125-12-01T10:00:00Z')
+    );
+    expect(trip).toHaveProperty('availableSeats', 3);
+    expect(trip).toHaveProperty('price', 45.5);
   });
 });
