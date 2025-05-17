@@ -48,4 +48,10 @@ describe('AuthController: POST /api/auth/signout', () => {
     expect(res.status).toBe(403);
     expect(res.body.message).toBe('Invalid token');
   });
+
+  it('GET /api/auth/me: 401<Missing token> if not authenticated', async () => {
+    const res = await request(app).post('/api/auth/signout');
+    expect(res.status).toBe(401);
+    expect(res.body.message).toBe('Missing token');
+  });
 });

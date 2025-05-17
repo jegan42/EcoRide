@@ -27,9 +27,11 @@ export const adminMail = 'testAdmin@example.mail';
 
 export const cookies: string[] = [];
 
+export const vehicleIds: string[] = [];
 export const userIds: string[] = [];
 
-export const resetDB = async () => {
+export const resetDB = async (): Promise<void> => {
+  await prismaNewClient.vehicle.deleteMany();
   await prismaNewClient.user.deleteMany();
 };
 
@@ -53,4 +55,27 @@ export const createUserAndSignIn = async (
   return await request(app)
     .post('/api/auth/signin')
     .send({ email, password: testPassword });
+};
+
+export const createVehicleAndGetId = async (
+  email: string,
+  cookies: string,
+  nbVehicle: string = ''
+): Promise<string> => {
+  const name = email.split('@')[0];
+
+  return (
+    await request(app)
+      .post('/api/vehicles')
+      .set('Cookie', cookies)
+      .send({
+        brand: 'Peugeot',
+        model: '308',
+        color: 'Blue',
+        vehicleYear: 2023,
+        licensePlate: `LP_${name}${nbVehicle}`,
+        energy: 'petrol',
+        seatCount: 4,
+      })
+  ).body.id;
 };
