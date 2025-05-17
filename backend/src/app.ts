@@ -8,10 +8,9 @@ import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import prismaNewClient from './lib/prisma';
 
-// import apiRoutes from './routes/api.routes';
-// import { csrfErrorHandler } from './middleware/csrf.middleware';
+import apiRoutes from './routes/api.routes';
+import { csrfErrorHandler } from './middleware/csrf.middleware';
 
 dotenv.config();
 
@@ -61,27 +60,9 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use('/api', apiRoutes);
+app.use('/api', apiRoutes);
 
-// app.use(csrfErrorHandler);
-
-app.get('/testusercreate', async (req: Request, res: Response) => {
-  const user = await prismaNewClient.user.create({
-      data: {
-        email: 'example@example.com',
-        firstName: 'John Doe',
-        lastName: 'tata',
-        username: 'toto',
-        
-      }
-    });
-res.json(user);
-});
-
-app.get('/testuser', async (req: Request, res: Response) => {
-const users = await prismaNewClient.user.findMany();
-res.json(users);
-});
+app.use(csrfErrorHandler);
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('EcoRide backend is running 🚗');

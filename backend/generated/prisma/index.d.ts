@@ -1428,7 +1428,6 @@ export namespace Prisma {
     googleRefreshToken: string | null
     avatar: string | null
     credits: number | null
-    status: string | null
     lastLogin: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1449,7 +1448,6 @@ export namespace Prisma {
     googleRefreshToken: string | null
     avatar: string | null
     credits: number | null
-    status: string | null
     lastLogin: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1471,7 +1469,6 @@ export namespace Prisma {
     avatar: number
     role: number
     credits: number
-    status: number
     lastLogin: number
     createdAt: number
     updatedAt: number
@@ -1502,7 +1499,6 @@ export namespace Prisma {
     googleRefreshToken?: true
     avatar?: true
     credits?: true
-    status?: true
     lastLogin?: true
     createdAt?: true
     updatedAt?: true
@@ -1523,7 +1519,6 @@ export namespace Prisma {
     googleRefreshToken?: true
     avatar?: true
     credits?: true
-    status?: true
     lastLogin?: true
     createdAt?: true
     updatedAt?: true
@@ -1545,7 +1540,6 @@ export namespace Prisma {
     avatar?: true
     role?: true
     credits?: true
-    status?: true
     lastLogin?: true
     createdAt?: true
     updatedAt?: true
@@ -1654,7 +1648,6 @@ export namespace Prisma {
     avatar: string | null
     role: string[]
     credits: number
-    status: string
     lastLogin: Date
     createdAt: Date
     updatedAt: Date
@@ -1695,7 +1688,6 @@ export namespace Prisma {
     avatar?: boolean
     role?: boolean
     credits?: boolean
-    status?: boolean
     lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1722,7 +1714,6 @@ export namespace Prisma {
     avatar?: boolean
     role?: boolean
     credits?: boolean
-    status?: boolean
     lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1744,7 +1735,6 @@ export namespace Prisma {
     avatar?: boolean
     role?: boolean
     credits?: boolean
-    status?: boolean
     lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1766,13 +1756,12 @@ export namespace Prisma {
     avatar?: boolean
     role?: boolean
     credits?: boolean
-    status?: boolean
     lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "googleId" | "firstName" | "lastName" | "username" | "email" | "password" | "phone" | "address" | "jwtToken" | "googleAccessToken" | "googleRefreshToken" | "avatar" | "role" | "credits" | "status" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "googleId" | "firstName" | "lastName" | "username" | "email" | "password" | "phone" | "address" | "jwtToken" | "googleAccessToken" | "googleRefreshToken" | "avatar" | "role" | "credits" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     vehicles?: boolean | User$vehiclesArgs<ExtArgs>
     bookings?: boolean | User$bookingsArgs<ExtArgs>
@@ -1807,7 +1796,6 @@ export namespace Prisma {
       avatar: string | null
       role: string[]
       credits: number
-      status: string
       lastLogin: Date
       createdAt: Date
       updatedAt: Date
@@ -2253,7 +2241,6 @@ export namespace Prisma {
     readonly avatar: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String[]'>
     readonly credits: FieldRef<"User", 'Float'>
-    readonly status: FieldRef<"User", 'String'>
     readonly lastLogin: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -7466,7 +7453,6 @@ export namespace Prisma {
     avatar: 'avatar',
     role: 'role',
     credits: 'credits',
-    status: 'status',
     lastLogin: 'lastLogin',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -7695,7 +7681,6 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     role?: StringNullableListFilter<"User">
     credits?: FloatFilter<"User"> | number
-    status?: StringFilter<"User"> | string
     lastLogin?: DateTimeFilter<"User"> | Date | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -7721,7 +7706,6 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     role?: SortOrder
     credits?: SortOrder
-    status?: SortOrder
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7750,7 +7734,6 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     role?: StringNullableListFilter<"User">
     credits?: FloatFilter<"User"> | number
-    status?: StringFilter<"User"> | string
     lastLogin?: DateTimeFilter<"User"> | Date | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -7776,7 +7759,6 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     role?: SortOrder
     credits?: SortOrder
-    status?: SortOrder
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7806,7 +7788,6 @@ export namespace Prisma {
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: StringNullableListFilter<"User">
     credits?: FloatWithAggregatesFilter<"User"> | number
-    status?: StringWithAggregatesFilter<"User"> | string
     lastLogin?: DateTimeWithAggregatesFilter<"User"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -8166,7 +8147,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8192,7 +8172,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8218,7 +8197,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8244,7 +8222,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8270,7 +8247,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8292,7 +8268,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8314,7 +8289,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8814,7 +8788,6 @@ export namespace Prisma {
     avatar?: SortOrder
     role?: SortOrder
     credits?: SortOrder
-    status?: SortOrder
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8839,7 +8812,6 @@ export namespace Prisma {
     googleRefreshToken?: SortOrder
     avatar?: SortOrder
     credits?: SortOrder
-    status?: SortOrder
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8860,7 +8832,6 @@ export namespace Prisma {
     googleRefreshToken?: SortOrder
     avatar?: SortOrder
     credits?: SortOrder
-    status?: SortOrder
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10143,7 +10114,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10168,7 +10138,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10249,7 +10218,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10274,7 +10242,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10315,7 +10282,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10340,7 +10306,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10446,7 +10411,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10471,7 +10435,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10553,7 +10516,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10578,7 +10540,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10654,7 +10615,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10679,7 +10639,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10745,7 +10704,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10770,7 +10728,6 @@ export namespace Prisma {
     avatar?: string | null
     role?: UserCreateroleInput | string[]
     credits?: number
-    status?: string
     lastLogin?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10811,7 +10768,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10836,7 +10792,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     role?: UserUpdateroleInput | string[]
     credits?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
     lastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
