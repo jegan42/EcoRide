@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String   @id @default(uuid()) @db.Uuid @map("id")
+  googleId              String?  @unique @map("google_id")
+  firstName             String   @map("first_name")
+  lastName              String   @map("last_name")
+  username              String   @unique @map("username")
+  email                 String   @unique @db.VarChar(255) @map("email")
+  password              String?  @map("password")
+  phone                 String?  @map("phone")
+  address               String?  @map("address")
+  jwtToken              String?  @unique @map("jwt_token")  
+  googleAccessToken     String?  @unique @map("google_access_token")
+  googleRefreshToken    String?  @unique @map("google_refresh_token")
+  avatar                String?  @map("avatar")
+  roles                 String[] @map("roles")
+  credits               Float    @default(20) @map("credits")
+  status                String   @default("active") @map("status")
+  lastLogin             DateTime @default(now()) @map("last_login")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  vehicles              Vehicle[]
+  bookings              Booking[]
+  preferences           UserPreferences?
+
+  tripsAsDriver         Trip[]   @relation("UserTripsAsDriver")
+}
+
+model Vehicle {
+  id                    String   @id @default(uuid()) @db.Uuid @map("id")
+  userId                String   @db.Uuid @map("user_id")
+  brand                 String   @map("brand")
+  model                 String   @map("model")
+  color                 String   @map("color")
+  vehicleYear           Int      @map("vehicule_year")
+  licensePlate          String   @unique @map("license_plate")
+  energy                VehicleEnergy @map("energy")
+  photo                 String?  @map("photo")
+  seatCount             Int      @map("seat_count")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  user                  User     @relation(fields: [userId], references: [id])
+  trips                 Trip[]
+}
+
+// Enum pour le statut du trip
+enum VehicleEnergy {
+  petrol
+  diesel
+  hybrid
+  lpg
+  electric
+  plug_in_hybrid
+  cng
+  hydrogen
+  ethanol
+}
+
+// Modèle pour la table Trip
+model Trip {
+  id                    String   @id @default(uuid()) @db.Uuid @map("id")
+  driverId              String   @db.Uuid @map("driver_id")
+  vehicleId             String   @db.Uuid @map("vehicle_id")
+  departureCity         String   @map("departure_city")
+  arrivalCity           String   @map("arrival_city")
+  departureDate         DateTime @map("departure_date")
+  arrivalDate           DateTime @map("arrival_date")
+  availableSeats        Int      @map("available_seats")
+  price                 Float    @map("price")
+  status                TripStatus @default(open) @map("status")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  driver                User     @relation("UserTripsAsDriver", fields: [driverId], references: [id])
+  vehicle               Vehicle  @relation(fields: [vehicleId], references: [id])
+  bookings              Booking[]
+}
+
+// Enum pour le statut du trip
+enum TripStatus {
+  open
+  full
+  canceled
+}
+
+// Modèle pour la table Reservation
+model Booking {
+  id                    String   @id @default(uuid()) @db.Uuid @map("id")
+  userId                String   @db.Uuid @map("user_id")
+  tripId                String   @db.Uuid @map("trip_id")
+  status                BookingStatus @map("status")
+  totalPrice            Float    @map("total_price")
+  seatCount             Int      @map("seat_count")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  user                  User     @relation(fields: [userId], references: [id])
+  trip                  Trip     @relation(fields: [tripId], references: [id])
+}
+
+// Enum pour le statut de la réservation
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+}
+
+// Modèle pour la table UserPreferences
+model UserPreferences {
+  id                    String   @unique @id @default(uuid()) @db.Uuid @map("id")
+  userId                String   @unique @db.Uuid @map("user_id")
+  acceptsSmoker         Boolean  @map("accepts_smoker")
+  acceptsPets           Boolean  @map("accepts_pets")
+  acceptsMusic          Boolean  @map("accepts_music")
+  acceptsChatter        Boolean  @map("accepts_chatter")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relation
+  user                  User     @relation(fields: [userId], references: [id])
+}
