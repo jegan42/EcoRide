@@ -26,7 +26,7 @@ describe('AuthController: POST /api/auth/signout', () => {
       .post('/api/auth/signout')
       .set('Cookie', cookies[0]);
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe('Signed out successfully');
+    expect(res.body).toHaveProperty('message', 'Signed out successfully');
 
     const signoutCookies = Array.isArray(res.headers['set-cookie'])
       ? res.headers['set-cookie']
@@ -41,17 +41,17 @@ describe('AuthController: POST /api/auth/signout', () => {
     expect(jwtTokenCookie).toMatch(/jwtToken=;/);
   });
 
-  it('GET /api/auth/me: 403<Invalid token> if JWT is invalid', async () => {
+  it('GET /api/auth/signout: 401<Invalid token>', async () => {
     const res = await request(app)
       .post('/api/auth/signout')
       .set('Cookie', invalidCookie);
-    expect(res.status).toBe(403);
-    expect(res.body.message).toBe('Invalid token');
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Invalid token');
   });
 
-  it('GET /api/auth/me: 401<Missing token> if not authenticated', async () => {
+  it('GET /api/auth/signout: 401<Missing token>', async () => {
     const res = await request(app).post('/api/auth/signout');
     expect(res.status).toBe(401);
-    expect(res.body.message).toBe('Missing token');
+    expect(res.body).toHaveProperty('message', 'Missing token');
   });
 });

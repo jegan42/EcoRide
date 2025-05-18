@@ -10,14 +10,14 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { email, password, firstName, lastName, username, phone, address } =
-      req.body;
-
-    const invalidInput = AuthService.checkCreateInput(req.body);
-    if (invalidInput) {
-      res.status(400).json({ message: invalidInput });
+    const isValidInput = AuthService.checkSignUpInput(req.body);
+    if (!isValidInput) {
+      res.status(400).json({ message: 'Missing required fields' });
       return;
     }
+
+    const { email, password, firstName, lastName, username, phone, address } =
+      req.body;
 
     try {
       const existingUserEmail = await prismaNewClient.user.findUnique({
@@ -55,8 +55,7 @@ export class AuthController {
       await AuthService.updateUserToken(newUser.id, jwtToken);
       setTokenCookie(res, jwtToken);
 
-      const { password: _, ...userWithoutPassword } = newUser;
-      res.status(201).json({ user: { ...userWithoutPassword, jwtToken } });
+      res.status(201).json({ user: AuthService.sanitizedUser(newUser) });
     } catch {
       res.status(500).json({ message: 'Server error during signup' });
     }
@@ -66,6 +65,12 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
+    const isValidInput = AuthService.checkSignInInput(req.body);
+    if (!isValidInput) {
+      res.status(400).json({ message: 'Missing required fields' });
+      return;
+    }
+
     const { email, password } = req.body;
 
     try {
@@ -75,8 +80,11 @@ export class AuthController {
         return;
       }
 
-      const isValid = await AuthService.verifyPassword(password, user.password);
-      if (!isValid) {
+      const isValidPassword = await AuthService.verifyPassword(
+        password,
+        user.password
+      );
+      if (!isValidPassword) {
         res.status(401).json({ message: 'Invalid credentials' });
         return;
       }
@@ -85,9 +93,7 @@ export class AuthController {
       await AuthService.updateUserToken(user.id, jwtToken);
       setTokenCookie(res, jwtToken);
 
-      const { password: _, jwtToken: _jwtToken, ...userWithoutPassword } = user;
-
-      res.status(200).json({ user: { ...userWithoutPassword, jwtToken } });
+      res.status(200).json({ user: AuthService.sanitizedUser(user) });
     } catch {
       res.status(500).json({ message: 'Server error during signin' });
     }
@@ -104,21 +110,23 @@ export class AuthController {
       return;
     }
 
-    const userData = await prismaNewClient.user.findUnique({
-      where: { id: user.id },
-    });
-    if (!userData) {
-      res.status(404).json({ message: 'User not found' });
+    if (!AuthService.checkUserId(user.id)) {
+      res.status(400).json({ message: 'Invalid ID' });
       return;
     }
+    try {
+      const userData = await prismaNewClient.user.findUnique({
+        where: { id: user.id },
+      });
+      if (!userData) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
 
-    const {
-      password: _,
-      jwtToken: _jwtToken,
-      ...userWithoutPassword
-    } = userData;
-
-    res.status(200).json({ user: userWithoutPassword });
+      res.status(200).json({ user: AuthService.sanitizedUser(userData) });
+    } catch {
+      res.status(500).json({ message: 'Server error during getMe' });
+    }
   };
 
   static readonly updateUser = async (
@@ -127,26 +135,17 @@ export class AuthController {
   ): Promise<void> => {
     const { id } = req.body;
 
-    try {
-      const user = await prismaNewClient.user.findUnique({
-        where: { id },
-      });
+    if (!id || Object.keys(req.body).length < 2) {
+      res.status(400).json({ message: 'No fields to update' });
+      return;
+    }
 
-      if (!user) {
-        res.status(400).json({ message: 'User not found' });
-        return;
-      }
-    } catch {
-      res.status(400).json({ message: 'Error checking user existence' });
+    if (!AuthService.checkUserId(id)) {
+      res.status(400).json({ message: 'Invalid ID' });
       return;
     }
 
     const currentUser = req.user as User;
-
-    if (!id || Object.keys(req.body).length < 2) {
-      res.status(400).json({ message: 'Field is required' });
-      return;
-    }
 
     if (currentUser.id !== id && !currentUser?.role.includes('admin')) {
       res.status(403).json({ message: 'Unauthorized' });
@@ -154,10 +153,10 @@ export class AuthController {
     }
 
     try {
-      const originalUser = await prismaNewClient.user.findUnique({
+      const user = await prismaNewClient.user.findUnique({
         where: { id },
       });
-      if (!originalUser) {
+      if (!user) {
         res.status(404).json({ message: 'User not found' });
         return;
       }
@@ -165,7 +164,7 @@ export class AuthController {
       const updateData = await AuthService.buildUpdateData(
         req.body,
         currentUser,
-        originalUser
+        user
       );
       if (typeof updateData === 'string') {
         res.status(409).json({ message: updateData });
@@ -181,8 +180,8 @@ export class AuthController {
         data: updateData,
       });
 
-      const { password: _, ...userWithoutPassword } = updatedUser;
-      res.status(200).json({ user: userWithoutPassword });
+      updatedUser.jwtToken && setTokenCookie(res, updatedUser.jwtToken);
+      res.status(200).json({ user: AuthService.sanitizedUser(updatedUser) });
     } catch {
       res.status(500).json({ message: 'Server error during updateUser' });
     }

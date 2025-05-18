@@ -26,13 +26,18 @@ afterAll(async () => {
 });
 
 describe('AuthController: GET /api/auth/me', () => {
-  it('GET /api/auth/me: 200<> should return the current user', async () => {
+  it('GET /api/auth/me: 200<> return the current user', async () => {
     const name = testEmails[0].split('@')[0];
     const res = await request(app)
       .get('/api/auth/me')
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body.user).not.toHaveProperty('googleId');
+    expect(res.body.user).not.toHaveProperty('password');
+    expect(res.body.user).not.toHaveProperty('jwtToken');
+    expect(res.body.user).not.toHaveProperty('googleAccessToken');
+    expect(res.body.user).not.toHaveProperty('googleRefreshToken');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
     expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
@@ -45,18 +50,18 @@ describe('AuthController: GET /api/auth/me', () => {
     expect(res.body.user).toHaveProperty('credits', 20);
   });
 
-  it('GET /api/auth/me: 401<Missing token> if no JWT is provided', async () => {
+  it('GET /api/auth/me: 401<Missing token>', async () => {
     const res = await request(app).get('/api/auth/me');
 
     expect(res.status).toBe(401);
-    expect(res.body.message).toBe('Missing token');
+    expect(res.body).toHaveProperty('message', 'Missing token');
   });
 
-  it('GET /api/auth/me: 403<Invalid token> if JWT is invalid', async () => {
+  it('GET /api/auth/me: 401<Invalid token>', async () => {
     const res = await request(app)
       .get('/api/auth/me')
       .set('Cookie', invalidCookie);
-    expect(res.status).toBe(403);
-    expect(res.body.message).toBe('Invalid token');
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Invalid token');
   });
 });

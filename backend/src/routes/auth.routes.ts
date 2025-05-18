@@ -2,7 +2,11 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import passport from 'passport';
-import { signinValidator, signupValidator } from '../validators/auth.validator';
+import {
+  signinValidator,
+  signupValidator,
+  updateValidator,
+} from '../validators/auth.validator';
 import { GoogleAuthController } from '../controllers/google.controller';
 import { csrfProtection } from '../middleware/csrf.middleware';
 import { authenticate } from '../middleware/auth.middleware';
@@ -35,12 +39,20 @@ router.post(
   }),
   csrfProtection,
   signinValidator,
+  handleValidationErrors,
   AuthController.signin
 );
 
 router.post('/signout', authenticate, csrfProtection, AuthController.signout);
 
-router.put('/update', authenticate, csrfProtection, AuthController.updateUser);
+router.put(
+  '/update',
+  authenticate,
+  csrfProtection,
+  updateValidator,
+  handleValidationErrors,
+  AuthController.updateUser
+);
 
 router.get('/me', authenticate, AuthController.getMe);
 

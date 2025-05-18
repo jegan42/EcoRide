@@ -6,6 +6,7 @@ import {
   verifyToken as checkToken,
 } from '../utils/jwt';
 import prismaNewClient from '../lib/prisma';
+import { UUID_REGEX } from '../validators/validator';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {
@@ -43,28 +44,52 @@ export class AuthService {
     }
   }
 
-  static async updateUserToken(id: string, jwtToken: string): Promise<boolean> {
-    try {
-      await prismaNewClient.user.update({
-        where: { id },
-        data: {
-          jwtToken,
-        },
-      });
-      return true;
-    } catch {
-      return false;
-    }
+  static async updateUserToken(id: string, jwtToken: string): Promise<void> {
+    await prismaNewClient.user.update({
+      where: { id },
+      data: {
+        jwtToken,
+      },
+    });
   }
 
-  static checkCreateInput(data: User): string | null {
-    return !data.email ||
-      !data.password ||
-      !data.firstName ||
-      !data.lastName ||
-      !data.username
-      ? 'Missing required fields'
-      : null;
+  static checkSignUpInput(user: User): boolean {
+    return Boolean(
+      user.email &&
+        user.password &&
+        user.firstName &&
+        user.lastName &&
+        user.username
+    );
+  }
+
+  static checkSignInInput(user: User): boolean {
+    return Boolean(user.email && user.password);
+  }
+
+  static checkUserId(id: string): boolean {
+    return Boolean(id && UUID_REGEX.test(id));
+  }
+
+  static sanitizedUser(
+    user: User
+  ): Omit<
+    User,
+    | 'password'
+    | 'jwtToken'
+    | 'googleId'
+    | 'googleAccessToken'
+    | 'googleRefreshToken'
+  > {
+    const {
+      googleId: _googleId,
+      password: _password,
+      jwtToken: _jwtToken,
+      googleAccessToken: _googleAccessToken,
+      googleRefreshToken: _googleRefreshToken,
+      ...userCleanUp
+    } = user;
+    return userCleanUp;
   }
 
   static async buildUpdateData(
@@ -99,7 +124,7 @@ export class AuthService {
 
     if (currentUser.role.includes('admin')) {
       updateData.role = role
-        ? [...originalUser.role, ...role]
+        ? Array.from(new Set([...originalUser.role, ...role]))
         : originalUser.role;
       updateData.credits = credits ?? originalUser.credits;
 

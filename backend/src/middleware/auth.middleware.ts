@@ -10,9 +10,9 @@ export const authenticate = async (
 ): Promise<void> => {
   const authHeader = req.headers.authorization;
 
-  const jwtToken = authHeader?.startsWith('Bearer ')
-    ? authHeader.split(' ')[1]
-    : req.cookies.jwtToken;
+  const jwtToken =
+    req.cookies.jwtToken ??
+    (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
   if (!jwtToken) {
     res.status(401).json({ message: 'Missing token' });
     return;
@@ -20,7 +20,7 @@ export const authenticate = async (
 
   const decoded = AuthService.verifyToken(jwtToken);
   if (!decoded?.userId) {
-    res.status(403).json({ message: 'Invalid token' });
+    res.status(401).json({ message: 'Invalid token' });
     return;
   }
 
@@ -39,8 +39,8 @@ export const authenticate = async (
 
     next();
   } catch {
-    res.status(403).json({
-      message: 'Invalid or expired token',
+    res.status(500).json({
+      message: 'Server error during authentication',
     });
     return;
   }

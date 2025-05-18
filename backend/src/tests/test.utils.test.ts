@@ -45,7 +45,6 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
     expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('jwtToken');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
     expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
@@ -78,7 +77,6 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
     expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('jwtToken');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
     expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
@@ -107,7 +105,6 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     expect(res).toBeDefined();
     expect(res).toHaveProperty('status', 200);
     expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('jwtToken');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
     expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
@@ -223,7 +220,7 @@ describe('Test Utils Funtions createTripAndGetId', () => {
     expect(tripIds[0]).toMatch(UUID_REGEX);
 
     const trip = await prismaNewClient.trip.findUnique({
-      where: { id: tripIds[0] },
+      where: { id: tripIds[0] ?? undefined },
     });
     expect(trip).toBeDefined();
     expect(trip?.id).toBeDefined();

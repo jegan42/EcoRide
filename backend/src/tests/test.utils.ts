@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../app';
 import prismaNewClient from '../lib/prisma';
 
-export const invalidValueId = 'a99a9a99-9aa9-999a-9a99-aa99999999a9';
+export const invalidValueId = 'a99a9a99-9aa9-499a-9a99-aa99999999a9';
 
 export const invalidFormatId = 'non-existent-id';
 export const invalidMail = 'i_am_not_a_mail';
@@ -11,7 +11,7 @@ export const invalidCookie = ['jwtToken=invalidtoken'];
 
 export const unikUserName = 'UNIKNAME';
 
-export const testPassword = 'testPassword';
+export const testPassword = 'Password@123';
 export const testEmails = [
   'user0@example.mail',
   'user1@example.mail',
@@ -27,7 +27,7 @@ export const adminMail = 'testAdmin@example.mail';
 
 export const cookies: string[] = [];
 
-export const tripIds: string[] = [];
+export const tripIds: (string | undefined)[] = [];
 export const vehicleIds: string[] = [];
 export const userIds: string[] = [];
 
@@ -82,20 +82,33 @@ export const createVehicleAndGetId = async (
   ).body.id;
 };
 
+export const getAvailableSeats = async (
+  vehicleId: string
+): Promise<number | undefined> => {
+  const res = await prismaNewClient.vehicle.findUnique({
+    where: { id: vehicleId },
+  });
+  if (!res || res.seatCount < 1) return undefined;
+  return res.seatCount - 1;
+};
+
 export const createTripAndGetId = async (
   vehicleId: string,
   cookies: string,
   departureDate: string = '2125-12-01T08:00:00Z',
   arrivalDate: string = '2125-12-01T10:00:00Z'
-): Promise<string> =>
-  (
+): Promise<string | undefined> => {
+  const availableSeats = await getAvailableSeats(vehicleId);
+  if (!availableSeats) return undefined;
+  return (
     await request(app).post('/api/trips').set('Cookie', cookies).send({
       vehicleId: vehicleId,
       departureCity: `Paris`,
       arrivalCity: `Lyon`,
       departureDate,
       arrivalDate,
-      availableSeats: 3,
+      availableSeats,
       price: 45.5,
     })
   ).body.id;
+};
