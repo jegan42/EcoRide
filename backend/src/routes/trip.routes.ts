@@ -4,10 +4,10 @@ import { TripController } from '../controllers/trip.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
 import {
-  tripIdParamValidator,
   createTripValidator,
   updateTripValidator,
 } from '../validators/trip.validator';
+import { uuidParamValidator } from '../validators/uuid.validator';
 import { authorize } from '../middleware/authorize.middleware';
 import { csrfProtection } from '../middleware/csrf.middleware';
 
@@ -16,7 +16,7 @@ const router = express.Router();
 router.get('/', TripController.getAll);
 router.get(
   '/:id',
-  tripIdParamValidator,
+  uuidParamValidator,
   handleValidationErrors,
   TripController.getById
 );
@@ -35,7 +35,7 @@ router.put(
   authenticate,
   csrfProtection,
   authorize(['driver']),
-  tripIdParamValidator,
+  uuidParamValidator,
   updateTripValidator,
   handleValidationErrors,
   TripController.update
@@ -45,7 +45,7 @@ router.delete(
   authenticate,
   csrfProtection,
   authorize(['driver']),
-  tripIdParamValidator,
+  uuidParamValidator,
   handleValidationErrors,
   TripController.delete
 );

@@ -174,6 +174,7 @@ exports.Prisma.TripScalarFieldEnum = {
 exports.Prisma.BookingScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  cancellerId: 'cancellerId',
   tripId: 'tripId',
   status: 'status',
   totalPrice: 'totalPrice',
@@ -222,7 +223,7 @@ exports.VehicleEnergy = exports.$Enums.VehicleEnergy = {
 exports.TripStatus = exports.$Enums.TripStatus = {
   open: 'open',
   full: 'full',
-  canceled: 'canceled'
+  cancelled: 'cancelled'
 };
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {

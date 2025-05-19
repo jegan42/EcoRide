@@ -39,7 +39,8 @@ model User {
   bookings    Booking[]
   preferences UserPreferences?
 
-  tripsAsDriver Trip[] @relation("UserTripsAsDriver")
+  tripsAsDriver     Trip[]    @relation("UserTripsAsDriver")
+  cancelledBookings Booking[] @relation("BookingCancelledBy")
 }
 
 model Vehicle {
@@ -99,23 +100,25 @@ model Trip {
 enum TripStatus {
   open
   full
-  canceled
+  cancelled
 }
 
 // Modèle pour la table Reservation
 model Booking {
-  id         String        @id @default(uuid()) @map("id") @db.Uuid
-  userId     String        @map("user_id") @db.Uuid
-  tripId     String        @map("trip_id") @db.Uuid
-  status     BookingStatus @map("status")
-  totalPrice Float         @map("total_price")
-  seatCount  Int           @map("seat_count")
-  createdAt  DateTime      @default(now()) @map("created_at")
-  updatedAt  DateTime      @default(now()) @updatedAt @map("updated_at")
+  id          String        @id @default(uuid()) @map("id") @db.Uuid
+  userId      String        @map("user_id") @db.Uuid
+  cancellerId String?       @map("canceller_id") @db.Uuid
+  tripId      String        @map("trip_id") @db.Uuid
+  status      BookingStatus @map("status")
+  totalPrice  Float         @map("total_price")
+  seatCount   Int           @map("seat_count")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
 
   // Relations
-  user User @relation(fields: [userId], references: [id])
-  trip Trip @relation(fields: [tripId], references: [id])
+  user        User  @relation(fields: [userId], references: [id])
+  trip        Trip  @relation(fields: [tripId], references: [id])
+  cancelledBy User? @relation("BookingCancelledBy", fields: [cancellerId], references: [id])
 }
 
 // Enum pour le statut de la réservation
