@@ -6,7 +6,7 @@ import {
   verifyToken as checkToken,
 } from '../utils/jwt';
 import prismaNewClient from '../lib/prisma';
-import { UUID_REGEX } from '../validators/validator';
+import { UUID_REGEX } from '../utils/validation';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {

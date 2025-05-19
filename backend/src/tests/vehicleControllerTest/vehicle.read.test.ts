@@ -12,6 +12,7 @@ import {
   testEmails,
   vehicleIds,
 } from '../test.utils';
+import { UUID_REGEX } from '../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();
@@ -32,10 +33,14 @@ describe('VehicleController: GET /api/vehicles', () => {
     expect(Array.isArray(res.body)).toBe(true);
   });
 
-  it('GET /api/vehicles/:id: 200<> should return vehicle by ID', async () => {
+  it('GET /api/vehicles/:id: 200<> return vehicle by ID', async () => {
     const res = await request(app).get(`/api/vehicles/${vehicleIds[0]}`);
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('id');
     expect(res.body).toHaveProperty('id', vehicleIds[0]);
+    expect(res.body.id).toMatch(UUID_REGEX);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body.userId).toMatch(UUID_REGEX);
     expect(res.body).toHaveProperty('brand', 'Peugeot');
     expect(res.body).toHaveProperty('model', '308');
     expect(res.body).toHaveProperty('color', 'Blue');
@@ -48,17 +53,17 @@ describe('VehicleController: GET /api/vehicles', () => {
     expect(res.body).toHaveProperty('seatCount', 4);
   });
 
+  it('GET /api/vehicles/:id: 400<Invalid ID> if invalid Format Id', async () => {
+    const res = await request(app).get(`/api/vehicles/${invalidFormatId}`);
+
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty('message', 'Invalid ID');
+  });
+
   it('GET /api/vehicles/:id: 404<Vehicle not found> if invalid Value Id', async () => {
     const res = await request(app).get(`/api/vehicles/${invalidValueId}`);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty('message', 'Vehicle not found');
-  });
-
-  it('GET /api/vehicles/:id: 400<Invalid vehicle ID> if invalid Format Id', async () => {
-    const res = await request(app).get(`/api/vehicles/${invalidFormatId}`);
-
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid vehicle ID');
   });
 });

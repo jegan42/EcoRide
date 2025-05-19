@@ -1,4 +1,4 @@
-// backend/src/controllers/vehicle.controller.ts
+// backend/src/routes/vehicle.routes.ts
 import express from 'express';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
@@ -9,7 +9,7 @@ import {
 import { VehicleController } from '../controllers/vehicle.controller';
 import { csrfProtection } from '../middleware/csrf.middleware';
 import { authorize } from '../middleware/authorize.middleware';
-import { uuidParamValidator } from '../validators/validator';
+import { uuidParamValidator } from '../validators/uuid.validator';
 
 const router = express.Router();
 

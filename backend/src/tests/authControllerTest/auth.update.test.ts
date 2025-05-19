@@ -15,7 +15,7 @@ import {
   unikUserName,
   userIds,
 } from '../test.utils';
-import { UUID_REGEX } from '../../validators/validator';
+import { UUID_REGEX } from '../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();

@@ -117,7 +117,7 @@ describe('TripController: POST /api/trips', () => {
     );
   });
 
-  it('POST /api/trips: 403<Invalid token> if JWT is invalid', async () => {
+  it('POST /api/trips: 401<Invalid token> if JWT is invalid', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', ['jwtToken=invalidtoken'])
@@ -131,7 +131,7 @@ describe('TripController: POST /api/trips', () => {
         price: 45.5,
       });
 
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
     expect(res.body).toHaveProperty('message', 'Invalid token');
   });
 

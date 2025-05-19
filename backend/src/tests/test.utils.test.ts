@@ -2,7 +2,7 @@
 import request from 'supertest';
 import app from '../app';
 import prismaNewClient from '../lib/prisma';
-import { UUID_REGEX } from '../validators/validator';
+import { UUID_REGEX } from '../utils/validation';
 import {
   resetDB,
   createUserAndSignIn,
@@ -147,6 +147,8 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
     expect(res.body.id).toMatch(UUID_REGEX);
+    expect(res.body).toHaveProperty('userId');
+    expect(res.body.userId).toMatch(UUID_REGEX);
     expect(res.body).toHaveProperty('userId', userIds[0]);
     expect(res.body).toHaveProperty('brand', 'Peugeot');
     expect(res.body).toHaveProperty('model', '308');

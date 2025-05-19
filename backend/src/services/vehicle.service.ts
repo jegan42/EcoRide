@@ -1,30 +1,44 @@
 // backend/src/services/vehicle.service.ts
 import prismaNewClient from '../lib/prisma';
-import { Vehicle } from '../../generated/prisma';
+import { User, Vehicle } from '../../generated/prisma';
 
 export class VehicleService {
-  static checkCreateInput(data: Vehicle): string | null {
-    return !data.brand ||
-      !data.model ||
-      !data.color ||
-      !data.vehicleYear ||
-      !data.licensePlate ||
-      !data.energy ||
-      !data.seatCount
-      ? 'Missing required fields'
-      : null;
+  static isCreateInputValid(data: Partial<Vehicle>): boolean {
+    return Boolean(
+      data.brand &&
+        data.model &&
+        data.color &&
+        data.vehicleYear &&
+        typeof data.vehicleYear === 'number' &&
+        data.vehicleYear >= 1900 &&
+        data.vehicleYear <= new Date().getFullYear() + 1 &&
+        data.licensePlate &&
+        data.licensePlate.length >= 3 &&
+        data.licensePlate.length <= 20 &&
+        data.energy &&
+        data.seatCount &&
+        typeof data.seatCount === 'number' &&
+        data.seatCount >= 1 &&
+        data.seatCount <= 10
+    );
   }
 
-  static async checkVehicleExistsWithLicensePlate(
+  static async isVehicleExistsWithLicensePlate(
     licensePlate: string
-  ): Promise<Vehicle | null> {
-    try {
-      const vehicle = await prismaNewClient.vehicle.findUnique({
+  ): Promise<boolean> {
+    return Boolean(
+      await prismaNewClient.vehicle.findUnique({
         where: { licensePlate },
-      });
-      return vehicle;
-    } catch {
-      return null;
-    }
+      })
+    );
+  }
+
+  static async isAuthorized(user: User, vehicleId: string): Promise<boolean> {
+    const vehicle = await prismaNewClient.vehicle.findUnique({
+      where: { id: vehicleId },
+    });
+    return Boolean(
+      user.role.includes('admin') || (vehicle && vehicle.userId === user.id)
+    );
   }
 }

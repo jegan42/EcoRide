@@ -1,3 +1,4 @@
+// backend/src/validators/vehicle.validator.ts
 import { body, param } from 'express-validator';
 
 export const createVehicleValidator = [
@@ -40,8 +41,4 @@ export const updateVehicleValidator = [
     .optional()
     .isInt({ min: 1, max: 10 })
     .withMessage('Seat count must be between 1 and 10'),
-];
-
-export const vehicleIdParamValidator = [
-  param('id').isUUID().withMessage('Invalid vehicle ID'),
 ];

@@ -30,12 +30,28 @@ afterAll(async () => {
 });
 
 describe('VehicleController: DELETE /api/vehicles', () => {
-  it('DELETE /api/vehicles/:id: 200<Vehicle deleted!> should delete a vehicle', async () => {
+  it('DELETE /api/vehicles/:id: 200<Vehicle deleted!>', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0]);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Vehicle deleted!');
+  });
+
+  it('DELETE /api/vehicles/:id: 401<Missing token> if not authenticated', async () => {
+    const res = await request(app).delete(`/api/vehicles/${vehicleIds[0]}`);
+
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Missing token');
+  });
+
+  it('DELETE /api/vehicles/:id: 401<Invalid token> JWT invalid', async () => {
+    const res = await request(app)
+      .delete(`/api/vehicles/${vehicleIds[0]}`)
+      .set('Cookie', invalidCookie);
+
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Invalid token');
   });
 
   it('DELETE /api/vehicles/:id: 403<Unauthorized> if invalidValueId Unauthorized', async () => {
@@ -47,20 +63,13 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     expect(res.body).toHaveProperty('message', 'Unauthorized');
   });
 
-  it('DELETE /api/vehicles/:id: 400<Invalid vehicle ID> if invalidFormatId vehicle not found', async () => {
+  it('DELETE /api/vehicles/:id: 400<Invalid ID> if invalidFormatId vehicle not found', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid vehicle ID');
-  });
-
-  it('DELETE /api/vehicles/:id: 401<Missing token> if not authenticated', async () => {
-    const res = await request(app).delete(`/api/vehicles/${vehicleIds[0]}`);
-
-    expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty('message', 'Invalid ID');
   });
 
   it('DELETE /api/vehicles/:id: 403<Unauthorized> should not delete vehicle of another user', async () => {
@@ -70,14 +79,5 @@ describe('VehicleController: DELETE /api/vehicles', () => {
 
     expect(res.status).toBe(403);
     expect(res.body).toHaveProperty('message', 'Unauthorized');
-  });
-
-  it('DELETE /api/vehicles/:id: 403<Vehicle deleted!> with invalid token', async () => {
-    const res = await request(app)
-      .delete(`/api/vehicles/${vehicleIds[0]}`)
-      .set('Cookie', invalidCookie);
-
-    expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
   });
 });
