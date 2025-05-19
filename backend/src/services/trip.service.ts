@@ -1,7 +1,9 @@
 // backend/src/services/trip.service.ts
 import prismaNewClient from '../lib/prisma';
-import { Trip, Vehicle, Prisma } from '../../generated/prisma';
+import { Trip, Prisma } from '../../generated/prisma';
 import { ParsedQs } from 'qs';
+import { UUID_REGEX } from '../utils/validation';
+
 type QueryValue =
   | (string | boolean)
   | ParsedQs
@@ -9,34 +11,76 @@ type QueryValue =
   | undefined;
 
 export class TripService {
-  static checkCreateInput(data: Partial<Trip>): string | null {
-    return !data.vehicleId ||
+  static isValidCreateInput(data: Partial<Trip>): boolean {
+    if (
+      !data.vehicleId ||
       !data.departureCity ||
       !data.arrivalCity ||
       !data.departureDate ||
       !data.arrivalDate ||
       !data.availableSeats ||
-      !data.price ||
+      !data.price
+    )
+      return false;
+
+    if (!UUID_REGEX.exec(data.vehicleId)) return false;
+
+    if (
       typeof data.availableSeats !== 'number' ||
       data.availableSeats <= 0 ||
       typeof data.price !== 'number' ||
       data.price <= 0
-      ? 'Missing required fields'
-      : null;
+    )
+      return false;
+
+    return true;
   }
 
-  static async checkVehicleExists(vehicleId: string): Promise<Vehicle | null> {
-    try {
-      const vehicle = await prismaNewClient.vehicle.findUnique({
-        where: { id: vehicleId },
-      });
-      return vehicle;
-    } catch {
-      return null;
+  static isValidSearchInput(data: Partial<ParsedQs>): boolean {
+    const { from, to, date, flexible } = data;
+
+    const allEmpty = [from, to, date, flexible].every((v) => v === undefined);
+    if (allEmpty) return true;
+
+    if (
+      (from !== undefined && typeof from !== 'string') ||
+      (to !== undefined && typeof to !== 'string') ||
+      (date !== undefined && typeof date !== 'string') ||
+      (flexible !== undefined && typeof flexible !== 'string')
+    ) {
+      return false;
     }
+
+    return true;
   }
 
-  static checkDates(departureDate: string, arrivalDate: string): string | null {
+  static isValidUpdateInput(data: Partial<Trip>): boolean {
+    return Boolean(
+      data.vehicleId ||
+        data.departureCity ||
+        data.arrivalCity ||
+        data.departureDate ||
+        data.arrivalDate ||
+        (data.availableSeats &&
+          typeof data.availableSeats === 'number' &&
+          data.availableSeats > 0) ||
+        (data.price && typeof data.price === 'number' && data.price > 0)
+    );
+  }
+
+  static async getMaxPassengerSeats(vehicleId: string): Promise<number | null> {
+    const availableSeats = (
+      await prismaNewClient.vehicle.findUnique({
+        where: { id: vehicleId },
+      })
+    )?.seatCount;
+    return availableSeats ? availableSeats - 1 : null;
+  }
+
+  static isValidDates(
+    departureDate: string,
+    arrivalDate: string
+  ): string | null {
     const startDate = new Date(departureDate);
     if (new Date() > startDate) return 'DepartureDate must be after today';
 
@@ -49,7 +93,7 @@ export class TripService {
     return null;
   }
 
-  static async checkTripExists(
+  static async isExistTrip(
     userId: string,
     vehicleId: string,
     departureDate: string
