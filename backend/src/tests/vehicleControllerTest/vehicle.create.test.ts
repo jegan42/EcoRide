@@ -38,17 +38,18 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('id');
-    expect(res.body.id).toMatch(UUID_REGEX);
-    expect(res.body).toHaveProperty('userId');
-    expect(res.body.userId).toMatch(UUID_REGEX);
-    expect(res.body).toHaveProperty('brand', 'Tesla');
-    expect(res.body).toHaveProperty('model', 'Model S');
-    expect(res.body).toHaveProperty('color', 'Red');
-    expect(res.body).toHaveProperty('vehicleYear', 2022);
-    expect(res.body).toHaveProperty('licensePlate', 'TESLA123');
-    expect(res.body).toHaveProperty('energy', 'electric');
-    expect(res.body).toHaveProperty('seatCount', 5);
+    expect(res.body.vehicle).toBeDefined();
+    expect(res.body.vehicle).toHaveProperty('id');
+    expect(res.body.vehicle.id).toMatch(UUID_REGEX);
+    expect(res.body.vehicle).toHaveProperty('userId');
+    expect(res.body.vehicle.userId).toMatch(UUID_REGEX);
+    expect(res.body.vehicle).toHaveProperty('brand', 'Tesla');
+    expect(res.body.vehicle).toHaveProperty('model', 'Model S');
+    expect(res.body.vehicle).toHaveProperty('color', 'Red');
+    expect(res.body.vehicle).toHaveProperty('vehicleYear', 2022);
+    expect(res.body.vehicle).toHaveProperty('licensePlate', 'TESLA123');
+    expect(res.body.vehicle).toHaveProperty('energy', 'electric');
+    expect(res.body.vehicle).toHaveProperty('seatCount', 5);
   });
 
   it('POST /api/vehicles: 401<Missing token> if user not authenticated', async () => {

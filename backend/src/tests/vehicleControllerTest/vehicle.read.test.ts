@@ -30,7 +30,8 @@ describe('VehicleController: GET /api/vehicles', () => {
   it('GET /api/vehicles: 200<> should return all vehicles', async () => {
     const res = await request(app).get('/api/vehicles');
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.vehicles).toBeDefined();
+    expect(Array.isArray(res.body.vehicles)).toBe(true);
   });
 
   it('GET /api/vehicles/:id: 200<> return vehicle by ID', async () => {

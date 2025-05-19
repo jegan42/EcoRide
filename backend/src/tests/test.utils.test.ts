@@ -145,18 +145,19 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('id');
-    expect(res.body.id).toMatch(UUID_REGEX);
-    expect(res.body).toHaveProperty('userId');
-    expect(res.body.userId).toMatch(UUID_REGEX);
-    expect(res.body).toHaveProperty('userId', userIds[0]);
-    expect(res.body).toHaveProperty('brand', 'Peugeot');
-    expect(res.body).toHaveProperty('model', '308');
-    expect(res.body).toHaveProperty('color', 'Blue');
-    expect(res.body).toHaveProperty('vehicleYear', 2023);
-    expect(res.body).toHaveProperty('licensePlate', `LP_${name}`);
-    expect(res.body).toHaveProperty('energy', 'petrol');
-    expect(res.body).toHaveProperty('seatCount', 4);
+    expect(res.body.vehicle).toBeDefined();
+    expect(res.body.vehicle).toHaveProperty('id');
+    expect(res.body.vehicle.id).toMatch(UUID_REGEX);
+    expect(res.body.vehicle).toHaveProperty('userId');
+    expect(res.body.vehicle.userId).toMatch(UUID_REGEX);
+    expect(res.body.vehicle).toHaveProperty('userId', userIds[0]);
+    expect(res.body.vehicle).toHaveProperty('brand', 'Peugeot');
+    expect(res.body.vehicle).toHaveProperty('model', '308');
+    expect(res.body.vehicle).toHaveProperty('color', 'Blue');
+    expect(res.body.vehicle).toHaveProperty('vehicleYear', 2023);
+    expect(res.body.vehicle).toHaveProperty('licensePlate', `LP_${name}`);
+    expect(res.body.vehicle).toHaveProperty('energy', 'petrol');
+    expect(res.body.vehicle).toHaveProperty('seatCount', 4);
   });
 
   it('FUNCTION: createVehicleAndGetId: <> return VEHICLE.ID with POST /api/vehicles', async () => {

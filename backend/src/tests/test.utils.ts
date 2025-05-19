@@ -79,7 +79,7 @@ export const createVehicleAndGetId = async (
         energy: 'petrol',
         seatCount: 4,
       })
-  ).body.id;
+  ).body.vehicle.id;
 };
 
 export const getAvailableSeats = async (

@@ -19,16 +19,16 @@ router.post(
   csrfProtection,
   createVehicleValidator,
   handleValidationErrors,
-  VehicleController.createVehicle
+  VehicleController.create
 );
 
-router.get('/', VehicleController.getAllVehicles);
+router.get('/', VehicleController.getAll);
 
 router.get(
   '/:id',
   uuidParamValidator,
   handleValidationErrors,
-  VehicleController.getVehicleById
+  VehicleController.getById
 );
 
 router.put(
@@ -39,7 +39,7 @@ router.put(
   updateVehicleValidator,
   uuidParamValidator,
   handleValidationErrors,
-  VehicleController.updateVehicle
+  VehicleController.update
 );
 
 router.delete(
@@ -49,7 +49,7 @@ router.delete(
   csrfProtection,
   uuidParamValidator,
   handleValidationErrors,
-  VehicleController.deleteVehicle
+  VehicleController.delete
 );
 
 export default router;

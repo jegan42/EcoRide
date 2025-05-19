@@ -1,12 +1,12 @@
 // backend/src/controllers/vehicle.controller.ts
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
-import { User } from '../../generated/prisma';
 import { VehicleService } from '../services/vehicle.service';
 import { isId } from '../utils/validation';
+import { requireUser } from '../utils/request';
 
 export class VehicleController {
-  static readonly createVehicle = async (
+  static readonly create = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -33,7 +33,7 @@ export class VehicleController {
         return;
       }
 
-      const user = req.user as User;
+      const user = requireUser(req, res);
       if (!user) {
         res.status(401).json({ message: 'Unauthorized' });
         return;
@@ -60,21 +60,21 @@ export class VehicleController {
           },
         },
       });
-      res.status(201).json(vehicle);
+      res.status(201).json({ vehicle });
     } catch {
       res.status(500).json({ message: 'Failed to create vehicle' });
     }
   };
 
-  static readonly getAllVehicles = async (
+  static readonly getAll = async (
     _req: Request,
     res: Response
   ): Promise<void> => {
     const vehicles = await prismaNewClient.vehicle.findMany();
-    res.status(200).json(vehicles);
+    res.status(200).json({ vehicles });
   };
 
-  static readonly getVehicleById = async (
+  static readonly getById = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -101,19 +101,30 @@ export class VehicleController {
     }
   };
 
-  static readonly updateVehicle = async (
+  static readonly update = async (
     req: Request,
     res: Response
   ): Promise<void> => {
     const { id } = req.params;
+
+    if (!VehicleService.isUpdateInputValid(req.body)) {
+      res.status(400).json({ message: 'Invalid or missing fields' });
+      return;
+    }
 
     if (!isId(id)) {
       res.status(400).json({ message: 'Invalid ID' });
       return;
     }
 
+    const user = requireUser(req, res);
+    if (!user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
     try {
-      if (!(await VehicleService.isAuthorized(req.user as User, id))) {
+      if (!(await VehicleService.isAuthorized(user, id))) {
         res.status(403).json({ message: 'Unauthorized' });
         return;
       }
@@ -123,14 +134,14 @@ export class VehicleController {
         data: req.body,
       });
 
-      res.status(200).json(vehicle);
+      res.status(200).json({ vehicle });
     } catch {
       res.status(500).json({ message: 'Error checking vehicle existence' });
       return;
     }
   };
 
-  static readonly deleteVehicle = async (
+  static readonly delete = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -146,8 +157,14 @@ export class VehicleController {
       return;
     }
 
+    const user = requireUser(req, res);
+    if (!user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
     try {
-      if (!(await VehicleService.isAuthorized(req.user as User, id))) {
+      if (!(await VehicleService.isAuthorized(user, id))) {
         res.status(403).json({ message: 'Unauthorized' });
         return;
       }

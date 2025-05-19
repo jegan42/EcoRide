@@ -23,6 +23,26 @@ export class VehicleService {
     );
   }
 
+  static isUpdateInputValid(data: Partial<Vehicle>): boolean {
+    const hasValidField = [
+      typeof data.brand === 'string' && data.brand.trim() !== '',
+      typeof data.model === 'string' && data.model.trim() !== '',
+      typeof data.color === 'string' && data.color.trim() !== '',
+      typeof data.vehicleYear === 'number' &&
+        data.vehicleYear >= 1900 &&
+        data.vehicleYear <= new Date().getFullYear() + 1,
+      typeof data.licensePlate === 'string' &&
+        data.licensePlate.length >= 3 &&
+        data.licensePlate.length <= 20,
+      typeof data.energy === 'string' && data.energy.trim() !== '',
+      typeof data.seatCount === 'number' &&
+        data.seatCount >= 1 &&
+        data.seatCount <= 10,
+    ];
+
+    return hasValidField.some(Boolean);
+  }
+
   static async isVehicleExistsWithLicensePlate(
     licensePlate: string
   ): Promise<boolean> {

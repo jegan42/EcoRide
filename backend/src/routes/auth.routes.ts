@@ -51,7 +51,7 @@ router.put(
   csrfProtection,
   updateValidator,
   handleValidationErrors,
-  AuthController.updateUser
+  AuthController.update
 );
 
 router.get('/me', authenticate, AuthController.getMe);

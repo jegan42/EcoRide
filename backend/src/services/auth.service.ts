@@ -6,6 +6,11 @@ import {
   verifyToken as checkToken,
 } from '../utils/jwt';
 import prismaNewClient from '../lib/prisma';
+import {
+  isEmail,
+  isCorrectPassword,
+  isCorrectUsername,
+} from '../utils/validation';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {
@@ -64,6 +69,17 @@ export class AuthService {
 
   static isSignInInputValid(user: User): boolean {
     return Boolean(user.email && user.password);
+  }
+
+  static isUpdateInputValid(user: User): boolean {
+    return Boolean(
+      user.email &&
+        isEmail(user.email) &&
+        user.password &&
+        isCorrectPassword(user.password) &&
+        user.username &&
+        isCorrectUsername(user.username)
+    );
   }
 
   static sanitizedUser(

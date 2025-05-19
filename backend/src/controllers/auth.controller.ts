@@ -2,9 +2,9 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { AuthService } from '../services/auth.service';
-import { User } from '../../generated/prisma';
 import { clearTokenCookie, setTokenCookie } from '../utils/tokenCookie';
 import { isId } from '../utils/validation';
+import { requireUser } from '../utils/request';
 
 export class AuthController {
   static readonly signup = async (
@@ -102,8 +102,7 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const user = req.user as User;
-
+    const user = requireUser(req, res);
     if (!user) {
       res.status(401).json({ message: 'Unauthorized' });
       return;
@@ -128,7 +127,7 @@ export class AuthController {
     }
   };
 
-  static readonly updateUser = async (
+  static readonly update = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -139,14 +138,23 @@ export class AuthController {
       return;
     }
 
+    if (AuthService.isUpdateInputValid(req.body)) {
+      res.status(400).json({ message: 'Invalid or missing fields' });
+      return;
+    }
+
     if (!isId(id)) {
       res.status(400).json({ message: 'Invalid ID' });
       return;
     }
 
-    const currentUser = req.user as User;
+    const currentUser = requireUser(req, res);
+    if (!currentUser) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
 
-    if (currentUser.id !== id && !currentUser?.role.includes('admin')) {
+    if (currentUser.id !== id && !currentUser.role.includes('admin')) {
       res.status(403).json({ message: 'Unauthorized' });
       return;
     }
