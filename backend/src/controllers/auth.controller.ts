@@ -4,14 +4,14 @@ import prismaNewClient from '../lib/prisma';
 import { AuthService } from '../services/auth.service';
 import { User } from '../../generated/prisma';
 import { clearTokenCookie, setTokenCookie } from '../utils/tokenCookie';
+import { isId } from '../utils/validation';
 
 export class AuthController {
   static readonly signup = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    const isValidInput = AuthService.checkSignUpInput(req.body);
-    if (!isValidInput) {
+    if (!AuthService.isSignUpInputValid(req.body)) {
       res.status(400).json({ message: 'Missing required fields' });
       return;
     }
@@ -65,8 +65,7 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const isValidInput = AuthService.checkSignInInput(req.body);
-    if (!isValidInput) {
+    if (!AuthService.isSignInInputValid(req.body)) {
       res.status(400).json({ message: 'Missing required fields' });
       return;
     }
@@ -110,7 +109,7 @@ export class AuthController {
       return;
     }
 
-    if (!AuthService.checkUserId(user.id)) {
+    if (!isId(user.id)) {
       res.status(400).json({ message: 'Invalid ID' });
       return;
     }
@@ -140,7 +139,7 @@ export class AuthController {
       return;
     }
 
-    if (!AuthService.checkUserId(id)) {
+    if (!isId(id)) {
       res.status(400).json({ message: 'Invalid ID' });
       return;
     }

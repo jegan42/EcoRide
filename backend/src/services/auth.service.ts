@@ -6,7 +6,6 @@ import {
   verifyToken as checkToken,
 } from '../utils/jwt';
 import prismaNewClient from '../lib/prisma';
-import { UUID_REGEX } from '../utils/validation';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {
@@ -53,7 +52,7 @@ export class AuthService {
     });
   }
 
-  static checkSignUpInput(user: User): boolean {
+  static isSignUpInputValid(user: User): boolean {
     return Boolean(
       user.email &&
         user.password &&
@@ -63,12 +62,8 @@ export class AuthService {
     );
   }
 
-  static checkSignInInput(user: User): boolean {
+  static isSignInInputValid(user: User): boolean {
     return Boolean(user.email && user.password);
-  }
-
-  static checkUserId(id: string): boolean {
-    return Boolean(id && UUID_REGEX.test(id));
   }
 
   static sanitizedUser(
