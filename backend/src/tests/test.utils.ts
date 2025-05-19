@@ -97,7 +97,7 @@ export const createTripAndGetId = async (
   cookies: string,
   departureDate: string = '2125-12-01T08:00:00Z',
   arrivalDate: string = '2125-12-01T10:00:00Z'
-): Promise<string | undefined> => {
+) => {
   const availableSeats = await getAvailableSeats(vehicleId);
   if (!availableSeats) return undefined;
   return (
@@ -110,5 +110,5 @@ export const createTripAndGetId = async (
       availableSeats,
       price: 45.5,
     })
-  ).body.id;
+  ).body.trip.id;
 };

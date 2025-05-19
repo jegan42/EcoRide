@@ -13,12 +13,12 @@ import { csrfProtection } from '../middleware/csrf.middleware';
 
 const router = express.Router();
 
-router.get('/', TripController.getAllTrips);
+router.get('/', TripController.getAll);
 router.get(
   '/:id',
   tripIdParamValidator,
   handleValidationErrors,
-  TripController.getTripById
+  TripController.getById
 );
 
 router.post(
@@ -28,7 +28,7 @@ router.post(
   authorize(['driver']),
   createTripValidator,
   handleValidationErrors,
-  TripController.createTrip
+  TripController.create
 );
 router.put(
   '/:id',
@@ -38,7 +38,7 @@ router.put(
   tripIdParamValidator,
   updateTripValidator,
   handleValidationErrors,
-  TripController.updateTrip
+  TripController.update
 );
 router.delete(
   '/:id',
@@ -47,7 +47,7 @@ router.delete(
   authorize(['driver']),
   tripIdParamValidator,
   handleValidationErrors,
-  TripController.deleteTrip
+  TripController.delete
 );
 
 export default router;

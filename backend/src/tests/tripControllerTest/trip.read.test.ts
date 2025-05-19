@@ -14,6 +14,7 @@ import {
   invalidFormatId,
   invalidValueId,
 } from '../test.utils';
+import { UUID_REGEX } from '../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();
@@ -32,17 +33,28 @@ describe('TripController: GET /api/trips', () => {
   it('GET /api/trips: 200<> should return all trips', async () => {
     const res = await request(app).get('/api/trips');
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(res.body.trips).toBeDefined();
+    expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
   it('GET /api/trips/:id: 200<> should return a trip by ID', async () => {
     const res = await request(app).get(`/api/trips/${tripIds[0]}`);
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('id', tripIds[0]);
-    expect(res.body).toHaveProperty('departureCity', 'Paris');
-    expect(res.body).toHaveProperty('arrivalCity', 'Lyon');
-    expect(res.body).toHaveProperty('price', 45.5);
+    expect(res.body.trip).toBeDefined();
+    expect(res.body).toHaveProperty('trip');
+    expect(res.body.trip).toHaveProperty('id', tripIds[0]);
+    expect(res.body.trip.id).toMatch(UUID_REGEX);
+    expect(res.body.trip).toHaveProperty('driverId');
+    expect(res.body.trip.driverId).toMatch(UUID_REGEX);
+    expect(res.body.trip).toHaveProperty('vehicleId');
+    expect(res.body.trip.vehicleId).toMatch(UUID_REGEX);
+    expect(res.body.trip).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.trip).toHaveProperty('arrivalCity', 'Lyon');
+    expect(res.body.trip).toHaveProperty('departureDate');
+    expect(res.body.trip).toHaveProperty('arrivalDate');
+    expect(res.body.trip).toHaveProperty('availableSeats', 3);
+    expect(res.body.trip).toHaveProperty('price', 45.5);
+    expect(res.body.trip).toHaveProperty('status', 'open');
   });
 
   it('GET /api/trips/:id: 400<Invalid trip ID> if trip not found or ID is not UUID', async () => {
@@ -55,7 +67,7 @@ describe('TripController: GET /api/trips', () => {
   it('GET /api/trips/:id: 404<Trip not found> if trip not found or ID is not valid', async () => {
     const res = await request(app).get(`/api/trips/${invalidValueId}`);
 
-    // expect(res.status).toBe(404);
+    expect(res.status).toBe(404);
     expect(res.body).toHaveProperty('message', 'Trip not found');
   });
 });

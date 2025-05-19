@@ -7,6 +7,7 @@ import {
   createTripAndGetId,
   createUserAndSignIn,
   createVehicleAndGetId,
+  invalidFormatId,
   invalidValueId,
   resetDB,
   testEmails,
@@ -51,9 +52,9 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body.trip).toHaveProperty('arrivalCity', 'Brussels');
   });
 
-  it('PUT /api/trips/:id: 400<Invalid trip ID> should return 500 if trip ID is invalid format "non-existent-id"', async () => {
+  it('PUT /api/trips/:id: 400<Invalid trip ID> trip ID is invalid format', async () => {
     const res = await request(app)
-      .put('/api/trips/non-existent-id')
+      .put(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0])
       .send({
         price: 30,
@@ -63,7 +64,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body).toHaveProperty('message', 'Invalid trip ID');
   });
 
-  it('PUT /api/trips/:id: 404<Trip not found> should return 500 if trip ID is invalid "12345678-abcd-a1a1-2b2b-12ab34cd56ef"', async () => {
+  it('PUT /api/trips/:id: 404<Trip not found> trip ID is invalid value', async () => {
     const res = await request(app)
       .put(`/api/trips/${invalidValueId}`)
       .set('Cookie', cookies[0])
@@ -75,7 +76,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body).toHaveProperty('message', 'Trip not found');
   });
 
-  it('PUT /api/trips/:id: 401<Missing token> should return 401 if not authenticated', async () => {
+  it('PUT /api/trips/:id: 401<Missing token> not authenticated', async () => {
     const res = await request(app).put(`/api/trips/${tripIds[0]}`).send({
       price: 30,
     });
@@ -84,7 +85,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body).toHaveProperty('message', 'Missing token');
   });
 
-  it('PUT /api/trips/:id: 403<Unauthorized> should return 403 if user is not the owner (unauthorized update)', async () => {
+  it('PUT /api/trips/:id: 403<Unauthorized> user is not the owner', async () => {
     const res = await request(app)
       .put(`/api/trips/${tripIds[0]}`)
       .set('Cookie', cookies[1])
@@ -96,7 +97,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body).toHaveProperty('message', 'Unauthorized');
   });
 
-  it('PUT /api/trips/:id: 403<Access denied: insufficient permissions> should return 403 if user does not have permission to update', async () => {
+  it('PUT /api/trips/:id: 403<Access denied: insufficient permissions> user does not have permission to update', async () => {
     await prismaNewClient.user.update({
       where: { email: testEmails[0] },
       data: { role: ['passenger'] },

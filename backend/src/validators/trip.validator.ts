@@ -1,3 +1,4 @@
+// backend/src/validators/trip.validator.ts
 import { body, param } from 'express-validator';
 
 export const createTripValidator = [

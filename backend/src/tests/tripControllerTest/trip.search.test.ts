@@ -30,9 +30,9 @@ describe('TripController: GET /api/trips (search)', () => {
   it('GET /api/trips (search): 200<> should return trips matching from/to params', async () => {
     const res = await request(app).get('/api/trips?from=Paris&to=Lyon');
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body[0]).toHaveProperty('departureCity', 'Paris');
-    expect(res.body[0]).toHaveProperty('arrivalCity', 'Lyon');
+    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(res.body.trips[0]).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.trips[0]).toHaveProperty('arrivalCity', 'Lyon');
   });
 
   it('GET /api/trips (search): 200<No trips found matching your criteria.> should return no results for unmatched cities', async () => {
@@ -47,34 +47,25 @@ describe('TripController: GET /api/trips (search)', () => {
   it('GET /api/trips (search): 200<> should return trips with exact date', async () => {
     const res = await request(app).get('/api/trips?date=2125-12-01');
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<> should return trips with flexible date', async () => {
     const res = await request(app).get(
-      '/api/trips?date=2125-12-02&flexible=true'
+      '/api/trips?date=2125-12-03&flexible=true'
     );
     expect(res.status).toBe(200);
-    expect(
-      Array.isArray(res.body) ||
-        res.body.alternative === true ||
-        res.body.message
-    ).toBe(true);
+    expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<> should return alternative trips with no-match date', async () => {
-    const res = await request(app).get(
-      '/api/trips?date=2125-12-02&flexible=true'
-    );
+    const res = await request(app).get('/api/trips?date=2125-12-03');
     expect(res.status).toBe(200);
-    expect(
-      Array.isArray(res.body) ||
-        res.body.alternative === true ||
-        res.body.message
-    ).toBe(true);
+    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(res.body.alternative === true).toBe(true);
   });
 
-  it('GET /api/trips (search): 200<No trips found matching your criteria.> should return no results for date with no match', async () => {
+  it('GET /api/trips (search): 200<No trips found matching your criteria.> no trip and no alternative for a date', async () => {
     const res = await request(app).get('/api/trips?date=2125-01-01');
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
