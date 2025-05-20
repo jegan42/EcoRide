@@ -2,6 +2,7 @@
 import request from 'supertest';
 import app from '../app';
 import prismaNewClient from '../lib/prisma';
+import { User } from '../../generated/prisma';
 
 export const invalidValueId = 'a99a9a99-9aa9-499a-9a99-aa99999999a9';
 
@@ -27,11 +28,15 @@ export const adminMail = 'testAdmin@example.mail';
 
 export const cookies: string[] = [];
 
+export const bookingsIds: (string | undefined)[] = [];
 export const tripIds: (string | undefined)[] = [];
 export const vehicleIds: string[] = [];
 export const userIds: string[] = [];
 
+export const users: User[] = [];
+
 export const resetDB = async (): Promise<void> => {
+  await prismaNewClient.booking.deleteMany();
   await prismaNewClient.trip.deleteMany();
   await prismaNewClient.vehicle.deleteMany();
   await prismaNewClient.user.deleteMany();
@@ -111,4 +116,19 @@ export const createTripAndGetId = async (
       price: 45.5,
     })
   ).body.trip.id;
+};
+
+export const createBookingAndGetId = async (
+  tripId: string,
+  cookies: string,
+  seatCount: number
+) => {
+  const res = await request(app)
+    .post('/api/bookings')
+    .set('Cookie', cookies)
+    .send({
+      tripId,
+      seatCount,
+    });
+  return res.body.booking.id;
 };

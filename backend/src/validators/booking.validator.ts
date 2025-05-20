@@ -17,7 +17,7 @@ export const createBookingValidator = [
 
 export const actionValidator = [
   body('action')
-    .exists()
+    .notEmpty()
     .withMessage('Action is required')
     .isString()
     .withMessage('Action must be a string')

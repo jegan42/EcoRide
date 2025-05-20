@@ -52,7 +52,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body.trip).toHaveProperty('arrivalCity', 'Brussels');
   });
 
-  it('PUT /api/trips/:id: 400<Invalid trip ID> trip ID is invalid format', async () => {
+  it('PUT /api/trips/:id: 400<Invalid ID> trip ID is invalid format', async () => {
     const res = await request(app)
       .put(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0])
@@ -61,7 +61,7 @@ describe('TripController: PUT /api/trips/:id', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid trip ID');
+    expect(res.body).toHaveProperty('message', 'Invalid ID');
   });
 
   it('PUT /api/trips/:id: 404<Trip not found> trip ID is invalid value', async () => {

@@ -9,6 +9,7 @@ import {
 } from '../validators/booking.validator';
 import { handleValidationErrors } from '../middleware/validator.middleware';
 import { BookingController } from '../controllers/booking.controller';
+import { authorize } from '../middleware/authorize.middleware';
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.post(
   handleValidationErrors,
   BookingController.create
 );
+
 router.delete(
   '/:id',
   authenticate,
@@ -27,54 +29,36 @@ router.delete(
   uuidParamValidator,
   BookingController.cancel
 );
-router.use(authenticate);
-router.use(csrfProtection);
 
-// POST /bookings
-router.post(
-  '/',
-  createBookingValidator,
-  handleValidationErrors,
-  BookingController.create
-);
+router.get('/me', authenticate, BookingController.getAllByUser);
 
-// GET /bookings/:id
+router.get('/driver', authenticate, BookingController.getAllByDriver);
+
 router.get(
-  '/:id',
-  uuidParamValidator,
-  handleValidationErrors,
-  BookingController.getById
-);
-
-// GET /bookings/me
-router.get('/me', BookingController.getAllByUser);
-
-// GET /bookings/driver
-router.get('/driver', BookingController.getAllByDriver);
-
-// GET /bookings/trip/:tripId
-router.get(
-  '/trip/:tripId',
+  '/trip/:id',
+  authenticate,
   uuidParamValidator,
   handleValidationErrors,
   BookingController.getAllByTrip
 );
 
-// POST /bookings/:id/validate
 router.post(
   '/:id/validate',
+  authenticate,
+  authorize(['driver']),
+  csrfProtection,
   uuidParamValidator,
-  actionValidator, // pour valider { action: "accept" | "reject" }
+  actionValidator,
   handleValidationErrors,
   BookingController.validate
 );
 
-// DELETE /bookings/:id
-router.delete(
+router.get(
   '/:id',
+  authenticate,
   uuidParamValidator,
   handleValidationErrors,
-  BookingController.cancel
+  BookingController.getById
 );
 
 export default router;

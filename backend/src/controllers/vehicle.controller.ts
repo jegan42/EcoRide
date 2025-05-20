@@ -55,9 +55,7 @@ export class VehicleController {
       await prismaNewClient.user.update({
         where: { id: user.id },
         data: {
-          role: {
-            push: 'driver',
-          },
+          role: Array.from(new Set([...user.role, 'driver'])),
         },
       });
       res.status(201).json({ vehicle });

@@ -15,6 +15,8 @@ import {
   testPassword,
   createTripAndGetId,
   tripIds,
+  bookingsIds,
+  createBookingAndGetId,
 } from './test.utils';
 
 beforeAll(async () => {
@@ -241,5 +243,63 @@ describe('Test Utils Funtions createTripAndGetId', () => {
     expect(res).toHaveProperty('arrivalDate', new Date('2125-12-01T10:00:00Z'));
     expect(res).toHaveProperty('availableSeats', 3);
     expect(res).toHaveProperty('price', 45.5);
+  });
+});
+
+describe('Test Utils Funtions createBookingAndGetId', () => {
+  it('ROUTE_USED: POST /api/bookings: 201<> return BOOKING', async () => {
+    await prismaNewClient.user.update({
+      where: { id: userIds[1] },
+      data: { credits: { increment: 200 } },
+    });
+    const res = await request(app)
+      .post('/api/bookings')
+      .set('Cookie', cookies[1])
+      .send({
+        tripId: tripIds[0],
+        seatCount: 2,
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.booking).toHaveProperty('id');
+    expect(res.body.booking.id).toMatch(UUID_REGEX);
+    expect(res.body.booking).toHaveProperty('userId', userIds[1]);
+    expect(res.body.booking).toHaveProperty('tripId', tripIds[0]);
+    expect(res.body.booking).toHaveProperty('status', 'pending');
+    expect(res.body.booking).toHaveProperty('totalPrice', 91);
+    expect(res.body.booking).toHaveProperty('seatCount', 2);
+  });
+
+  it('FUNCTION: createBookingAndGetId: <> RETURN Booking ID with POST /api/bookings', async () => {
+    tripIds[1] = await createTripAndGetId(
+      vehicleIds[0],
+      cookies[0],
+      '2127-10-01T08:00:00.000Z',
+      '2127-10-01T18:00:00.000Z'
+    );
+    expect(tripIds[1]).toBeDefined();
+    expect(tripIds[1]).toHaveLength(36);
+    expect(tripIds[1]).toMatch(UUID_REGEX);
+
+    bookingsIds[0] = await createBookingAndGetId(
+      tripIds[1] ?? '',
+      cookies[1],
+      1
+    );
+    expect(bookingsIds[0]).toBeDefined();
+    expect(bookingsIds[0]).toHaveLength(36);
+    expect(bookingsIds[0]).toMatch(UUID_REGEX);
+
+    const res = await prismaNewClient.booking.findUnique({
+      where: { id: bookingsIds[0] ?? undefined },
+    });
+    expect(res).toBeDefined();
+    expect(res).toHaveProperty('id');
+    expect(res?.id).toMatch(UUID_REGEX);
+    expect(res).toHaveProperty('userId', userIds[1]);
+    expect(res).toHaveProperty('tripId', tripIds[1]);
+    expect(res).toHaveProperty('status', 'pending');
+    expect(res).toHaveProperty('totalPrice', 45.5);
+    expect(res).toHaveProperty('seatCount', 1);
   });
 });

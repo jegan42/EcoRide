@@ -55,13 +55,13 @@ describe('TripController: DELETE /api/trips/:id', () => {
     expect(check).toBeNull();
   });
 
-  it('DELETE /api/trips/:id: 400<Invalid trip ID> with invalid format Id', async () => {
+  it('DELETE /api/trips/:id: 400<Invalid ID> with invalid format Id', async () => {
     const res = await request(app)
       .delete(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid trip ID');
+    expect(res.body).toHaveProperty('message', 'Invalid ID');
   });
 
   it('DELETE /api/trips/:id: 404<Trip does not exist> with invalid Value Id', async () => {

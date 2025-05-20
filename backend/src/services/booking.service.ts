@@ -125,7 +125,7 @@ export class BookingService {
     });
   };
 
-  static readonly validateBooking = async (
+  static readonly validate = async (
     bookingId: string,
     driverId: string,
     action: 'accept' | 'reject'
@@ -216,7 +216,7 @@ export class BookingService {
         },
       });
 
-      return { message: 'Booking cancelled successfully' };
+      return 'Booking cancelled successfully';
     });
   };
 }

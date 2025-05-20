@@ -57,11 +57,11 @@ describe('TripController: GET /api/trips', () => {
     expect(res.body.trip).toHaveProperty('status', 'open');
   });
 
-  it('GET /api/trips/:id: 400<Invalid trip ID> if trip not found or ID is not UUID', async () => {
+  it('GET /api/trips/:id: 400<Invalid ID> if trip not found or ID is not UUID', async () => {
     const res = await request(app).get(`/api/trips/${invalidFormatId}`);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid trip ID');
+    expect(res.body).toHaveProperty('message', 'Invalid ID');
   });
 
   it('GET /api/trips/:id: 404<Trip not found> if trip not found or ID is not valid', async () => {
