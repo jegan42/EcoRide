@@ -25,6 +25,7 @@ export const testEmails = [
   'user9@example.mail',
 ];
 export const adminMail = 'testAdmin@example.mail';
+export const names = testEmails.map((email: string) => email.split('@')[0]);
 
 export const cookies: string[] = [];
 
@@ -36,6 +37,7 @@ export const userIds: string[] = [];
 export const users: User[] = [];
 
 export const resetDB = async (): Promise<void> => {
+  await prismaNewClient.userPreferences.deleteMany();
   await prismaNewClient.booking.deleteMany();
   await prismaNewClient.trip.deleteMany();
   await prismaNewClient.vehicle.deleteMany();
@@ -131,4 +133,16 @@ export const createBookingAndGetId = async (
       seatCount,
     });
   return res.body.booking.id;
+};
+
+export const createUserPreferences = async (id: string, cookies: string) => {
+  return await request(app)
+    .post(`/api/user-preferences/${id}`)
+    .set('Cookie', cookies)
+    .send({
+      acceptsSmoker: true,
+      acceptsPets: false,
+      acceptsMusic: true,
+      acceptsChatter: false,
+    });
 };

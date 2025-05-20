@@ -17,6 +17,8 @@ import {
   tripIds,
   bookingsIds,
   createBookingAndGetId,
+  names,
+  createUserPreferences,
 } from './test.utils';
 
 beforeAll(async () => {
@@ -31,17 +33,16 @@ afterAll(async () => {
 
 describe('Test Utils Funtions createUserAndSignIn', () => {
   it('ROUTE_USED: POST /api/auth/signup: 201<> return USER', async () => {
-    const name = testEmails[0].split('@')[0];
     const res = await request(app)
       .post('/api/auth/signup')
       .send({
         email: testEmails[0],
         password: testPassword,
-        firstName: `firstName${name}`,
-        lastName: `lastName${name}`,
+        firstName: `firstName${names[0]}`,
+        lastName: `lastName${names[0]}`,
         username: unikUserName,
-        phone: `1234${name}`,
-        address: `123 ${name} St`,
+        phone: `1234${names[0]}`,
+        address: `123 ${names[0]} St`,
       });
 
     expect(res).toBeDefined();
@@ -49,12 +50,12 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${name}`);
+    expect(res.body.user).toHaveProperty('firstName', `firstName${names[0]}`);
+    expect(res.body.user).toHaveProperty('lastName', `lastName${names[0]}`);
     expect(res.body.user).toHaveProperty('username', unikUserName);
     expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `1234${name}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${name} St`);
+    expect(res.body.user).toHaveProperty('phone', `1234${names[0]}`);
+    expect(res.body.user).toHaveProperty('address', `123 ${names[0]} St`);
     expect(res.body.user).toHaveProperty('role', ['passenger']);
     expect(res.body.user).toHaveProperty('credits', 20);
 
@@ -70,7 +71,6 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
   });
 
   it('ROUTE_USED: POST /api/auth/signin: 200<> return USER', async () => {
-    const name = testEmails[0].split('@')[0];
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: testPassword,
@@ -81,12 +81,12 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${name}`);
+    expect(res.body.user).toHaveProperty('firstName', `firstName${names[0]}`);
+    expect(res.body.user).toHaveProperty('lastName', `lastName${names[0]}`);
     expect(res.body.user).toHaveProperty('username', unikUserName);
     expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `1234${name}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${name} St`);
+    expect(res.body.user).toHaveProperty('phone', `1234${names[0]}`);
+    expect(res.body.user).toHaveProperty('address', `123 ${names[0]} St`);
     expect(res.body.user).toHaveProperty('role', ['passenger']);
     expect(res.body.user).toHaveProperty('credits', 20);
 
@@ -102,19 +102,18 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
   });
 
   it('FUNCTION: createUserAndSignIn: 200<> return USER with POST /api/auth/signup THEN POST /api/auth/signin', async () => {
-    const name = testEmails[1].split('@')[0];
     const res = await createUserAndSignIn(testEmails[1]);
     expect(res).toBeDefined();
     expect(res).toHaveProperty('status', 200);
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${name}`);
-    expect(res.body.user).toHaveProperty('username', `username${name}`);
+    expect(res.body.user).toHaveProperty('firstName', `firstName${names[1]}`);
+    expect(res.body.user).toHaveProperty('lastName', `lastName${names[1]}`);
+    expect(res.body.user).toHaveProperty('username', `username${names[1]}`);
     expect(res.body.user).toHaveProperty('email', testEmails[1]);
-    expect(res.body.user).toHaveProperty('phone', `1234${name}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${name} St`);
+    expect(res.body.user).toHaveProperty('phone', `1234${names[1]}`);
+    expect(res.body.user).toHaveProperty('address', `123 ${names[1]} St`);
     expect(res.body.user).toHaveProperty('role', ['passenger']);
     expect(res.body.user).toHaveProperty('credits', 20);
 
@@ -132,16 +131,15 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
 
 describe('Test Utils Funtions createVehicleAndGetId', () => {
   it('ROUTE_USED: POST /api/vehicles: 201<> return VEHICLE', async () => {
-    const name = testEmails[0].split('@')[0];
     const res = await request(app)
       .post('/api/vehicles')
-      .set('Cookie', cookies)
+      .set('Cookie', cookies[0])
       .send({
         brand: 'Peugeot',
         model: '308',
         color: 'Blue',
         vehicleYear: 2023,
-        licensePlate: `LP_${name}`,
+        licensePlate: `LP_${names[0]}`,
         energy: 'petrol',
         seatCount: 4,
       });
@@ -157,13 +155,12 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
     expect(res.body.vehicle).toHaveProperty('model', '308');
     expect(res.body.vehicle).toHaveProperty('color', 'Blue');
     expect(res.body.vehicle).toHaveProperty('vehicleYear', 2023);
-    expect(res.body.vehicle).toHaveProperty('licensePlate', `LP_${name}`);
+    expect(res.body.vehicle).toHaveProperty('licensePlate', `LP_${names[0]}`);
     expect(res.body.vehicle).toHaveProperty('energy', 'petrol');
     expect(res.body.vehicle).toHaveProperty('seatCount', 4);
   });
 
   it('FUNCTION: createVehicleAndGetId: <> return VEHICLE.ID with POST /api/vehicles', async () => {
-    const name = testEmails[0].split('@')[0];
     const nbVehicle = '0';
     vehicleIds[0] = await createVehicleAndGetId(
       testEmails[0],
@@ -187,7 +184,10 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
     expect(vehicle).toHaveProperty('model', '308');
     expect(vehicle).toHaveProperty('color', 'Blue');
     expect(vehicle).toHaveProperty('vehicleYear', 2023);
-    expect(vehicle).toHaveProperty('licensePlate', `LP_${name}${nbVehicle}`);
+    expect(vehicle).toHaveProperty(
+      'licensePlate',
+      `LP_${names[0]}${nbVehicle}`
+    );
     expect(vehicle).toHaveProperty('energy', 'petrol');
     expect(vehicle).toHaveProperty('seatCount', 4);
   });
@@ -301,5 +301,45 @@ describe('Test Utils Funtions createBookingAndGetId', () => {
     expect(res).toHaveProperty('status', 'pending');
     expect(res).toHaveProperty('totalPrice', 45.5);
     expect(res).toHaveProperty('seatCount', 1);
+  });
+});
+
+describe('Test Utils Funtions createUserPreferences', () => {
+  it('ROUTE_USED: POST /api/user-preferences/:id: 201<> return a new UserPreferences', async () => {
+    const res = await request(app)
+      .post(`/api/user-preferences/${userIds[0]}`)
+      .set('Cookie', cookies[0])
+      .send({
+        acceptsSmoker: true,
+        acceptsPets: false,
+        acceptsMusic: true,
+        acceptsChatter: false,
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.userPreferences).toBeDefined();
+    expect(res.body.userPreferences).toHaveProperty('id');
+    expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
+    expect(res.body.userPreferences).toHaveProperty('userId', userIds[0]);
+    expect(res.body.userPreferences.userId).toMatch(UUID_REGEX);
+    expect(res.body.userPreferences).toHaveProperty('acceptsSmoker', true);
+    expect(res.body.userPreferences).toHaveProperty('acceptsPets', false);
+    expect(res.body.userPreferences).toHaveProperty('acceptsMusic', true);
+    expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
+  });
+
+  it('FUNCTION: createUserPreferences: 201<> return a new UserPreferences with POST /api/user-preferences/:id', async () => {
+    const res = await createUserPreferences(userIds[1], cookies[1]);
+
+    expect(res.status).toBe(201);
+    expect(res.body.userPreferences).toBeDefined();
+    expect(res.body.userPreferences).toHaveProperty('id');
+    expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
+    expect(res.body.userPreferences).toHaveProperty('userId', userIds[1]);
+    expect(res.body.userPreferences.userId).toMatch(UUID_REGEX);
+    expect(res.body.userPreferences).toHaveProperty('acceptsSmoker', true);
+    expect(res.body.userPreferences).toHaveProperty('acceptsPets', false);
+    expect(res.body.userPreferences).toHaveProperty('acceptsMusic', true);
+    expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
   });
 });
