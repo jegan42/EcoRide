@@ -1,39 +1,38 @@
 // backend/src/constant/messages.ts
 export const messages = {
-  SUCCESS: (item: string, method: string = ''): string =>
+  SUCCESS: (method: string, item: string): string =>
     `Successfully ${method}: ${item}`,
-  SUCCESS_CREATE: (item: string, method: string = ''): string =>
+  SUCCESS_CREATE: (method: string, item: string): string =>
     `Successfully ${method}: ${item}`,
 
-  FAILED: (item: string, method: string): string =>
+  FAILED: (method: string, item: string): string =>
     `Failed to ${method}: ${item}`,
-  INVALID: (item: string, method: string = ''): string =>
+  INVALID: (method: string, item: string): string =>
     `Invalid ${method}: ${item}`,
-  MISSING: (item: string, method: string = ''): string =>
+  MISSING: (method: string, item: string): string =>
     `Missing ${method}: ${item}`,
-  BAD_REQUEST: (item: string, _method: string = ''): string =>
-    `Bad request: ${item}`,
-  REQUIRED: (field: string, _method: string = ''): string =>
-    `${field} is required`,
+  BAD_REQUEST: (method: string, item: string): string =>
+    `Bad request ${method}: ${item}`,
+  REQUIRED: (method: string, item: string): string =>
+    `Required ${method}: ${item}`,
 
-  UNAUTHORIZED: (item: string, _method: string = ''): string =>
-    `Authentication required: ${item}`,
-  FORBIDDEN: (item: string, _method: string = ''): string =>
-    `Access denied: ${item}`,
+  UNAUTHORIZED: (method: string, item: string): string =>
+    `Authentication ${method}: ${item}`,
+  FORBIDDEN: (method: string, item: string): string =>
+    `Access ${method}: ${item}`,
 
-  NOT_FOUND: (item: string, _method: string = ''): string =>
-    `Not found: ${item}`,
+  NOT_FOUND: (method: string, item: string): string =>
+    `Not found ${method}: ${item}`,
 
-  ALREADY: (item: string, method: string = ''): string =>
+  ALREADY: (method: string, item: string): string =>
     `Already ${method}: ${item}`,
-  CONFLICT: (item: string, method: string = ''): string =>
+  CONFLICT: (method: string, item: string): string =>
     `Conflict ${method}: ${item}`,
 
-  LIMIT_EXCEEDED: (item: string, _method: string = ''): string =>
-    `Limit exceeded: ${item}`,
+  LIMIT_EXCEEDED: (method: string, item: string): string =>
+    `Limit exceeded ${method}: ${item}`,
 
-  ERROR: (item: string, method: string = ''): string =>
-    `Error ${method}: ${item}`,
+  ERROR: (method: string, item: string): string => `Error ${method}: ${item}`,
 };
 
 export type Message = (typeof messages)[keyof typeof messages];
