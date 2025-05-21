@@ -1,10 +1,19 @@
 // backend/src/utils/response.ts
 import { Response } from 'express';
+import { messages, statusCodes } from '../constant';
 
-export const sendErrorResponse = (
+export const sendJsonResponse = (
   res: Response,
-  statusCode: number,
-  message: string
+  statusKey: keyof typeof statusCodes,
+  method: string,
+  item: string,
+  dataKey?: string,
+  data?: object
 ): Response => {
-  return res.status(statusCode).json({ message });
+  const response: any = {};
+  response.message = messages[statusKey](item, method);
+  if (dataKey && data) {
+    response[dataKey] = data;
+  }
+  return res.status(statusCodes[statusKey]).json(response);
 };
