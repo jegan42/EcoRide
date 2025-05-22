@@ -21,7 +21,7 @@ afterAll(async () => {
 });
 
 describe('AuthController: POST /api/auth/signup', () => {
-  it('POST /api/auth/signup: 201<> sign up a new user', async () => {
+  it('POST /api/auth/signup: 201<Successfully created Auth: signup> sign up a new user', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[0],
       password: testPassword,
@@ -34,6 +34,10 @@ describe('AuthController: POST /api/auth/signup', () => {
 
     expect(res.status).toBe(201);
 
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully created Auth: signup'
+    );
     expect(res.body.user).not.toHaveProperty('googleId');
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).not.toHaveProperty('jwtToken');
@@ -56,7 +60,7 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(cookies[0]).toMatch(/HttpOnly/);
   });
 
-  it('POST /api/auth/signup: 400<Email is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Email is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       firstName: 'qq',
       lastName: 'ww',
@@ -65,10 +69,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Email is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Email is required'
+    );
   });
 
-  it('POST /api/auth/signup: 400<Please provide a valid email address>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Please provide a valid email address>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: invalidMail,
       password: testPassword,
@@ -81,11 +88,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Please provide a valid email address'
+      'Bad request Validator: Please provide a valid email address'
     );
   });
 
-  it('POST /api/auth/signup: 400<Password is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Password is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       firstName: 'qq',
@@ -95,10 +102,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Password is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Password is required'
+    );
   });
 
-  it('POST /api/auth/signup: 400<Password must be at least 8 characters long>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Password must be at least 8 characters long>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: '12345',
@@ -111,11 +121,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must be at least 8 characters long'
+      'Bad request Validator: Password must be at least 8 characters long'
     );
   });
 
-  it('POST /api/auth/signup: 400<Password must contain a number>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Password must contain a number>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: 'abcdefgh',
@@ -128,11 +138,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain a number'
+      'Bad request Validator: Password must contain a number'
     );
   });
 
-  it('POST /api/auth/signup: 400<Password must contain both letters and numbers>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Password must contain both letters and numbers>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: '12345678',
@@ -145,11 +155,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain both letters and numbers'
+      'Bad request Validator: Password must contain both letters and numbers'
     );
   });
 
-  it('POST /api/auth/signup: 400<Password must contain a special character>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Password must contain a special character>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: 'abcdefgh123',
@@ -162,11 +172,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain a special character'
+      'Bad request Validator: Password must contain a special character'
     );
   });
 
-  it('POST /api/auth/signup: 400<Username must be between 3 and 20 characters> with 1 character', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Username must be between 3 and 20 characters> with 1 character', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -179,11 +189,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Username must be between 3 and 20 characters'
+      'Bad request Validator: Username must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/auth/signup: 400<Username must be between 3 and 20 characters> with 26 character', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Username must be between 3 and 20 characters> with 26 character', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -196,11 +206,11 @@ describe('AuthController: POST /api/auth/signup', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Username must be between 3 and 20 characters'
+      'Bad request Validator: Username must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/auth/signup: 400<First name is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: First name is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -210,10 +220,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'First name is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: First name is required'
+    );
   });
 
-  it('POST /api/auth/signup: 400<Last name is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Last name is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -223,10 +236,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Last name is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Last name is required'
+    );
   });
 
-  it('POST /api/auth/signup: 400<Phone number is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Phone number is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -236,10 +252,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Phone number is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Phone number is required'
+    );
   });
 
-  it('POST /api/auth/signup: 400<Address is required>', async () => {
+  it('POST /api/auth/signup: 400<Bad request Validator: Address is required>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -249,10 +268,13 @@ describe('AuthController: POST /api/auth/signup', () => {
       phone: '123456789',
     });
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Address is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Address is required'
+    );
   });
 
-  it('POST /api/auth/signup: 409<Email already in use>', async () => {
+  it('POST /api/auth/signup: 409<Conflict Auth: already used email>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[0],
       password: testPassword,
@@ -264,10 +286,13 @@ describe('AuthController: POST /api/auth/signup', () => {
     });
 
     expect(res.status).toBe(409);
-    expect(res.body).toHaveProperty('message', 'Email already in use');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Conflict Auth: already used email'
+    );
   });
 
-  it('POST /api/auth/signup: 409<Username already in use>', async () => {
+  it('POST /api/auth/signup: 409<Conflict Auth: already used username>', async () => {
     const res = await request(app).post('/api/auth/signup').send({
       email: testEmails[1],
       password: testPassword,
@@ -278,6 +303,9 @@ describe('AuthController: POST /api/auth/signup', () => {
       address: '1 Test St',
     });
     expect(res.status).toBe(409);
-    expect(res.body).toHaveProperty('message', 'Username already in use');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Conflict Auth: already used username'
+    );
   });
 });

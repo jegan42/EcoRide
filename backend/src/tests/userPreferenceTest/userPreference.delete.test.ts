@@ -29,48 +29,63 @@ afterAll(async () => {
 });
 
 describe('UserPreferencesController: DELETE /api/user-preferences/:id', () => {
-  it('DELETE /api/user-preferences/:id: 200<Preferences deleted!>', async () => {
+  it('DELETE /api/user-preferences/:id: 200<Successfully UserPreferences: deleted>', async () => {
     const res = await request(app)
       .delete(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Preferences deleted!');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully UserPreferences: deleted'
+    );
   });
 
-  it('DELETE /api/user-preferences/:id: 401<Missing token>', async () => {
+  it('DELETE /api/user-preferences/:id: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).delete(
       `/api/user-preferences/${userIds[0]}`
     );
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('DELETE /api/user-preferences/:id: 401<Invalid token>', async () => {
+  it('DELETE /api/user-preferences/:id: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .delete(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('DELETE /api/user-preferences/:id: 400<Invalid ID>', async () => {
+  it('DELETE /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .delete(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('DELETE /api/user-preferences/:id: 403<Forbidden>', async () => {
+  it('DELETE /api/user-preferences/:id: 403<Access denied Owner: not the owner>', async () => {
     const res = await request(app)
       .delete(`/api/user-preferences/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Forbidden');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Owner: not the owner'
+    );
   });
 });

@@ -23,7 +23,7 @@ afterAll(async () => {
 });
 
 describe('VehicleController: POST /api/vehicles', () => {
-  it('POST /api/vehicles: 201<> should create a new vehicle', async () => {
+  it('POST /api/vehicles: 201<Successfully created Vehicle: created> should create a new vehicle', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -38,6 +38,10 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully created Vehicle: created'
+    );
     expect(res.body.vehicle).toBeDefined();
     expect(res.body.vehicle).toHaveProperty('id');
     expect(res.body.vehicle.id).toMatch(UUID_REGEX);
@@ -52,7 +56,7 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.body.vehicle).toHaveProperty('seatCount', 5);
   });
 
-  it('POST /api/vehicles: 401<Missing token> if user not authenticated', async () => {
+  it('POST /api/vehicles: 401<Unauthorized access Athenticate: missing token> if user not authenticated', async () => {
     const res = await request(app).post('/api/vehicles').send({
       brand: 'Tesla',
       model: 'X',
@@ -64,10 +68,13 @@ describe('VehicleController: POST /api/vehicles', () => {
     });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('POST /api/vehicles: 401<Invalid token> if JWT is invalid', async () => {
+  it('POST /api/vehicles: 401<Unauthorized access Athenticate: invalid token> if JWT is invalid', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', invalidCookie)
@@ -82,10 +89,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('POST /api/vehicles: 400<Brand is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Brand is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -99,10 +109,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Brand is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Brand is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Model is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Model is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -116,10 +129,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Model is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Model is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Color is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Color is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -133,10 +149,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Color is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Color is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Vehicle year is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -150,10 +169,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Vehicle year is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Vehicle year is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Vehicle year must be a valid year>', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year>', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -170,11 +192,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<Vehicle year must be a valid year> 1850', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year> 1850', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -191,11 +213,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<Vehicle year must be a valid year> 2525', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year> 2525', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -212,11 +234,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<License plate is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: License plate is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -230,10 +252,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'License plate is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: License plate is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<License plate must be between 3 and 20 characters> 1 character', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: License plate must be between 3 and 20 characters> 1 character', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -250,11 +275,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'License plate must be between 3 and 20 characters'
+      'Bad request Validator: License plate must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/vehicles: 400<License plate must be between 3 and 20 characters> 21 character', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: License plate must be between 3 and 20 characters> 21 character', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -271,11 +296,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'License plate must be between 3 and 20 characters'
+      'Bad request Validator: License plate must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/vehicles: 400<Energy is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Energy is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -289,10 +314,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Energy is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Energy is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Seat count is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Seat count is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -306,10 +334,13 @@ describe('VehicleController: POST /api/vehicles', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Seat count is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Seat count is required'
+    );
   });
 
-  it('POST /api/vehicles: 400<Seat count must be between 1 and 10> 0', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Seat count must be between 1 and 10> 0', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -326,11 +357,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Seat count must be between 1 and 10'
+      'Bad request Validator: Seat count must be between 1 and 10'
     );
   });
 
-  it('POST /api/vehicles: 400<Seat count must be between 1 and 10> 15', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: Seat count must be between 1 and 10> 15', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -347,11 +378,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Seat count must be between 1 and 10'
+      'Bad request Validator: Seat count must be between 1 and 10'
     );
   });
 
-  it('POST /api/vehicles: 409<Vehicle with this license plate already exists>', async () => {
+  it('POST /api/vehicles: 409<Conflict Vehicle: already used this license plate>', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -368,7 +399,7 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(409);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle with this license plate already exists'
+      'Conflict Vehicle: already used this license plate'
     );
   });
 });

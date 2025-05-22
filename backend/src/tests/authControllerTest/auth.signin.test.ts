@@ -23,13 +23,14 @@ afterAll(async () => {
 });
 
 describe('AuthController: POST /api/auth/signin', () => {
-  it('POST /api/auth/signin: 200<> return the current user', async () => {
+  it('POST /api/auth/signin: 200<Successfully Auth: signin> return the current user', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: testPassword,
     });
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Auth: signin');
     expect(res.body.user).not.toHaveProperty('googleId');
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).not.toHaveProperty('jwtToken');
@@ -54,16 +55,19 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(cookies[0]).toMatch(/HttpOnly/);
   });
 
-  it('POST /api/auth/signin: 400<Email is required>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Email is required>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       password: testPassword,
     });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Email is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Email is required'
+    );
   });
 
-  it('POST /api/auth/signin: 400<Please provide a valid email address>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Please provide a valid email address>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: invalidMail,
       password: testPassword,
@@ -72,20 +76,23 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Please provide a valid email address'
+      'Bad request Validator: Please provide a valid email address'
     );
   });
 
-  it('POST /api/auth/signin: 400<Password is required>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Password is required>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
     });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Password is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Password is required'
+    );
   });
 
-  it('POST /api/auth/signin: 400<Password must be at least 8 characters long>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Password must be at least 8 characters long>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: '12345',
@@ -93,11 +100,11 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must be at least 8 characters long'
+      'Bad request Validator: Password must be at least 8 characters long'
     );
   });
 
-  it('POST /api/auth/signin: 400<Password must contain a number>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Password must contain a number>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: 'abcdefgh',
@@ -105,11 +112,11 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain a number'
+      'Bad request Validator: Password must contain a number'
     );
   });
 
-  it('POST /api/auth/signin: 400<Password must contain both letters and numbers>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Password must contain both letters and numbers>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: '12345678',
@@ -117,11 +124,11 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain both letters and numbers'
+      'Bad request Validator: Password must contain both letters and numbers'
     );
   });
 
-  it('POST /api/auth/signin: 400<Password must contain a special character>', async () => {
+  it('POST /api/auth/signin: 400<Bad request Validator: Password must contain a special character>', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[0],
       password: 'abcdefgh123',
@@ -129,21 +136,24 @@ describe('AuthController: POST /api/auth/signin', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Password must contain a special character'
+      'Bad request Validator: Password must contain a special character'
     );
   });
 
-  it('POST /api/auth/signin: 401<Invalid credentials> wrong email', async () => {
+  it('POST /api/auth/signin: 401<Unauthorized access Auth: invalid credentials> wrong email', async () => {
     const res = await request(app).post('/api/auth/signin').send({
       email: testEmails[1],
       password: testPassword,
     });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid credentials');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Auth: invalid credentials'
+    );
   });
 
-  it('POST /api/auth/signin: 401<Invalid credentials> wrong password', async () => {
+  it('POST /api/auth/signin: 401<Unauthorized access Auth: invalid credentials> wrong password', async () => {
     const res = await request(app)
       .post('/api/auth/signin')
       .send({
@@ -152,6 +162,9 @@ describe('AuthController: POST /api/auth/signin', () => {
       });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid credentials');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Auth: invalid credentials'
+    );
   });
 });

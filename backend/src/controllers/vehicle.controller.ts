@@ -12,12 +12,7 @@ export class VehicleController {
     res: Response
   ): Promise<void> => {
     if (!VehicleService.isCreateInputValid(req.body)) {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'Vehicle',
-        'missing fields'
-      );
+      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'missing fields');
       return;
     }
 
@@ -104,7 +99,7 @@ export class VehicleController {
 
       sendJsonResponse(
         res,
-        'SUCCESS_CREATE',
+        'SUCCESS',
         'Vehicle',
         'getAll',
         'vehicles',
@@ -234,12 +229,7 @@ export class VehicleController {
     if (!user) return;
 
     if (!id) {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'Vehicle',
-        'missing fields'
-      );
+      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'missing fields');
       return;
     }
 

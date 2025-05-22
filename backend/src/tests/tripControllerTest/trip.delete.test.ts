@@ -41,13 +41,13 @@ afterAll(async () => {
 });
 
 describe('TripController: DELETE /api/trips/:id', () => {
-  it('DELETE /api/trips/:id: 200<Trip deleted!>', async () => {
+  it('DELETE /api/trips/:id: 200<Successfully Trip: deleted>', async () => {
     const res = await request(app)
       .delete(`/api/trips/${tripIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Trip deleted!');
+    expect(res.body).toHaveProperty('message', 'Successfully Trip: deleted');
 
     const check = await prismaNewClient.trip.findUnique({
       where: { id: tripIds[0] },
@@ -55,39 +55,51 @@ describe('TripController: DELETE /api/trips/:id', () => {
     expect(check).toBeNull();
   });
 
-  it('DELETE /api/trips/:id: 400<Invalid ID> with invalid format Id', async () => {
+  it('DELETE /api/trips/:id: 400<Bad request Validator: Invalid ID> with invalid format Id', async () => {
     const res = await request(app)
       .delete(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('DELETE /api/trips/:id: 404<Trip does not exist> with invalid Value Id', async () => {
+  it('DELETE /api/trips/:id: 404<Not found Trip: trip not found> with invalid Value Id', async () => {
     const res = await request(app)
       .delete(`/api/trips/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('message', 'Trip does not exist');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Trip: trip not found'
+    );
   });
 
-  it('DELETE /api/trips/:id: 404<Trip does not exist> if trip does not exist', async () => {
+  it('DELETE /api/trips/:id: 404<Not found Trip: trip not found> if trip does not exist', async () => {
     const res = await request(app)
       .delete(`/api/trips/${tripIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('message', 'Trip does not exist');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Trip: trip not found'
+    );
   });
 
-  it('DELETE /api/trips/:id: 403<Unauthorized> user is not the owner (unauthorized delete)', async () => {
+  it('DELETE /api/trips/:id: 403<Access denied Trip: not a driver> user is not the owner (unauthorized delete)', async () => {
     const res = await request(app)
       .delete(`/api/trips/${tripIds[1]}`)
       .set('Cookie', cookies[1]);
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Unauthorized');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Trip: not a driver'
+    );
   });
 });

@@ -30,12 +30,16 @@ afterAll(async () => {
 });
 
 describe('UserPreferencesController: GET /api/user-preferences/:id', () => {
-  it('GET /api/user-preferences/:id: 200<> return a UserPreferences', async () => {
+  it('GET /api/user-preferences/:id: 200<Successfully UserPreferences: getByUserId> return a UserPreferences', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully UserPreferences: getByUserId'
+    );
     expect(res.body.userPreferences).toBeDefined();
     expect(res.body.userPreferences).toHaveProperty('id');
     expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
@@ -47,37 +51,49 @@ describe('UserPreferencesController: GET /api/user-preferences/:id', () => {
     expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
   });
 
-  it('GET /api/user-preferences/:id: 401<Missing token>', async () => {
+  it('GET /api/user-preferences/:id: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).get(`/api/user-preferences/${userIds[0]}`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('GET /api/user-preferences/:id: 401<Invalid token>', async () => {
+  it('GET /api/user-preferences/:id: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('GET /api/user-preferences/:id: 400<Invalid ID>', async () => {
+  it('GET /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('GET /api/user-preferences/:id: 403<Forbidden>', async () => {
+  it('GET /api/user-preferences/:id: 403<Access denied Owner: not the owner>', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Forbidden');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Owner: not the owner'
+    );
   });
 });

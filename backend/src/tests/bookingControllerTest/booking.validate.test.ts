@@ -62,7 +62,7 @@ afterAll(async () => {
 });
 
 describe('TripController: POST /api/bookings/:id/validate', () => {
-  it('POST /api/bookings/:id/validate: 200<Booking accepted>', async () => {
+  it('POST /api/bookings/:id/validate: 200<Successfully Booking: Booking accepted>', async () => {
     const beforeCreditsDriver = (
       await prismaNewClient.user.findUnique({ where: { id: userIds[0] } })
     )?.credits;
@@ -77,7 +77,10 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
       .send({ action: 'accept' });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Booking accepted');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully Booking: Booking accepted'
+    );
 
     const afterCreditsDriver = (
       await prismaNewClient.user.findUnique({ where: { id: userIds[0] } })
@@ -89,17 +92,20 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(afterBooking?.status).toBe(BookingStatus.confirmed);
   });
 
-  it('POST /api/bookings/:id/validate: 200<Booking is not pending>', async () => {
+  it('POST /api/bookings/:id/validate: 409<Conflict Booking: booking not pending>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[0]}/validate`)
       .set('Cookie', cookies[0])
       .send({ action: 'accept' });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Booking is not pending');
+    expect(res.status).toBe(409);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Conflict Booking: booking not pending'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 200<Booking rejected>', async () => {
+  it('POST /api/bookings/:id/validate: 200<Successfully Booking: Booking rejected>', async () => {
     const beforeCreditsBuyer = (
       await prismaNewClient.user.findUnique({ where: { id: userIds[1] } })
     )?.credits;
@@ -114,7 +120,10 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
       .send({ action: 'reject' });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Booking rejected');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully Booking: Booking rejected'
+    );
 
     const afterCreditsBuyer = (
       await prismaNewClient.user.findUnique({ where: { id: userIds[1] } })
@@ -127,36 +136,45 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(afterBooking?.cancellerId).toBe(userIds[0]);
   });
 
-  it('POST /api/bookings/:id/validate: 200<Booking is not pending>', async () => {
+  it('POST /api/bookings/:id/validate: 409<Conflict Booking: booking not pending>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[1]}/validate`)
       .set('Cookie', cookies[0])
       .send({ action: 'reject' });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Booking is not pending');
+    expect(res.status).toBe(409);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Conflict Booking: booking not pending'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Action is required>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action is required>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Action is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Action is required'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Action must be a string>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action must be a string>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0])
       .send({ action: 8 });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Action must be a string');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Action must be a string'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Action must be either "accept" or "reject">', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action must be either "accept" or "reject">', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0])
@@ -165,30 +183,36 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Action must be either "accept" or "reject"'
+      'Bad request Validator: Action must be either "accept" or "reject"'
     );
   });
 
-  it('POST /api/bookings/:id/validate: 401<Missing token>', async () => {
+  it('POST /api/bookings/:id/validate: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .send({ action: 'accept' });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 401<Invalid token>', async () => {
+  it('POST /api/bookings/:id/validate: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', invalidCookie)
       .send({ action: 'accept' });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 403<Access denied: insufficient permissions>', async () => {
+  it('POST /api/bookings/:id/validate: 403<Access denied Authorize: insufficient permissions>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[1])
@@ -197,27 +221,33 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(403);
     expect(res.body).toHaveProperty(
       'message',
-      'Access denied: insufficient permissions'
+      'Access denied Authorize: insufficient permissions'
     );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Invalid ID>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${invalidFormatId}/validate`)
       .set('Cookie', cookies[0])
       .send({ action: 'accept' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('POST /api/bookings/:id/validate: 404<Booking not found>', async () => {
+  it('POST /api/bookings/:id/validate: 404<Not found Booking: booking not found>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${invalidValueId}/validate`)
       .set('Cookie', cookies[0])
       .send({ action: 'accept' });
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('message', 'Booking not found');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Booking: booking not found'
+    );
   });
 });

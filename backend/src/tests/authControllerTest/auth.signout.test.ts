@@ -21,12 +21,12 @@ afterAll(async () => {
 });
 
 describe('AuthController: POST /api/auth/signout', () => {
-  it('POST /api/auth/signout: 200<Signed out successfully> sign out the user and clear the accessToken cookie', async () => {
+  it('POST /api/auth/signout: 200<Successfully Auth: signout> sign out the user and clear the accessToken cookie', async () => {
     const res = await request(app)
       .post('/api/auth/signout')
       .set('Cookie', cookies[0]);
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Signed out successfully');
+    expect(res.body).toHaveProperty('message', 'Successfully Auth: signout');
 
     const signoutCookies = Array.isArray(res.headers['set-cookie'])
       ? res.headers['set-cookie']
@@ -41,17 +41,23 @@ describe('AuthController: POST /api/auth/signout', () => {
     expect(jwtTokenCookie).toMatch(/jwtToken=;/);
   });
 
-  it('GET /api/auth/signout: 401<Invalid token>', async () => {
+  it('GET /api/auth/signout: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .post('/api/auth/signout')
       .set('Cookie', invalidCookie);
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('GET /api/auth/signout: 401<Missing token>', async () => {
+  it('GET /api/auth/signout: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).post('/api/auth/signout');
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 });

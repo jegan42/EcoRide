@@ -28,12 +28,16 @@ afterAll(async () => {
 });
 
 describe('UserPreferencesController: GET /api/user-preferences/me', () => {
-  it('GET /api/user-preferences/me: 200<> return a UserPreferences', async () => {
+  it('GET /api/user-preferences/me: 200<Successfully UserPreferences: getByUserId> return a UserPreferences', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/me`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully UserPreferences: getByUserId'
+    );
     expect(res.body.userPreferences).toBeDefined();
     expect(res.body.userPreferences).toHaveProperty('id');
     expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
@@ -45,19 +49,25 @@ describe('UserPreferencesController: GET /api/user-preferences/me', () => {
     expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
   });
 
-  it('GET /api/user-preferences/me: 401<Missing token>', async () => {
+  it('GET /api/user-preferences/me: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).get(`/api/user-preferences/me`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('GET /api/user-preferences/me: 401<Invalid token>', async () => {
+  it('GET /api/user-preferences/me: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/me`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 });
