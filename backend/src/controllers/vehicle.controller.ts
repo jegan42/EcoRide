@@ -4,6 +4,7 @@ import prismaNewClient from '../lib/prisma';
 import { VehicleService } from '../services/vehicle.service';
 import { isId } from '../utils/validation';
 import { requireUser } from '../utils/request';
+import { sendJsonResponse } from '../utils/response';
 
 export class VehicleController {
   static readonly create = async (
@@ -11,7 +12,12 @@ export class VehicleController {
     res: Response
   ): Promise<void> => {
     if (!VehicleService.isCreateInputValid(req.body)) {
-      res.status(400).json({ message: 'Missing required fields' });
+      sendJsonResponse(
+        res,
+        'BAD_REQUEST',
+        'Vehicle',
+        'missing required fields'
+      );
       return;
     }
 
@@ -27,17 +33,17 @@ export class VehicleController {
 
     try {
       if (await VehicleService.isVehicleExistsWithLicensePlate(licensePlate)) {
-        res
-          .status(409)
-          .json({ message: 'Vehicle with this license plate already exists' });
+        sendJsonResponse(
+          res,
+          'CONFLICT',
+          'Vehicle',
+          'this license plate already exists'
+        );
         return;
       }
 
       const user = requireUser(req, res);
-      if (!user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
+      if (!user) return;
 
       const vehicle = await prismaNewClient.vehicle.create({
         data: {
@@ -52,15 +58,35 @@ export class VehicleController {
         },
       });
 
+      if (!vehicle) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        return;
+      }
+
       await prismaNewClient.user.update({
         where: { id: user.id },
         data: {
           role: Array.from(new Set([...user.role, 'driver'])),
         },
       });
-      res.status(201).json({ vehicle });
-    } catch {
-      res.status(500).json({ message: 'Failed to create vehicle' });
+      sendJsonResponse(
+        res,
+        'SUCCESS_CREATE',
+        'Vehicle',
+        'created',
+        'vehicle',
+        vehicle
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Vehicle',
+        'failed to create',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -68,8 +94,34 @@ export class VehicleController {
     _req: Request,
     res: Response
   ): Promise<void> => {
-    const vehicles = await prismaNewClient.vehicle.findMany();
-    res.status(200).json({ vehicles });
+    try {
+      const vehicles = await prismaNewClient.vehicle.findMany();
+
+      if (!vehicles) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
+        return;
+      }
+
+      sendJsonResponse(
+        res,
+        'SUCCESS_CREATE',
+        'Vehicle',
+        'founded',
+        'vehicles',
+        vehicles
+      );
+      res.status(200).json({ vehicles });
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Vehicle',
+        'Failed to getAll',
+        undefined,
+        undefined,
+        error
+      );
+    }
   };
 
   static readonly getById = async (
@@ -79,7 +131,7 @@ export class VehicleController {
     const { id } = req.params;
 
     if (!isId(id)) {
-      res.status(400).json({ message: 'Invalid ID' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
       return;
     }
 
@@ -88,14 +140,28 @@ export class VehicleController {
         where: { id },
       });
       if (!vehicle) {
-        res.status(404).json({ message: 'Vehicle not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
         return;
       }
 
-      res.json(vehicle);
-    } catch {
-      res.status(500).json({ message: 'Error checking vehicle existence' });
-      return;
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Vehicle',
+        'founded',
+        'vehicle',
+        vehicle
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Vehicle',
+        'Failed to getById',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -106,24 +172,26 @@ export class VehicleController {
     const { id } = req.params;
 
     if (!VehicleService.isUpdateInputValid(req.body)) {
-      res.status(400).json({ message: 'Invalid or missing fields' });
+      sendJsonResponse(
+        res,
+        'BAD_REQUEST',
+        'Vehicle',
+        'invalid or missing fields'
+      );
       return;
     }
 
     if (!isId(id)) {
-      res.status(400).json({ message: 'Invalid ID' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
       return;
     }
 
     const user = requireUser(req, res);
-    if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
+    if (!user) return;
 
     try {
       if (!(await VehicleService.isAuthorized(user, id))) {
-        res.status(403).json({ message: 'Unauthorized' });
+        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not a driver');
         return;
       }
 
@@ -131,11 +199,29 @@ export class VehicleController {
         where: { id },
         data: req.body,
       });
+      if (!vehicle) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
+        return;
+      }
 
-      res.status(200).json({ vehicle });
-    } catch {
-      res.status(500).json({ message: 'Error checking vehicle existence' });
-      return;
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Vehicle',
+        'founded',
+        'vehicle',
+        vehicle
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Vehicle',
+        'Failed to update',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -145,32 +231,42 @@ export class VehicleController {
   ): Promise<void> => {
     const { id } = req.params;
 
+    const user = requireUser(req, res);
+    if (!user) return;
+
     if (!id) {
-      res.status(400).json({ message: 'Missing required fields' });
+      sendJsonResponse(
+        res,
+        'BAD_REQUEST',
+        'Vehicle',
+        'missing required fields'
+      );
       return;
     }
 
     if (!isId(id)) {
-      res.status(400).json({ message: 'Invalid ID' });
-      return;
-    }
-
-    const user = requireUser(req, res);
-    if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
       return;
     }
 
     try {
       if (!(await VehicleService.isAuthorized(user, id))) {
-        res.status(403).json({ message: 'Unauthorized' });
+        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not a driver');
         return;
       }
 
       await prismaNewClient.vehicle.delete({ where: { id } });
-      res.status(200).json({ message: 'Vehicle deleted!' });
-    } catch {
-      res.status(500).json({ message: 'Error checking vehicle existence' });
+      sendJsonResponse(res, 'SUCCESS', 'Vehicle', 'deleted');
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Vehicle',
+        'Failed to delete',
+        undefined,
+        undefined,
+        error
+      );
       return;
     }
   };
