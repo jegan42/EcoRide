@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { clearTokenCookie, setTokenCookie } from '../utils/tokenCookie';
 import { isId } from '../utils/validation';
 import { requireUser } from '../utils/request';
+import { sendJsonResponse } from '../utils/response';
 
 export class AuthController {
   static readonly signup = async (
@@ -12,7 +13,7 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     if (!AuthService.isSignUpInputValid(req.body)) {
-      res.status(400).json({ message: 'Missing required fields' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing required fields');
       return;
     }
 
@@ -24,7 +25,7 @@ export class AuthController {
         where: { email },
       });
       if (existingUserEmail) {
-        res.status(409).json({ message: 'Email already in use' });
+        sendJsonResponse(res, 'CONFLICT', 'Auth', 'email already used');
         return;
       }
 
@@ -32,7 +33,7 @@ export class AuthController {
         where: { username },
       });
       if (existingUserUsername) {
-        res.status(409).json({ message: 'Username already in use' });
+        sendJsonResponse(res, 'CONFLICT', 'Auth', 'username already used');
         return;
       }
 
@@ -55,9 +56,24 @@ export class AuthController {
       await AuthService.updateUserToken(newUser.id, jwtToken);
       setTokenCookie(res, jwtToken);
 
-      res.status(201).json({ user: AuthService.sanitizedUser(newUser) });
-    } catch {
-      res.status(500).json({ message: 'Server error during signup' });
+      sendJsonResponse(
+        res,
+        'SUCCESS_CREATE',
+        'Auth',
+        'created',
+        'user',
+        AuthService.sanitizedUser(newUser)
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Auth',
+        'failed to signup',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -66,7 +82,7 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     if (!AuthService.isSignInInputValid(req.body)) {
-      res.status(400).json({ message: 'Missing required fields' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing required fields');
       return;
     }
 
@@ -75,7 +91,7 @@ export class AuthController {
     try {
       const user = await prismaNewClient.user.findUnique({ where: { email } });
       if (!user?.password) {
-        res.status(401).json({ message: 'Invalid credentials' });
+        sendJsonResponse(res, 'UNAUTHORIZED', 'Auth', 'invalid credentials');
         return;
       }
 
@@ -84,7 +100,7 @@ export class AuthController {
         user.password
       );
       if (!isValidPassword) {
-        res.status(401).json({ message: 'Invalid credentials' });
+        sendJsonResponse(res, 'UNAUTHORIZED', 'Auth', 'invalid credentials');
         return;
       }
 
@@ -92,9 +108,24 @@ export class AuthController {
       await AuthService.updateUserToken(user.id, jwtToken);
       setTokenCookie(res, jwtToken);
 
-      res.status(200).json({ user: AuthService.sanitizedUser(user) });
-    } catch {
-      res.status(500).json({ message: 'Server error during signin' });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Auth',
+        'signin',
+        'user',
+        AuthService.sanitizedUser(user)
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Auth',
+        'failed to signin',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -103,13 +134,10 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     const user = requireUser(req, res);
-    if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
+    if (!user) return;
 
     if (!isId(user.id)) {
-      res.status(400).json({ message: 'Invalid ID' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid ID');
       return;
     }
     try {
@@ -117,13 +145,28 @@ export class AuthController {
         where: { id: user.id },
       });
       if (!userData) {
-        res.status(404).json({ message: 'User not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Auth', 'user not found');
         return;
       }
 
-      res.status(200).json({ user: AuthService.sanitizedUser(userData) });
-    } catch {
-      res.status(500).json({ message: 'Server error during getMe' });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Auth',
+        'getMe',
+        'user',
+        AuthService.sanitizedUser(userData)
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Auth',
+        'failed to getMe',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -133,29 +176,25 @@ export class AuthController {
   ): Promise<void> => {
     const { id } = req.body;
 
-    if (!id || Object.keys(req.body).length < 2) {
-      res.status(400).json({ message: 'No fields to update' });
-      return;
-    }
-
-    if (AuthService.isUpdateInputValid(req.body)) {
-      res.status(400).json({ message: 'Invalid or missing fields' });
+    if (
+      !id ||
+      Object.keys(req.body).length < 2 ||
+      AuthService.isUpdateInputValid(req.body)
+    ) {
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid or missing fields');
       return;
     }
 
     if (!isId(id)) {
-      res.status(400).json({ message: 'Invalid ID' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid ID');
       return;
     }
 
     const currentUser = requireUser(req, res);
-    if (!currentUser) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
+    if (!currentUser) return;
 
     if (currentUser.id !== id && !currentUser.role.includes('admin')) {
-      res.status(403).json({ message: 'Unauthorized' });
+      sendJsonResponse(res, 'FORBIDDEN', 'Auth', 'not own user');
       return;
     }
 
@@ -164,21 +203,52 @@ export class AuthController {
         where: { id },
       });
       if (!user) {
-        res.status(404).json({ message: 'User not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Auth', 'user not found');
         return;
       }
 
-      const updateData = await AuthService.buildUpdateData(
-        req.body,
-        currentUser,
-        user
-      );
-      if (typeof updateData === 'string') {
-        res.status(409).json({ message: updateData });
-        return;
+      const {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        phone,
+        address,
+        avatar,
+        role,
+        credits,
+      } = req.body;
+
+      const updateData: any = {
+        firstName: firstName ?? user.firstName,
+        lastName: lastName ?? user.lastName,
+        phone: phone ?? user.phone,
+        address: address ?? user.address,
+        avatar: avatar ?? user.avatar,
+      };
+
+      if (password) {
+        updateData.password = await AuthService.hashPassword(password);
       }
+
+      if (currentUser.role.includes('admin')) {
+        updateData.role = role
+          ? Array.from(new Set([...user.role, ...role]))
+          : user.role;
+        updateData.credits = credits ?? user.credits;
+
+        const alReadyUsed = await AuthService.isUsed(user.id, email, username);
+        if (alReadyUsed !== null) {
+          sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
+        }
+
+        updateData.email = email ?? user.email;
+        updateData.username = username ?? user.username;
+      }
+
       if (!updateData) {
-        res.status(400).json({ message: 'Request is empty' });
+        sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'Request is empty');
         return;
       }
 
@@ -188,9 +258,24 @@ export class AuthController {
       });
 
       updatedUser.jwtToken && setTokenCookie(res, updatedUser.jwtToken);
-      res.status(200).json({ user: AuthService.sanitizedUser(updatedUser) });
-    } catch {
-      res.status(500).json({ message: 'Server error during updateUser' });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Auth',
+        'update',
+        'user',
+        AuthService.sanitizedUser(updatedUser)
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Auth',
+        'failed to update',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -199,6 +284,6 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     clearTokenCookie(res);
-    res.status(200).json({ message: 'Signed out successfully' });
+    sendJsonResponse(res, 'SUCCESS', 'Auth', 'signout');
   };
 }
