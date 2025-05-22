@@ -16,7 +16,7 @@ export class VehicleController {
         res,
         'BAD_REQUEST',
         'Vehicle',
-        'missing required fields'
+        'missing fields'
       );
       return;
     }
@@ -37,7 +37,7 @@ export class VehicleController {
           res,
           'CONFLICT',
           'Vehicle',
-          'this license plate already exists'
+          'already used this license plate'
         );
         return;
       }
@@ -98,7 +98,7 @@ export class VehicleController {
       const vehicles = await prismaNewClient.vehicle.findMany();
 
       if (!vehicles) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
         return;
       }
 
@@ -106,7 +106,7 @@ export class VehicleController {
         res,
         'SUCCESS_CREATE',
         'Vehicle',
-        'founded',
+        'getAll',
         'vehicles',
         vehicles
       );
@@ -115,7 +115,7 @@ export class VehicleController {
         res,
         'ERROR',
         'Vehicle',
-        'Failed to getAll',
+        'failed to getAll',
         undefined,
         undefined,
         error
@@ -139,7 +139,7 @@ export class VehicleController {
         where: { id },
       });
       if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
         return;
       }
 
@@ -147,7 +147,7 @@ export class VehicleController {
         res,
         'SUCCESS',
         'Vehicle',
-        'founded',
+        'getById',
         'vehicle',
         vehicle
       );
@@ -199,7 +199,7 @@ export class VehicleController {
         data: req.body,
       });
       if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
         return;
       }
 
@@ -207,7 +207,7 @@ export class VehicleController {
         res,
         'SUCCESS',
         'Vehicle',
-        'founded',
+        'updated',
         'vehicle',
         vehicle
       );
@@ -238,7 +238,7 @@ export class VehicleController {
         res,
         'BAD_REQUEST',
         'Vehicle',
-        'missing required fields'
+        'missing fields'
       );
       return;
     }

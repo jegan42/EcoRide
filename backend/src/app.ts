@@ -12,6 +12,7 @@ import dotenv from 'dotenv';
 import apiRoutes from './routes/api.routes';
 import { csrfErrorHandler } from './middleware/csrf.middleware';
 import { sendJsonResponse } from './utils/response';
+import { errorHandler } from './middleware/error.middleware';
 
 dotenv.config();
 
@@ -64,6 +65,7 @@ app.use(passport.session());
 app.use('/api', apiRoutes);
 
 app.use(csrfErrorHandler);
+app.use(errorHandler); 
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('EcoRide backend is running 🚗');
@@ -74,7 +76,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res,
     'ERROR',
     'APP',
-    'Server Error',
+    'server Error',
     undefined,
     undefined,
     err

@@ -12,7 +12,7 @@ export const errorHandler = (
     res,
     'ERROR',
     'Middleware',
-    'Something went wrong',
+    'something went wrong',
     undefined,
     undefined,
     err

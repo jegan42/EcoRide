@@ -178,7 +178,7 @@ export class BookingService {
         },
       });
 
-      return 'Booking cancelled successfully';
+      return 'cancelled';
     });
   };
 }

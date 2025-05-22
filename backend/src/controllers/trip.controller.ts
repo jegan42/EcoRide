@@ -11,7 +11,7 @@ export class TripController {
     res: Response
   ): Promise<void> => {
     if (!TripService.isValidCreateInput(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid or missing fields');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'invalid or missing fields');
       return;
     }
 
@@ -41,7 +41,7 @@ export class TripController {
       const maxPassengerSeats =
         await TripService.getMaxPassengerSeats(vehicleId);
       if (maxPassengerSeats === null) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'Vehicle not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'vehicle not found');
         return;
       }
 
@@ -50,7 +50,7 @@ export class TripController {
           res,
           'BAD_REQUEST',
           'Trip',
-          'Available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
+          'available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
         );
         return;
       }
@@ -60,7 +60,7 @@ export class TripController {
           res,
           'CONFLICT',
           'Trip',
-          'A trip with the same vehicle and user already exists on this date'
+          'already exists a trip with the same vehicle and user on this date'
         );
         return;
       }
@@ -83,13 +83,13 @@ export class TripController {
         return;
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'created', 'trip', trip);
     } catch (error) {
       sendJsonResponse(
         res,
         'ERROR',
         'Trip',
-        'Failed to create',
+        'failed to create',
         undefined,
         undefined,
         error
@@ -104,7 +104,7 @@ export class TripController {
     const { from, to, date, flexible } = req.query;
 
     if (!TripService.isValidSearchInput(req.query)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid fields');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'invalid fields');
       return;
     }
 
@@ -134,7 +134,7 @@ export class TripController {
             res,
             'SUCCESS',
             'Trip',
-            'No trips found matching your criteria',
+            'trips not found matching your criteria',
             'trips',
             []
           );
@@ -144,7 +144,7 @@ export class TripController {
             res,
             'SUCCESS',
             'Trip',
-            'alternative trips is founded',
+            'alternative trips founded',
             'trips',
             alternative
           );
@@ -157,14 +157,7 @@ export class TripController {
         return;
       }
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Trip',
-        'trips is founded',
-        'trips',
-        trips
-      );
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'getAll', 'trips', trips);
     } catch (error) {
       sendJsonResponse(
         res,
@@ -198,13 +191,13 @@ export class TripController {
         return;
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'getById', 'trip', trip);
     } catch (error) {
       sendJsonResponse(
         res,
         'ERROR',
         'Trip',
-        'Failed to getById',
+        'failed to getById',
         undefined,
         undefined,
         error
@@ -219,7 +212,7 @@ export class TripController {
     const { id } = req.params;
 
     if (!TripService.isValidUpdateInput(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid or missing fields');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'invalid or missing fields');
       return;
     }
 
@@ -233,7 +226,7 @@ export class TripController {
       }
 
       if (requireUser(req, res)?.id !== existingTrip.driverId) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not driver');
+        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
         return;
       }
 
@@ -247,7 +240,7 @@ export class TripController {
         return;
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'updated', 'trip', trip);
     } catch (error) {
       sendJsonResponse(
         res,
@@ -278,7 +271,7 @@ export class TripController {
       }
 
       if (requireUser(req, res)?.id !== trip.driverId) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not driver');
+        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
         return;
       }
 
@@ -286,13 +279,13 @@ export class TripController {
         where: { id },
       });
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip deleted');
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'deleted');
     } catch (error) {
       sendJsonResponse(
         res,
         'ERROR',
         'Trip',
-        'Failed to delete',
+        'failed to delete',
         undefined,
         undefined,
         error

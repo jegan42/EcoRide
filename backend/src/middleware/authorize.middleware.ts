@@ -11,7 +11,7 @@ export const authorize =
     const user = req.user as User;
 
     if (!user || !Array.isArray(user.role)) {
-      sendJsonResponse(res, 'FORBIDDEN', 'Authorize', 'No roles found');
+      sendJsonResponse(res, 'FORBIDDEN', 'Authorize', 'no roles');
       return;
     }
 
@@ -24,7 +24,7 @@ export const authorize =
         res,
         'FORBIDDEN',
         'Authorize',
-        'Insufficient permissions'
+        'insufficient permissions'
       );
       return;
     }

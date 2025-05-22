@@ -13,7 +13,7 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     if (!AuthService.isSignUpInputValid(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing required fields');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing fields');
       return;
     }
 
@@ -21,20 +21,9 @@ export class AuthController {
       req.body;
 
     try {
-      const existingUserEmail = await prismaNewClient.user.findUnique({
-        where: { email },
-      });
-      if (existingUserEmail) {
-        sendJsonResponse(res, 'CONFLICT', 'Auth', 'email already used');
-        return;
-      }
-
-      const existingUserUsername = await prismaNewClient.user.findUnique({
-        where: { username },
-      });
-      if (existingUserUsername) {
-        sendJsonResponse(res, 'CONFLICT', 'Auth', 'username already used');
-        return;
+      const alReadyUsed = await AuthService.isUsed(email, username);
+      if (alReadyUsed !== null) {
+        sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
       }
 
       const hashedPassword = await AuthService.hashPassword(password);
@@ -60,7 +49,7 @@ export class AuthController {
         res,
         'SUCCESS_CREATE',
         'Auth',
-        'created',
+        'signup',
         'user',
         AuthService.sanitizedUser(newUser)
       );
@@ -82,7 +71,7 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     if (!AuthService.isSignInInputValid(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing required fields');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing fields');
       return;
     }
 
@@ -238,7 +227,7 @@ export class AuthController {
           : user.role;
         updateData.credits = credits ?? user.credits;
 
-        const alReadyUsed = await AuthService.isUsed(user.id, email, username);
+        const alReadyUsed = await AuthService.isUsed(email, username);
         if (alReadyUsed !== null) {
           sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
         }
@@ -248,7 +237,7 @@ export class AuthController {
       }
 
       if (!updateData) {
-        sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'Request is empty');
+        sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'empty request');
         return;
       }
 

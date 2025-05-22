@@ -21,7 +21,7 @@ export const csrfErrorHandler = (
   next: NextFunction
 ): void => {
   if (err.code === 'EBADCSRFTOKEN') {
-    sendJsonResponse(res, 'FORBIDDEN', 'CSRF', 'Invalid token');
+    sendJsonResponse(res, 'FORBIDDEN', 'CSRF', 'invalid token');
     return;
   }
   next(err);

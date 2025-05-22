@@ -8,7 +8,7 @@ export const requireUser = (req: Request, res: Response): User | null => {
   const user = (req.user as User) ?? null;
 
   if (!user) {
-    sendJsonResponse(res, 'UNAUTHORIZED', 'Request', 'User not connected');
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Request', 'user not connected');
     return null;
   }
 
@@ -24,12 +24,12 @@ export const assertOwnership = (
   if (!user) return null;
 
   if (!isId(ownerId)) {
-    sendJsonResponse(res, 'BAD_REQUEST', 'Owner', 'Invalid ID');
+    sendJsonResponse(res, 'BAD_REQUEST', 'Owner', 'invalid ID');
     return null;
   }
 
   if (user.id !== ownerId) {
-    sendJsonResponse(res, 'FORBIDDEN', 'Owner', 'Not the owner');
+    sendJsonResponse(res, 'FORBIDDEN', 'Owner', 'not the owner');
     return null;
   }
 

@@ -13,7 +13,7 @@ export class GoogleAuthController {
     const user = req.user as User;
 
     if (!user) {
-      sendJsonResponse(res, 'UNAUTHORIZED', 'Google', 'User not connected');
+      sendJsonResponse(res, 'UNAUTHORIZED', 'Google', 'user not connected');
       return;
     }
 

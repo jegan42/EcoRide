@@ -103,25 +103,21 @@ export class AuthService {
     return userCleanUp;
   }
 
-  static async isUsed(
-    userId: string,
-    email: string,
-    username: string
-  ): Promise<string | null> {
+  static async isUsed(email: string, username: string): Promise<string | null> {
     const existingUserEmail = email
       ? await prismaNewClient.user.findUnique({ where: { email } })
       : null;
 
-    if (existingUserEmail && existingUserEmail.id !== userId) {
-      return 'email already used';
+    if (existingUserEmail) {
+      return 'already used email';
     }
 
     const existingUserUsername = username
       ? await prismaNewClient.user.findUnique({ where: { username } })
       : null;
 
-    if (existingUserUsername && existingUserUsername.id !== userId) {
-      return 'username already used';
+    if (existingUserUsername) {
+      return 'already used username';
     }
     return null;
   }

@@ -15,7 +15,7 @@ export class PreferencesController {
         res,
         'BAD_REQUEST',
         'UserPreferences',
-        'Missing or invalid required fields'
+        'invalid or missing fields'
       );
       return;
     }
@@ -29,7 +29,7 @@ export class PreferencesController {
           res,
           'CONFLICT',
           'UserPreferences',
-          'UserPreferences already exists'
+          'already created userPreferences'
         );
         return;
       }
@@ -61,17 +61,12 @@ export class PreferencesController {
         res,
         'SUCCESS_CREATE',
         'UserPreferences',
-        'Created',
+        'created',
         'userPreferences',
         userPreferences
       );
     } catch {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'UserPreferences',
-        'Failed to create userPreferences'
-      );
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to create');
     }
   };
 
@@ -111,7 +106,7 @@ export class PreferencesController {
         res,
         'SUCCESS',
         'UserPreferences',
-        'UserPreferences founded',
+        'getByUserId',
         'userPreferences',
         userPreferences
       );
@@ -120,7 +115,7 @@ export class PreferencesController {
         res,
         'ERROR',
         'UserPreferences',
-        'Failed to get userPreferences'
+        'Failed to getByUserId'
       );
       return;
     }
@@ -135,7 +130,7 @@ export class PreferencesController {
         res,
         'BAD_REQUEST',
         'UserPreferences',
-        'Invalid or missing fields'
+        'invalid or missing fields'
       );
       return;
     }
@@ -162,17 +157,12 @@ export class PreferencesController {
         res,
         'SUCCESS',
         'UserPreferences',
-        'UserPreferences founded',
+        'updated',
         'userPreferences',
         userPreferences
       );
     } catch {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'UserPreferences',
-        'Failed to update userPreferences'
-      );
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to update');
       return;
     }
   };
@@ -186,19 +176,9 @@ export class PreferencesController {
 
     try {
       await prismaNewClient.userPreferences.delete({ where: { userId: id } });
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'UserPreferences',
-        'UserPreferences deleted'
-      );
+      sendJsonResponse(res, 'SUCCESS', 'UserPreferences', 'deleted');
     } catch {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'UserPreferences',
-        'Failed to delete userPreferences'
-      );
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to delete');
       return;
     }
   };

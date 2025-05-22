@@ -15,13 +15,13 @@ export const authenticate = async (
     req.cookies.jwtToken ??
     (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
   if (!jwtToken) {
-    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'Missing token');
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'missing token');
     return;
   }
 
   const decoded = AuthService.verifyToken(jwtToken);
   if (!decoded?.userId) {
-    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'Invalid token');
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'invalid token');
     return;
   }
 
@@ -32,7 +32,7 @@ export const authenticate = async (
       },
     });
     if (!user) {
-      sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'User not found');
+      sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'user not found');
       return;
     }
 
@@ -44,7 +44,7 @@ export const authenticate = async (
       res,
       'ERROR',
       'Athenticate',
-      'Server error',
+      'server error',
       undefined,
       undefined,
       error

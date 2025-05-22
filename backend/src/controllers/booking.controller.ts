@@ -21,7 +21,7 @@ export class BookingController {
           res,
           'BAD_REQUEST',
           'Booking',
-          'Invalid or missing fields'
+          'invalid or missing fields'
         );
         return;
       }
@@ -32,20 +32,15 @@ export class BookingController {
         include: { bookings: true, driver: true },
       });
       if (!trip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Trip not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'trip not found');
         return;
       }
       if (trip.status !== 'open') {
-        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Trip not available');
+        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'trip not open');
         return;
       }
       if (seatCount > trip.availableSeats) {
-        sendJsonResponse(
-          res,
-          'BAD_REQUEST',
-          'Booking',
-          'Not enough seats available'
-        );
+        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'not enough seats');
         return;
       }
       if (user.id === trip.driverId) {
@@ -53,14 +48,14 @@ export class BookingController {
           res,
           'FORBIDDEN',
           'Booking',
-          'Will not booking own trip'
+          'will not booking own trip'
         );
         return;
       }
 
       const totalPrice = trip.price * seatCount;
       if (user.credits < totalPrice) {
-        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Not enough credits');
+        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'not enough credits');
         return;
       }
 
@@ -79,7 +74,7 @@ export class BookingController {
           res,
           'BAD_REQUEST',
           'Booking',
-          'User already booked this trip'
+          'already booked this trip'
         );
         return;
       }
@@ -87,7 +82,7 @@ export class BookingController {
       const booking = await BookingService.create(user, trip, seatCount);
 
       if (!booking) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
 
@@ -95,7 +90,7 @@ export class BookingController {
         res,
         'SUCCESS_CREATE',
         'Booking',
-        'Created',
+        'created',
         'booking',
         booking
       );
@@ -104,7 +99,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to create',
+        'failed to create',
         undefined,
         undefined,
         error
@@ -116,20 +111,20 @@ export class BookingController {
     const user = requireUser(req, res);
     if (!user) return;
 
-    const bookingId = req.params.id;
-    if (!isId(bookingId)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Invalid booking ID');
+    const { id } = req.params;
+    if (!isId(id)) {
+      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
       return;
     }
 
     try {
       const booking = await prismaNewClient.booking.findUnique({
-        where: { id: bookingId },
+        where: { id: id },
         include: { trip: true },
       });
 
       if (!booking) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
 
@@ -141,13 +136,13 @@ export class BookingController {
           res,
           'BAD_REQUEST',
           'Booking',
-          'Not a passenger or not a driver'
+          'not a passenger or not a driver'
         );
         return;
       }
 
       if (booking.status === BookingStatus.cancelled) {
-        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Already cancelled');
+        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'already cancelled');
         return;
       }
 
@@ -155,14 +150,14 @@ export class BookingController {
         where: { id: booking.tripId },
       });
       if (!existingTrip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Trip does not exist');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'trip not found');
         return;
       }
 
       const resultMsg = await BookingService.cancel(
         existingTrip,
         booking,
-        bookingId,
+        id,
         user.id
       );
       sendJsonResponse(res, 'SUCCESS', 'Booking', resultMsg);
@@ -171,7 +166,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to cancel',
+        'failed to cancel',
         undefined,
         undefined,
         error
@@ -187,7 +182,7 @@ export class BookingController {
       const bookings = await BookingService.getAllByUserId(user.id);
 
       if (!bookings) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
 
@@ -204,7 +199,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to getAllByUser',
+        'failed to getAllByUser',
         undefined,
         undefined,
         error
@@ -218,6 +213,11 @@ export class BookingController {
 
     try {
       const bookings = await BookingService.getAllByDriverId(user.id);
+      if (!bookings) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
+        return;
+      }
+
       sendJsonResponse(
         res,
         'SUCCESS',
@@ -226,17 +226,12 @@ export class BookingController {
         'bookings',
         bookings
       );
-
-      if (!bookings) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
-        return;
-      }
     } catch (error) {
       sendJsonResponse(
         res,
         'ERROR',
         'Booking',
-        'Failed to getAllByDriver',
+        'failed to getAllByDriver',
         undefined,
         undefined,
         error
@@ -251,7 +246,7 @@ export class BookingController {
       const bookings = await BookingService.getAllByTripId(id);
 
       if (!bookings) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
       sendJsonResponse(
@@ -267,7 +262,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to getAllByTrip',
+        'failed to getAllByTrip',
         undefined,
         undefined,
         error
@@ -283,12 +278,12 @@ export class BookingController {
     const { action } = req.body;
     const user = requireUser(req, res);
     if (!user?.role?.includes('driver')) {
-      sendJsonResponse(res, 'FORBIDDEN', 'Booking', 'Not a driver');
+      sendJsonResponse(res, 'FORBIDDEN', 'Booking', 'not a driver');
       return;
     }
 
     if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Invalid ID');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
       return;
     }
 
@@ -297,7 +292,7 @@ export class BookingController {
         res,
         'BAD_REQUEST',
         'Booking',
-        'Action must be either accept or reject'
+        'action must be either accept or reject'
       );
       return;
     }
@@ -307,12 +302,12 @@ export class BookingController {
         include: { trip: true },
       });
       if (!booking) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
 
       if (!booking.trip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Trip not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'trip not found');
         return;
       }
 
@@ -321,12 +316,12 @@ export class BookingController {
           res,
           'FORBIDDEN',
           'Booking',
-          'Only the driver can validate this booking'
+          'only the driver can validate'
         );
         return;
       }
       if (booking.status !== BookingStatus.pending) {
-        sendJsonResponse(res, 'CONFLICT', 'Booking', 'Booking is not pending');
+        sendJsonResponse(res, 'CONFLICT', 'Booking', 'booking not pending');
         return;
       }
       const validateBookingMsg = await BookingService.validate(
@@ -340,7 +335,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to validate',
+        'failed to validate',
         undefined,
         undefined,
         error
@@ -354,7 +349,7 @@ export class BookingController {
     const { id } = req.params;
 
     if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Invalid booking ID');
+      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
       return;
     }
 
@@ -365,7 +360,7 @@ export class BookingController {
       });
 
       if (!booking) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
 
@@ -377,7 +372,7 @@ export class BookingController {
           res,
           'BAD_REQUEST',
           'Booking',
-          'Not a passenger or not a driver'
+          'not a passenger or not a driver'
         );
         return;
       }
@@ -394,7 +389,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'Failed to getById',
+        'failed to getById',
         undefined,
         undefined,
         error

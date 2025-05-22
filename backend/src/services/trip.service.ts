@@ -82,13 +82,13 @@ export class TripService {
     arrivalDate: string
   ): string | null {
     const startDate = new Date(departureDate);
-    if (new Date() > startDate) return 'DepartureDate must be after today';
+    if (new Date() > startDate) return 'departureDate must be after today';
 
     const endDate = new Date(arrivalDate);
-    if (startDate > endDate) return 'DepartureDate must be before arrivalDate';
+    if (startDate > endDate) return 'departureDate must be before arrivalDate';
 
     if (startDate.getTime() === endDate.getTime())
-      return 'DepartureDate and arrivalDate can start at the same date but not same time';
+      return 'departureDate and arrivalDate can start at the same date but not same time';
 
     return null;
   }
