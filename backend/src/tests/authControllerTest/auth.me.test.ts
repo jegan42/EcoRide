@@ -26,13 +26,14 @@ afterAll(async () => {
 });
 
 describe('AuthController: GET /api/auth/me', () => {
-  it('GET /api/auth/me: 200<> return the current user', async () => {
+  it('GET /api/auth/me: 200<Successfully Auth: getMe> return the current user', async () => {
     const name = testEmails[0].split('@')[0];
     const res = await request(app)
       .get('/api/auth/me')
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Auth: getMe');
     expect(res.body.user).not.toHaveProperty('googleId');
     expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user).not.toHaveProperty('jwtToken');
@@ -50,18 +51,24 @@ describe('AuthController: GET /api/auth/me', () => {
     expect(res.body.user).toHaveProperty('credits', 20);
   });
 
-  it('GET /api/auth/me: 401<Missing token>', async () => {
+  it('GET /api/auth/me: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).get('/api/auth/me');
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('GET /api/auth/me: 401<Invalid token>', async () => {
+  it('GET /api/auth/me: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .get('/api/auth/me')
       .set('Cookie', invalidCookie);
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 });
