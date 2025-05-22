@@ -47,6 +47,16 @@ export class PreferencesController {
         },
       });
 
+      if (!userPreferences) {
+        sendJsonResponse(
+          res,
+          'NOT_FOUND',
+          'UserPreferences',
+          'userPreferences not found'
+        );
+        return;
+      }
+
       sendJsonResponse(
         res,
         'SUCCESS_CREATE',
@@ -137,6 +147,16 @@ export class PreferencesController {
         where: { userId: id },
         data: req.body,
       });
+
+      if (!userPreferences) {
+        sendJsonResponse(
+          res,
+          'NOT_FOUND',
+          'UserPreferences',
+          'userPreferences not found'
+        );
+        return;
+      }
 
       sendJsonResponse(
         res,
