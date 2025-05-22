@@ -110,7 +110,6 @@ export class VehicleController {
         'vehicles',
         vehicles
       );
-      res.status(200).json({ vehicles });
     } catch (error) {
       sendJsonResponse(
         res,
