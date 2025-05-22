@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { TripService } from '../services/trip.service';
 import { requireUser } from '../utils/request';
+import { sendJsonResponse } from '../utils/response';
 
 export class TripController {
   static readonly create = async (
@@ -10,9 +11,12 @@ export class TripController {
     res: Response
   ): Promise<void> => {
     if (!TripService.isValidCreateInput(req.body)) {
-      res.status(400).json({ message: 'Invalid or missing fields' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid or missing fields');
       return;
     }
+
+    const user = requireUser(req, res);
+    if (!user) return;
 
     const {
       vehicleId,
@@ -29,15 +33,7 @@ export class TripController {
       arrivalDate
     );
     if (dateValidationMsg) {
-      res.status(400).json({
-        message: dateValidationMsg,
-      });
-      return;
-    }
-
-    const user = requireUser(req, res);
-    if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', dateValidationMsg);
       return;
     }
 
@@ -45,22 +41,27 @@ export class TripController {
       const maxPassengerSeats =
         await TripService.getMaxPassengerSeats(vehicleId);
       if (maxPassengerSeats === null) {
-        res.status(404).json({ message: 'Vehicle not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'Vehicle not found');
         return;
       }
 
       if (maxPassengerSeats < availableSeats) {
-        res.status(400).json({
-          message: `Available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)`,
-        });
+        sendJsonResponse(
+          res,
+          'BAD_REQUEST',
+          'Trip',
+          'Available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
+        );
         return;
       }
 
       if (await TripService.isExistTrip(user.id, vehicleId, departureDate)) {
-        res.status(409).json({
-          message:
-            'A trip with the same vehicle and user already exists on this date.',
-        });
+        sendJsonResponse(
+          res,
+          'CONFLICT',
+          'Trip',
+          'A trip with the same vehicle and user already exists on this date'
+        );
         return;
       }
 
@@ -77,9 +78,22 @@ export class TripController {
         },
       });
 
-      res.status(201).json({ trip });
+      if (!trip) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
+        return;
+      }
+
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create trip', details: error });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Trip',
+        'Failed to create',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -87,21 +101,20 @@ export class TripController {
     req: Request,
     res: Response
   ): Promise<void> => {
+    const { from, to, date, flexible } = req.query;
+
+    if (!TripService.isValidSearchInput(req.query)) {
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid fields');
+      return;
+    }
+
     try {
-      const { from, to, date, flexible } = req.query;
-
-      if (!TripService.isValidSearchInput(req.query)) {
-        res.status(400).json({ message: 'Invalid fields' });
-        return;
-      }
-
       const whereClause = TripService.buildWhereClause(
         from,
         to,
         date,
         flexible
       );
-
       const trips = await prismaNewClient.trip.findMany({
         where: whereClause,
         include: {
@@ -117,20 +130,51 @@ export class TripController {
           flexible
         );
         if (!alternative?.length) {
-          res.status(200).json({
-            trips: [],
-            message: 'No trips found matching your criteria.',
-          });
+          sendJsonResponse(
+            res,
+            'SUCCESS',
+            'Trip',
+            'No trips found matching your criteria',
+            'trips',
+            []
+          );
           return;
         } else {
-          res.status(200).json({ trips: alternative, alternative: true });
+          sendJsonResponse(
+            res,
+            'SUCCESS',
+            'Trip',
+            'alternative trips is founded',
+            'trips',
+            alternative
+          );
           return;
         }
       }
 
-      res.status(200).json({ trips });
+      if (!trips) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trips not found');
+        return;
+      }
+
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Trip',
+        'trips is founded',
+        'trips',
+        trips
+      );
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch trips', details: error });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Trip',
+        'Failed to getAll',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -150,13 +194,21 @@ export class TripController {
       });
 
       if (!trip) {
-        res.status(404).json({ message: 'Trip not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
         return;
       }
 
-      res.status(200).json({ trip });
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch trip', details: error });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Trip',
+        'Failed to getById',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -167,7 +219,7 @@ export class TripController {
     const { id } = req.params;
 
     if (!TripService.isValidUpdateInput(req.body)) {
-      res.status(400).json({ message: 'Invalid or missing fields' });
+      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', 'Invalid or missing fields');
       return;
     }
 
@@ -176,12 +228,12 @@ export class TripController {
         where: { id },
       });
       if (!existingTrip) {
-        res.status(404).json({ message: 'Trip not found' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
         return;
       }
 
       if (requireUser(req, res)?.id !== existingTrip.driverId) {
-        res.status(403).json({ message: 'Unauthorized' });
+        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not driver');
         return;
       }
 
@@ -190,9 +242,22 @@ export class TripController {
         data: req.body,
       });
 
-      res.status(200).json({ trip });
+      if (!trip) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
+        return;
+      }
+
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip founded', 'trip', trip);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update trip', details: error });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Trip',
+        'Failed to update',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 
@@ -208,12 +273,12 @@ export class TripController {
       });
 
       if (!trip) {
-        res.status(404).json({ message: 'Trip does not exist' });
+        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
         return;
       }
 
       if (requireUser(req, res)?.id !== trip.driverId) {
-        res.status(403).json({ message: 'Unauthorized' });
+        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not driver');
         return;
       }
 
@@ -221,9 +286,17 @@ export class TripController {
         where: { id },
       });
 
-      res.status(200).json({ message: 'Trip deleted!' });
+      sendJsonResponse(res, 'SUCCESS', 'Trip', 'trip deleted');
     } catch (error) {
-      res.status(500).json({ error: 'Failed to delete trip', details: error });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Trip',
+        'Failed to delete',
+        undefined,
+        undefined,
+        error
+      );
     }
   };
 }
