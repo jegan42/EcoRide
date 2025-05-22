@@ -1,6 +1,7 @@
 // backend/src/middleware/csrf.middleware.ts
 import csrf from 'csurf';
 import { Request, Response, NextFunction } from 'express';
+import { sendJsonResponse } from '../utils/response';
 
 export const csrfProtection =
   process.env.NODE_ENV !== 'test'
@@ -20,7 +21,7 @@ export const csrfErrorHandler = (
   next: NextFunction
 ): void => {
   if (err.code === 'EBADCSRFTOKEN') {
-    res.status(403).json({ message: 'Invalid CSRF token' });
+    sendJsonResponse(res, 'FORBIDDEN', 'CSRF', 'Invalid token');
     return;
   }
   next(err);
