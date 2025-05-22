@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { User } from '../../generated/prisma';
 import { setTokenCookie } from '../utils/tokenCookie';
+import { sendJsonResponse } from '../utils/response';
 
 export class GoogleAuthController {
   static readonly callback = async (
@@ -12,7 +13,7 @@ export class GoogleAuthController {
     const user = req.user as User;
 
     if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
+      sendJsonResponse(res, 'UNAUTHORIZED', 'Google', 'User not connected');
       return;
     }
 
