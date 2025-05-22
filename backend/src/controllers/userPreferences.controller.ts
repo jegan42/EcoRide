@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { PreferenceService } from '../services/userPreferences.service';
 import { assertOwnership, requireUser } from '../utils/request';
+import { sendJsonResponse } from '../utils/response';
 
 export class PreferencesController {
   static readonly create = async (
@@ -10,7 +11,12 @@ export class PreferencesController {
     res: Response
   ): Promise<void> => {
     if (!PreferenceService.isCreateInputValid(req.body)) {
-      res.status(400).json({ message: 'Missing or invalid required fields' });
+      sendJsonResponse(
+        res,
+        'BAD_REQUEST',
+        'UserPreferences',
+        'Missing or invalid required fields'
+      );
       return;
     }
 
@@ -19,7 +25,12 @@ export class PreferencesController {
 
     try {
       if (await PreferenceService.isExistUserPreferences(id)) {
-        res.status(409).json({ message: 'UserPreferences already exists' });
+        sendJsonResponse(
+          res,
+          'CONFLICT',
+          'UserPreferences',
+          'UserPreferences already exists'
+        );
         return;
       }
 
@@ -36,9 +47,21 @@ export class PreferencesController {
         },
       });
 
-      res.status(201).json({ userPreferences });
+      sendJsonResponse(
+        res,
+        'SUCCESS_CREATE',
+        'UserPreferences',
+        'Created',
+        'userPreferences',
+        userPreferences
+      );
     } catch {
-      res.status(500).json({ message: 'Failed to create userPreferences' });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'UserPreferences',
+        'Failed to create userPreferences'
+      );
     }
   };
 
@@ -65,13 +88,30 @@ export class PreferencesController {
         where: { userId: id },
       });
       if (!userPreferences) {
-        res.status(404).json({ message: 'userPreferences not found' });
+        sendJsonResponse(
+          res,
+          'NOT_FOUND',
+          'UserPreferences',
+          'userPreferences not found'
+        );
         return;
       }
 
-      res.status(200).json({ userPreferences });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'UserPreferences',
+        'UserPreferences founded',
+        'userPreferences',
+        userPreferences
+      );
     } catch {
-      res.status(500).json({ message: 'Failed to get userPreferences' });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'UserPreferences',
+        'Failed to get userPreferences'
+      );
       return;
     }
   };
@@ -81,7 +121,12 @@ export class PreferencesController {
     res: Response
   ): Promise<void> => {
     if (!PreferenceService.isUpdateInputValid(req.body)) {
-      res.status(400).json({ message: 'Invalid or missing fields' });
+      sendJsonResponse(
+        res,
+        'BAD_REQUEST',
+        'UserPreferences',
+        'Invalid or missing fields'
+      );
       return;
     }
     const { id } = req.params;
@@ -93,9 +138,21 @@ export class PreferencesController {
         data: req.body,
       });
 
-      res.status(200).json({ userPreferences });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'UserPreferences',
+        'UserPreferences founded',
+        'userPreferences',
+        userPreferences
+      );
     } catch {
-      res.status(500).json({ message: 'Failed to update userPreferences' });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'UserPreferences',
+        'Failed to update userPreferences'
+      );
       return;
     }
   };
@@ -109,9 +166,19 @@ export class PreferencesController {
 
     try {
       await prismaNewClient.userPreferences.delete({ where: { userId: id } });
-      res.status(200).json({ message: 'Preferences deleted!' });
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'UserPreferences',
+        'UserPreferences deleted'
+      );
     } catch {
-      res.status(500).json({ message: 'Failed to delete userPreferences' });
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'UserPreferences',
+        'Failed to delete userPreferences'
+      );
       return;
     }
   };
