@@ -19,61 +19,34 @@ export class BookingService {
 
   static readonly create = async (
     user: User,
-    tripId: string,
+    trip: Trip,
     seatCount: number
   ): Promise<Booking | string> => {
     return await prismaNewClient.$transaction(async (tx) => {
-      const trip = await tx.trip.findUnique({
-        where: { id: tripId },
-        include: { bookings: true, driver: true },
-      });
-      if (!trip) return 'Trip not found';
-      if (trip.status !== 'open') return 'Trip not available';
-      if (seatCount > trip.availableSeats) return 'Not enough seats available';
-      if (user.id === trip.driverId) return 'Will not booking own trip';
-
       const totalPrice = trip.price * seatCount;
-      if (user.credits < totalPrice) return 'Not enough credits';
-
-      const existingBooking = await tx.booking.findFirst({
-        where: {
-          tripId,
-          userId: user.id,
-          status: {
-            in: [BookingStatus.pending, BookingStatus.confirmed],
-          },
-        },
-      });
-
-      if (existingBooking) return 'User already booked this trip';
-
       const booking = await tx.booking.create({
         data: {
           userId: user.id,
-          tripId,
+          tripId: trip.id,
           seatCount,
           totalPrice,
           status: BookingStatus.pending,
         },
       });
-
       const updatedSeats = trip.availableSeats - seatCount;
-
       await tx.trip.update({
-        where: { id: tripId },
+        where: { id: trip.id },
         data: {
           availableSeats: updatedSeats,
           status: updatedSeats === 0 ? 'full' : 'open',
         },
       });
-
       await tx.user.update({
         where: { id: user.id },
         data: {
           credits: user.credits - totalPrice,
         },
       });
-
       return booking;
     });
   };
@@ -126,22 +99,11 @@ export class BookingService {
   };
 
   static readonly validate = async (
-    bookingId: string,
+    booking: Booking & { trip: Trip },
     driverId: string,
     action: 'accept' | 'reject'
   ) => {
     return await prismaNewClient.$transaction(async (tx) => {
-      const booking = await tx.booking.findUnique({
-        where: { id: bookingId },
-        include: { trip: true },
-      });
-
-      if (!booking) return 'Booking not found';
-      if (booking.trip.driverId !== driverId)
-        return 'Only the driver can validate this booking';
-      if (booking.status !== BookingStatus.pending)
-        return 'Booking is not pending';
-
       let bookingData = {};
       let userToCreditId = '';
 
@@ -165,7 +127,7 @@ export class BookingService {
       }
 
       await tx.booking.update({
-        where: { id: bookingId },
+        where: { id: booking.id },
         data: bookingData,
       });
       await tx.user.update({
