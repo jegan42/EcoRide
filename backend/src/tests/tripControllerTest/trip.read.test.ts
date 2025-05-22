@@ -30,16 +30,18 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/trips', () => {
-  it('GET /api/trips: 200<> should return all trips', async () => {
+  it('GET /api/trips: 200<Successfully Trip: getAll> should return all trips', async () => {
     const res = await request(app).get('/api/trips');
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
     expect(res.body.trips).toBeDefined();
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
-  it('GET /api/trips/:id: 200<> should return a trip by ID', async () => {
+  it('GET /api/trips/:id: 200<Successfully Trip: getById> should return a trip by ID', async () => {
     const res = await request(app).get(`/api/trips/${tripIds[0]}`);
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Trip: getById');
     expect(res.body.trip).toBeDefined();
     expect(res.body).toHaveProperty('trip');
     expect(res.body.trip).toHaveProperty('id', tripIds[0]);
@@ -57,17 +59,23 @@ describe('TripController: GET /api/trips', () => {
     expect(res.body.trip).toHaveProperty('status', 'open');
   });
 
-  it('GET /api/trips/:id: 400<Invalid ID> if trip not found or ID is not UUID', async () => {
+  it('GET /api/trips/:id: 400<Bad request Validator: Invalid ID> if trip not found or ID is not UUID', async () => {
     const res = await request(app).get(`/api/trips/${invalidFormatId}`);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('GET /api/trips/:id: 404<Trip not found> if trip not found or ID is not valid', async () => {
+  it('GET /api/trips/:id: 404<Not found Trip: trip not found> if trip not found or ID is not valid', async () => {
     const res = await request(app).get(`/api/trips/${invalidValueId}`);
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('message', 'Trip not found');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Trip: trip not found'
+    );
   });
 });

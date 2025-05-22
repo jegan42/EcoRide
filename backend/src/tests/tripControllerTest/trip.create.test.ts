@@ -28,7 +28,7 @@ afterAll(async () => {
 });
 
 describe('TripController: POST /api/trips', () => {
-  it('POST /api/trips: 201<> should create a new trip with valid data', async () => {
+  it('POST /api/trips: 201<Successfully created Trip: created> should create a new trip with valid data', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -43,6 +43,10 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully created Trip: created'
+    );
     expect(res.body).toHaveProperty('trip');
     expect(res.body.trip).toHaveProperty('id');
     expect(res.body.trip.id).toMatch(UUID_REGEX);
@@ -59,7 +63,7 @@ describe('TripController: POST /api/trips', () => {
     expect(res.body.trip).toHaveProperty('status', 'open');
   });
 
-  it('POST /api/trips: 400<Vehicle ID is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Vehicle ID is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -73,10 +77,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Vehicle ID is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Vehicle ID is required'
+    );
   });
 
-  it('POST /api/trips: 400<Departure city is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Departure city is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -90,10 +97,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Departure city is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Departure city is required'
+    );
   });
 
-  it('POST /api/trips: 400<Arrival city is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Arrival city is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -107,10 +117,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Arrival city is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Arrival city is required'
+    );
   });
 
-  it('POST /api/trips: 400<Departure date is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Departure date is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -124,10 +137,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Departure date is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Departure date is required'
+    );
   });
 
-  it('POST /api/trips: 400<Departure date must be a valid ISO 8601 date>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Departure date must be a valid ISO 8601 date>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -144,11 +160,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Departure date must be a valid ISO 8601 date'
+      'Bad request Validator: Departure date must be a valid ISO 8601 date'
     );
   });
 
-  it('POST /api/trips: 400<Arrival date is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Arrival date is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -162,10 +178,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Arrival date is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Arrival date is required'
+    );
   });
 
-  it('POST /api/trips: 400<Arrival date must be a valid ISO 8601 date>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Arrival date must be a valid ISO 8601 date>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -182,11 +201,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Arrival date must be a valid ISO 8601 date'
+      'Bad request Validator: Arrival date must be a valid ISO 8601 date'
     );
   });
 
-  it('POST /api/trips: 400<Available seats are required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Available seats are required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -200,10 +219,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Available seats are required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Available seats are required'
+    );
   });
 
-  it('POST /api/trips: 400<availableSeats must be an Int>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: availableSeats must be an Int>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -218,10 +240,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'availableSeats must be an Int');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: availableSeats must be an Int'
+    );
   });
 
-  it('POST /api/trips: 400<Available seats must be at least 1>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Available seats must be at least 1>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -238,11 +263,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Available seats must be at least 1'
+      'Bad request Validator: Available seats must be at least 1'
     );
   });
 
-  it('POST /api/trips: 400<Price is required>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Price is required>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -256,10 +281,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Price is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Price is required'
+    );
   });
 
-  it('POST /api/trips: 400<Price must be a positive number>', async () => {
+  it('POST /api/trips: 400<Bad request Validator: Price must be a positive number>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -276,11 +304,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Price must be a positive number'
+      'Bad request Validator: Price must be a positive number'
     );
   });
 
-  it('POST /api/trips: 400<DepartureDate must be after today>', async () => {
+  it('POST /api/trips: 400<Bad request Trip: departureDate must be after today>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -297,11 +325,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'DepartureDate must be after today'
+      'Bad request Trip: departureDate must be after today'
     );
   });
 
-  it('POST /api/trips: 400<DepartureDate must be before arrivalDate>', async () => {
+  it('POST /api/trips: 400<Bad request Trip: departureDate must be before arrivalDate>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -318,11 +346,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'DepartureDate must be before arrivalDate'
+      'Bad request Trip: departureDate must be before arrivalDate'
     );
   });
 
-  it('POST /api/trips: 400<DepartureDate and arrivalDate can start at the same date but not same time>', async () => {
+  it('POST /api/trips: 400<Bad request Trip: departureDate and arrivalDate can start at the same date but not same time>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -339,11 +367,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'DepartureDate and arrivalDate can start at the same date but not same time'
+      'Bad request Trip: departureDate and arrivalDate can start at the same date but not same time'
     );
   });
 
-  it('POST /api/trips: 400<Invalid or missing fields> if vehicleId is invalid format', async () => {
+  it('POST /api/trips: 400<Bad request Trip: invalid or missing fields> if vehicleId is invalid format', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -358,10 +386,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid or missing fields');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Trip: invalid or missing fields'
+    );
   });
 
-  it('POST /api/trips: 404<Vehicle not found> if vehicleId is invalid value', async () => {
+  it('POST /api/trips: 404<Not found Trip: vehicle not found> if vehicleId is invalid value', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -376,10 +407,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('message', 'Vehicle not found');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Trip: vehicle not found'
+    );
   });
 
-  it('POST /api/trips: 400<Available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)>', async () => {
+  it('POST /api/trips: 400<Bad request Trip: available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -396,11 +430,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
+      'Bad request Trip: available seats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
     );
   });
 
-  it('POST /api/trips: 409<A trip with the same vehicle and user already exists on this date.>', async () => {
+  it('POST /api/trips: 409<Conflict Trip: already exists a trip with the same vehicle and user on this date>', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[0])
@@ -417,11 +451,11 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(409);
     expect(res.body).toHaveProperty(
       'message',
-      'A trip with the same vehicle and user already exists on this date.'
+      'Conflict Trip: already exists a trip with the same vehicle and user on this date'
     );
   });
 
-  it('POST /api/trips: 401<Missing token> if not authenticated', async () => {
+  it('POST /api/trips: 401<Unauthorized access Athenticate: missing token> if not authenticated', async () => {
     const res = await request(app).post('/api/trips').send({
       vehicleId: vehicleIds[0],
       departureCity: 'Paris',
@@ -433,10 +467,13 @@ describe('TripController: POST /api/trips', () => {
     });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('POST /api/trips: 401<Invalid token> if JWT is invalid', async () => {
+  it('POST /api/trips: 401<Unauthorized access Athenticate: invalid token> if JWT is invalid', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', ['jwtToken=invalidtoken'])
@@ -451,10 +488,13 @@ describe('TripController: POST /api/trips', () => {
       });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('POST /api/trips: 403<Access denied: insufficient permissions> if user is not a driver', async () => {
+  it('POST /api/trips: 403<Access denied Authorize: insufficient permissions> if user is not a driver', async () => {
     const res = await request(app)
       .post('/api/trips')
       .set('Cookie', cookies[1])
@@ -471,7 +511,7 @@ describe('TripController: POST /api/trips', () => {
     expect(res.status).toBe(403);
     expect(res.body).toHaveProperty(
       'message',
-      'Access denied: insufficient permissions'
+      'Access denied Authorize: insufficient permissions'
     );
   });
 });
