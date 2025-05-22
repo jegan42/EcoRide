@@ -29,13 +29,14 @@ afterAll(async () => {
 });
 
 describe('VehicleController: PUT /api/vehicles', () => {
-  it('PUT /api/vehicles/:id: 200<> should update vehicle info', async () => {
+  it('PUT /api/vehicles/:id: 200<Successfully Vehicle: updated> should update vehicle info', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
       .send({ color: 'Blue' });
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Vehicle: updated');
     expect(res.body.vehicle).toBeDefined();
     expect(res.body.vehicle).toHaveProperty('id');
     expect(res.body.vehicle.id).toMatch(UUID_REGEX);
@@ -53,47 +54,59 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.body.vehicle).toHaveProperty('seatCount', 4);
   });
 
-  it('PUT /api/vehicles/:id: 400<Invalid vehicle ID>', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Invalid vehicle ID>', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${invalidFormatId}`)
       .set('Cookie', cookies[0])
       .send({ color: 'green' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid vehicle ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid vehicle ID'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 400<Brand must not be empty>', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Brand must not be empty>', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
       .send({ brand: '' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Brand must not be empty');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Brand must not be empty'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 400<Model must not be empty>', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Model must not be empty>', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
       .send({ model: '' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Model must not be empty');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Model must not be empty'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 400<Color must not be empty>', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Color must not be empty>', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
       .send({ color: '' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Color must not be empty');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Color must not be empty'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 400<Vehicle year must be a valid year> empty', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Vehicle year must be a valid year> empty', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -102,11 +115,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<Vehicle year must be a valid year> 1850', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Vehicle year must be a valid year> 1850', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -115,11 +128,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<Vehicle year must be a valid year> 2525', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Vehicle year must be a valid year> 2525', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -128,11 +141,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Vehicle year must be a valid year'
+      'Bad request Validator: Vehicle year must be a valid year'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<License plate must be between 3 and 20 characters> empty', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: License plate must be between 3 and 20 characters> empty', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -141,11 +154,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'License plate must be between 3 and 20 characters'
+      'Bad request Validator: License plate must be between 3 and 20 characters'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<License plate must be between 3 and 20 characters> 1 character', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: License plate must be between 3 and 20 characters> 1 character', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -154,11 +167,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'License plate must be between 3 and 20 characters'
+      'Bad request Validator: License plate must be between 3 and 20 characters'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<License plate must be between 3 and 20 characters> 21 character', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: License plate must be between 3 and 20 characters> 21 character', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -167,21 +180,24 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'License plate must be between 3 and 20 characters'
+      'Bad request Validator: License plate must be between 3 and 20 characters'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<Energy must not be empty> empty', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Energy must not be empty> empty', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
       .send({ energy: '' });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Energy must not be empty');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Energy must not be empty'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 400<Seat count must be between 1 and 10> empty', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Seat count must be between 1 and 10> empty', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -190,11 +206,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Seat count must be between 1 and 10'
+      'Bad request Validator: Seat count must be between 1 and 10'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<Seat count must be between 1 and 10> 0', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Seat count must be between 1 and 10> 0', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -203,11 +219,11 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Seat count must be between 1 and 10'
+      'Bad request Validator: Seat count must be between 1 and 10'
     );
   });
 
-  it('PUT /api/vehicles/:id: 400<Seat count must be between 1 and 10> 15', async () => {
+  it('PUT /api/vehicles/:id: 400<Bad request Validator: Seat count must be between 1 and 10> 15', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0])
@@ -216,36 +232,45 @@ describe('VehicleController: PUT /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Seat count must be between 1 and 10'
+      'Bad request Validator: Seat count must be between 1 and 10'
     );
   });
 
-  it('PUT /api/vehicles/:id: 403<Unauthorized> should not update vehicle of another user', async () => {
+  it('PUT /api/vehicles/:id: 403<Access denied Vehicle: not a driver> should not update vehicle of another user', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[1]}`)
       .set('Cookie', cookies[0])
       .send({ color: 'Green' });
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Unauthorized');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Vehicle: not a driver'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 403<Unauthorized> if Invalid vehicle ID: Unauthorized', async () => {
+  it('PUT /api/vehicles/:id: 403<Access denied Vehicle: not a driver> if Invalid vehicle ID: Unauthorized', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${invalidValueId}`)
       .set('Cookie', cookies[0])
       .send({ color: 'Green' });
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Unauthorized');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Vehicle: not a driver'
+    );
   });
 
-  it('PUT /api/vehicles/:id: 401<Missing token> if not authenticated', async () => {
+  it('PUT /api/vehicles/:id: 401<Unauthorized access Athenticate: missing token> if not authenticated', async () => {
     const res = await request(app)
       .put(`/api/vehicles/${vehicleIds[0]}`)
       .send({ color: 'Green' });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 });

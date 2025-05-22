@@ -99,7 +99,7 @@ export class VehicleController {
 
       sendJsonResponse(
         res,
-        'SUCCESS_CREATE',
+        'SUCCESS',
         'Vehicle',
         'getAll',
         'vehicles',

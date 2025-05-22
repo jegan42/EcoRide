@@ -30,54 +30,69 @@ afterAll(async () => {
 });
 
 describe('VehicleController: DELETE /api/vehicles', () => {
-  it('DELETE /api/vehicles/:id: 200<Vehicle deleted!>', async () => {
+  it('DELETE /api/vehicles/:id: 200<Successfully Vehicle: deleted>', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', cookies[0]);
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Vehicle deleted!');
+    expect(res.body).toHaveProperty('message', 'Successfully Vehicle: deleted');
   });
 
-  it('DELETE /api/vehicles/:id: 401<Missing token> if not authenticated', async () => {
+  it('DELETE /api/vehicles/:id: 401<Unauthorized access Athenticate: missing token> if not authenticated', async () => {
     const res = await request(app).delete(`/api/vehicles/${vehicleIds[0]}`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('DELETE /api/vehicles/:id: 401<Invalid token> JWT invalid', async () => {
+  it('DELETE /api/vehicles/:id: 401<Unauthorized access Athenticate: invalid token> JWT invalid', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${vehicleIds[0]}`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('DELETE /api/vehicles/:id: 403<Unauthorized> if invalidValueId Unauthorized', async () => {
+  it('DELETE /api/vehicles/:id: 403<Access denied Vehicle: not a driver> if invalidValueId Unauthorized', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Unauthorized');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Vehicle: not a driver'
+    );
   });
 
-  it('DELETE /api/vehicles/:id: 400<Invalid ID> if invalidFormatId vehicle not found', async () => {
+  it('DELETE /api/vehicles/:id: 400<Bad request Validator: Invalid ID> if invalidFormatId vehicle not found', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('DELETE /api/vehicles/:id: 403<Unauthorized> should not delete vehicle of another user', async () => {
+  it('DELETE /api/vehicles/:id: 403<Access denied Vehicle: not a driver> should not delete vehicle of another user', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${vehicleIds[1]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Unauthorized');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Vehicle: not a driver'
+    );
   });
 });
