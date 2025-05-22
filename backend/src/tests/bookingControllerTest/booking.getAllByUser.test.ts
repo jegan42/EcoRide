@@ -48,39 +48,53 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/bookings/me', () => {
-  it('GET /api/bookings/me: 200<> return BOOKINGS', async () => {
+  it('GET /api/bookings/me: 200<Successfully Booking: getAllByUser> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/me`)
       .set('Cookie', cookies[1]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully Booking: getAllByUser'
+    );
     expect(Array.isArray(res.body.bookings)).toBe(true);
     expect(res.body.bookings[0]).toHaveProperty('id', bookingsIds[0]);
     expect(res.body.bookings[0]).toHaveProperty('userId', userIds[1]);
   });
 
-  it('GET /api/bookings/me: 200<> return BOOKINGS', async () => {
+  it('GET /api/bookings/me: 200<Successfully Booking: getAllByUser> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/me`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully Booking: getAllByUser'
+    );
     expect(Array.isArray(res.body.bookings)).toBe(true);
   });
 
-  it('GET /api/bookings/me: 401<Invalid token>', async () => {
+  it('GET /api/bookings/me: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .get(`/api/bookings/me`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('GET /api/bookings/me: 401<Missing token>', async () => {
+  it('GET /api/bookings/me: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).get(`/api/bookings/me`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 });

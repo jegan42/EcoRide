@@ -65,7 +65,7 @@ app.use(passport.session());
 app.use('/api', apiRoutes);
 
 app.use(csrfErrorHandler);
-app.use(errorHandler); 
+app.use(errorHandler);
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('EcoRide backend is running 🚗');

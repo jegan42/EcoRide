@@ -49,7 +49,7 @@ afterAll(async () => {
 });
 
 describe('TripController: DELETE /api/bookings', () => {
-  it('DELETE /api/bookings: 200<Booking cancelled successfully>', async () => {
+  it('DELETE /api/bookings: 200<Successfully Booking: cancelled>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${bookingsIds[0]}`)
       .set('Cookie', cookies[1]);
@@ -57,41 +57,53 @@ describe('TripController: DELETE /api/bookings', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Booking cancelled successfully'
+      'Successfully Booking: cancelled'
     );
   });
 
-  it('DELETE /api/bookings: 401<Missing token>', async () => {
+  it('DELETE /api/bookings: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).delete(`/api/bookings/${bookingsIds[0]}`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('DELETE /api/bookings: 400<Invalid booking ID>', async () => {
+  it('DELETE /api/bookings: 400<Bad request Booking: invalid ID>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${invalidFormatId}`)
       .set('Cookie', cookies[1]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid booking ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Booking: invalid ID'
+    );
   });
 
-  it('DELETE /api/bookings: 400<Booking not found>', async () => {
+  it('DELETE /api/bookings: 404<Not found Booking: booking not found>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${invalidValueId}`)
       .set('Cookie', cookies[1]);
 
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Booking not found');
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Booking: booking not found'
+    );
   });
 
-  it('DELETE /api/bookings: 400<Booking already cancelled>', async () => {
+  it('DELETE /api/bookings: 400<Bad request Booking: already cancelled>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${bookingsIds[0]}`)
       .set('Cookie', cookies[1]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Booking already cancelled');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Booking: already cancelled'
+    );
   });
 });

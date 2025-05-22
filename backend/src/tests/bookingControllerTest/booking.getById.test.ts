@@ -44,12 +44,13 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/bookings/:id', () => {
-  it('GET /api/bookings/:id: 200<> return BOOKING', async () => {
+  it('GET /api/bookings/:id: 200<Successfully Booking: getById> return BOOKING', async () => {
     const res = await request(app)
       .get(`/api/bookings/${bookingsIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Booking: getById');
     expect(res.body.booking).toHaveProperty('id', bookingsIds[0]);
     expect(res.body.booking.id).toMatch(UUID_REGEX);
     expect(res.body.booking).toHaveProperty('userId', userIds[1]);
@@ -59,37 +60,49 @@ describe('TripController: GET /api/bookings/:id', () => {
     expect(res.body.booking).toHaveProperty('seatCount', 1);
   });
 
-  it('GET /api/bookings/:id: 401<Missing token>', async () => {
+  it('GET /api/bookings/:id: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).get(`/api/bookings/${bookingsIds[0]}`);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('GET /api/bookings/:id: 401<Invalid token>', async () => {
+  it('GET /api/bookings/:id: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .get(`/api/bookings/${bookingsIds[0]}`)
       .set('Cookie', invalidCookie);
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('GET /api/bookings/:id: 400<Invalid ID>', async () => {
+  it('GET /api/bookings/:id: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .get(`/api/bookings/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('GET /api/bookings/:id: 400<Booking not found>', async () => {
+  it('GET /api/bookings/:id: 404<Not found Booking: booking not found>', async () => {
     const res = await request(app)
       .get(`/api/bookings/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Booking not found');
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Booking: booking not found'
+    );
   });
 });
