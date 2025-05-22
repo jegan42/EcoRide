@@ -83,7 +83,7 @@ export class TripController {
         return;
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'created', 'trip', trip);
+      sendJsonResponse(res, 'SUCCESS_CREATE', 'Trip', 'created', 'trip', trip);
     } catch (error) {
       sendJsonResponse(
         res,
