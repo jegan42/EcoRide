@@ -28,7 +28,7 @@ afterAll(async () => {
 });
 
 describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
-  it('POST /api/user-preferences/:id: 201<> return a new UserPreferences', async () => {
+  it('POST /api/user-preferences/:id: 201<Successfully created UserPreferences: created> return a new UserPreferences', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -40,6 +40,10 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Successfully created UserPreferences: created'
+    );
     expect(res.body.userPreferences).toBeDefined();
     expect(res.body.userPreferences).toHaveProperty('id');
     expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
@@ -51,7 +55,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
   });
 
-  it('POST /api/user-preferences/:id: 400<acceptsSmoker is required>', async () => {
+  it('POST /api/user-preferences/:id: 400<Bad request Validator: acceptsSmoker is required>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -62,10 +66,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'acceptsSmoker is required');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: acceptsSmoker is required'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 400<Must be true or false>', async () => {
+  it('POST /api/user-preferences/:id: 400<Bad request Validator: Must be true or false>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -77,10 +84,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Must be true or false');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Must be true or false'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 401<Missing token>', async () => {
+  it('POST /api/user-preferences/:id: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .send({
@@ -91,10 +101,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Missing token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: missing token'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 401<Invalid token>', async () => {
+  it('POST /api/user-preferences/:id: 401<Unauthorized access Athenticate: invalid token>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', invalidCookie)
@@ -106,10 +119,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(401);
-    expect(res.body).toHaveProperty('message', 'Invalid token');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Unauthorized access Athenticate: invalid token'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 400<Invalid ID>', async () => {
+  it('POST /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0])
@@ -121,10 +137,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: Invalid ID'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 403<Forbidden>', async () => {
+  it('POST /api/user-preferences/:id: 403<Access denied Owner: not the owner>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${invalidValueId}`)
       .set('Cookie', cookies[0])
@@ -136,10 +155,13 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
       });
 
     expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty('message', 'Forbidden');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Owner: not the owner'
+    );
   });
 
-  it('POST /api/user-preferences/:id: 409<UserPreferences already exists>', async () => {
+  it('POST /api/user-preferences/:id: 409<Conflict UserPreferences: already created userPreferences>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -153,7 +175,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     expect(res.status).toBe(409);
     expect(res.body).toHaveProperty(
       'message',
-      'UserPreferences already exists'
+      'Conflict UserPreferences: already created userPreferences'
     );
   });
 });
