@@ -2,12 +2,13 @@
 import { Request, Response } from 'express';
 import { User } from '../../generated/prisma';
 import { isId } from './validation';
+import { sendJsonResponse } from './response';
 
 export const requireUser = (req: Request, res: Response): User | null => {
   const user = (req.user as User) ?? null;
 
   if (!user) {
-    res.status(401).json({ message: 'Unauthorized' });
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Request', 'User not connected');
     return null;
   }
 
@@ -23,12 +24,12 @@ export const assertOwnership = (
   if (!user) return null;
 
   if (!isId(ownerId)) {
-    res.status(400).json({ message: 'Invalid ID' });
+    sendJsonResponse(res, 'BAD_REQUEST', 'Owner', 'Invalid ID');
     return null;
   }
 
   if (user.id !== ownerId) {
-    res.status(403).json({ message: 'Forbidden' });
+    sendJsonResponse(res, 'FORBIDDEN', 'Owner', 'Not the owner');
     return null;
   }
 

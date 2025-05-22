@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 
 import apiRoutes from './routes/api.routes';
 import { csrfErrorHandler } from './middleware/csrf.middleware';
+import { sendJsonResponse } from './utils/response';
 
 dotenv.config();
 
@@ -68,8 +69,16 @@ app.get('/', (_req: Request, res: Response) => {
   res.send('EcoRide backend is running 🚗');
 });
 
-app.use((_err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ message: 'Internal Server Error' });
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  sendJsonResponse(
+    res,
+    'ERROR',
+    'APP',
+    'Server Error',
+    undefined,
+    undefined,
+    err
+  );
 });
 
 export default app;

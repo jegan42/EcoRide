@@ -1,6 +1,7 @@
 // backend/src/middleware/authorize.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../../generated/prisma';
+import { sendJsonResponse } from '../utils/response';
 
 export const authorize =
   (
@@ -10,7 +11,7 @@ export const authorize =
     const user = req.user as User;
 
     if (!user || !Array.isArray(user.role)) {
-      res.status(403).json({ message: 'Access denied: no roles found' });
+      sendJsonResponse(res, 'FORBIDDEN', 'Authorize', 'No roles found');
       return;
     }
 
@@ -19,9 +20,12 @@ export const authorize =
     );
 
     if (!hasRole) {
-      res
-        .status(403)
-        .json({ message: 'Access denied: insufficient permissions' });
+      sendJsonResponse(
+        res,
+        'FORBIDDEN',
+        'Authorize',
+        'Insufficient permissions'
+      );
       return;
     }
 

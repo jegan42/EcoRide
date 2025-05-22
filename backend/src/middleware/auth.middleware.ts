@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service';
 import prismaNewClient from '../lib/prisma';
+import { sendJsonResponse } from '../utils/response';
 
 export const authenticate = async (
   req: Request,
@@ -14,13 +15,13 @@ export const authenticate = async (
     req.cookies.jwtToken ??
     (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
   if (!jwtToken) {
-    res.status(401).json({ message: 'Missing token' });
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'Missing token');
     return;
   }
 
   const decoded = AuthService.verifyToken(jwtToken);
   if (!decoded?.userId) {
-    res.status(401).json({ message: 'Invalid token' });
+    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'Invalid token');
     return;
   }
 
@@ -31,17 +32,23 @@ export const authenticate = async (
       },
     });
     if (!user) {
-      res.status(401).json({ message: 'User not found' });
+      sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'User not found');
       return;
     }
 
     req.user = user;
 
     next();
-  } catch {
-    res.status(500).json({
-      message: 'Server error during authentication',
-    });
+  } catch (error) {
+    sendJsonResponse(
+      res,
+      'ERROR',
+      'Athenticate',
+      'Server error',
+      undefined,
+      undefined,
+      error
+    );
     return;
   }
 };
