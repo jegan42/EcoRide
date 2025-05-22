@@ -12,10 +12,10 @@ export class BookingController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    try {
-      const user = requireUser(req, res);
-      if (!user) return;
+    const user = requireUser(req, res);
+    if (!user) return;
 
+    try {
       if (!(await BookingService.isValidCreateInput(req.body))) {
         sendJsonResponse(
           res,
@@ -86,6 +86,11 @@ export class BookingController {
 
       const booking = await BookingService.create(user, trip, seatCount);
 
+      if (!booking) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
+
       sendJsonResponse(
         res,
         'SUCCESS_CREATE',
@@ -112,98 +117,162 @@ export class BookingController {
     if (!user) return;
 
     const bookingId = req.params.id;
-
     if (!isId(bookingId)) {
       sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Invalid booking ID');
       return;
     }
 
-    const booking = await prismaNewClient.booking.findUnique({
-      where: { id: bookingId },
-      include: { trip: true },
-    });
+    try {
+      const booking = await prismaNewClient.booking.findUnique({
+        where: { id: bookingId },
+        include: { trip: true },
+      });
 
-    if (!booking) {
-      sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
-      return;
-    }
+      if (!booking) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
 
-    const isUserPassenger = booking.userId === user.id;
-    const isUserDriver = booking.trip.driverId === user.id;
+      const isUserPassenger = booking.userId === user.id;
+      const isUserDriver = booking.trip.driverId === user.id;
 
-    if (!isUserPassenger && !isUserDriver) {
+      if (!isUserPassenger && !isUserDriver) {
+        sendJsonResponse(
+          res,
+          'BAD_REQUEST',
+          'Booking',
+          'Not a passenger or not a driver'
+        );
+        return;
+      }
+
+      if (booking.status === BookingStatus.cancelled) {
+        sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Already cancelled');
+        return;
+      }
+
+      const existingTrip = await prismaNewClient.trip.findUnique({
+        where: { id: booking.tripId },
+      });
+      if (!existingTrip) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Trip does not exist');
+        return;
+      }
+
+      const resultMsg = await BookingService.cancel(
+        existingTrip,
+        booking,
+        bookingId,
+        user.id
+      );
+      sendJsonResponse(res, 'SUCCESS', 'Booking', resultMsg);
+    } catch (error) {
       sendJsonResponse(
         res,
-        'BAD_REQUEST',
+        'ERROR',
         'Booking',
-        'Not a passenger or not a driver'
+        'Failed to cancel',
+        undefined,
+        undefined,
+        error
       );
-      return;
     }
-
-    if (booking.status === BookingStatus.cancelled) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'Already cancelled');
-      return;
-    }
-
-    const existingTrip = await prismaNewClient.trip.findUnique({
-      where: { id: booking.tripId },
-    });
-    if (!existingTrip) {
-      sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Trip does not exist');
-      return;
-    }
-
-    const resultMsg = await BookingService.cancel(
-      existingTrip,
-      booking,
-      bookingId,
-      user.id
-    );
-    sendJsonResponse(res, 'SUCCESS', 'Booking', resultMsg);
   };
 
   static readonly getAllByUser = async (req: Request, res: Response) => {
     const user = requireUser(req, res);
     if (!user) return;
 
-    const bookings = await BookingService.getAllByUserId(user.id);
-    sendJsonResponse(
-      res,
-      'SUCCESS',
-      'Booking',
-      'getAllByUser',
-      'bookings',
-      bookings
-    );
+    try {
+      const bookings = await BookingService.getAllByUserId(user.id);
+
+      if (!bookings) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
+
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Booking',
+        'getAllByUser',
+        'bookings',
+        bookings
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Booking',
+        'Failed to getAllByUser',
+        undefined,
+        undefined,
+        error
+      );
+    }
   };
 
   static readonly getAllByDriver = async (req: Request, res: Response) => {
     const user = requireUser(req, res);
     if (!user) return;
 
-    const bookings = await BookingService.getAllByDriverId(user.id);
-    sendJsonResponse(
-      res,
-      'SUCCESS',
-      'Booking',
-      'getAllByDriver',
-      'bookings',
-      bookings
-    );
+    try {
+      const bookings = await BookingService.getAllByDriverId(user.id);
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Booking',
+        'getAllByDriver',
+        'bookings',
+        bookings
+      );
+
+      if (!bookings) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Booking',
+        'Failed to getAllByDriver',
+        undefined,
+        undefined,
+        error
+      );
+    }
   };
 
   static readonly getAllByTrip = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const bookings = await BookingService.getAllByTripId(id);
-    sendJsonResponse(
-      res,
-      'SUCCESS',
-      'Booking',
-      'getAllByTrip',
-      'bookings',
-      bookings
-    );
+
+    try {
+      const bookings = await BookingService.getAllByTripId(id);
+
+      if (!bookings) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
+      sendJsonResponse(
+        res,
+        'SUCCESS',
+        'Booking',
+        'getAllByTrip',
+        'bookings',
+        bookings
+      );
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Booking',
+        'Failed to getAllByTrip',
+        undefined,
+        undefined,
+        error
+      );
+    }
   };
 
   static readonly validate = async (
@@ -271,7 +340,7 @@ export class BookingController {
         res,
         'ERROR',
         'Booking',
-        'On validate or cancel booking',
+        'Failed to validate',
         undefined,
         undefined,
         error
@@ -289,28 +358,47 @@ export class BookingController {
       return;
     }
 
-    const booking = await prismaNewClient.booking.findUnique({
-      where: { id },
-      include: { trip: true },
-    });
+    try {
+      const booking = await prismaNewClient.booking.findUnique({
+        where: { id },
+        include: { trip: true },
+      });
 
-    if (!booking) {
-      sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
-      return;
-    }
+      if (!booking) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'Booking not found');
+        return;
+      }
 
-    const isUserPassenger = booking.userId === user.id;
-    const isUserDriver = booking.trip.driverId === user.id;
+      const isUserPassenger = booking.userId === user.id;
+      const isUserDriver = booking.trip.driverId === user.id;
 
-    if (!isUserPassenger && !isUserDriver) {
+      if (!isUserPassenger && !isUserDriver) {
+        sendJsonResponse(
+          res,
+          'BAD_REQUEST',
+          'Booking',
+          'Not a passenger or not a driver'
+        );
+        return;
+      }
       sendJsonResponse(
         res,
-        'BAD_REQUEST',
+        'SUCCESS',
         'Booking',
-        'Not a passenger or not a driver'
+        'getById',
+        'booking',
+        booking
       );
-      return;
+    } catch (error) {
+      sendJsonResponse(
+        res,
+        'ERROR',
+        'Booking',
+        'Failed to getById',
+        undefined,
+        undefined,
+        error
+      );
     }
-    sendJsonResponse(res, 'SUCCESS', 'Booking', 'getById', 'booking', booking);
   };
 }
