@@ -1,7 +1,7 @@
 // backend/src/tests/tripControllerTest/trip.create.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   createUserAndSignIn,
   testEmails,
@@ -11,8 +11,8 @@ import {
   resetDB,
   invalidFormatId,
   invalidValueId,
-} from '../test.utils';
-import { UUID_REGEX } from '../../utils/validation';
+} from '../../test.utils';
+import { UUID_REGEX } from '../../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();

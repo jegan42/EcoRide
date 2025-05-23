@@ -1,7 +1,7 @@
 // backend/src/tests/userPreferencesControllerTest/userPreferences.getUserById.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   cookies,
   createUserAndSignIn,
@@ -12,8 +12,8 @@ import {
   resetDB,
   testEmails,
   userIds,
-} from '../test.utils';
-import { UUID_REGEX } from '../../utils/validation';
+} from '../../test.utils';
+import { UUID_REGEX } from '../../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();

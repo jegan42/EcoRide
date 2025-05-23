@@ -1,7 +1,7 @@
 // backend/src/tests/tripControllerTest/trip.read.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   resetDB,
   createUserAndSignIn,
@@ -13,8 +13,8 @@ import {
   vehicleIds,
   invalidFormatId,
   invalidValueId,
-} from '../test.utils';
-import { UUID_REGEX } from '../../utils/validation';
+} from '../../test.utils';
+import { UUID_REGEX } from '../../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();

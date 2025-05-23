@@ -1,7 +1,7 @@
 // backend/src/tests/vehicleControllerTest/vehicle.delete.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   cookies,
   createUserAndSignIn,
@@ -12,7 +12,7 @@ import {
   resetDB,
   testEmails,
   vehicleIds,
-} from '../test.utils';
+} from '../../test.utils';
 
 beforeAll(async () => {
   await resetDB();

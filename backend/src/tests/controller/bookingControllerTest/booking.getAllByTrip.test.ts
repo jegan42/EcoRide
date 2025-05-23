@@ -1,7 +1,7 @@
 // backend/src/tests/bookingControllerTest/booking.getAllByTrip.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   resetDB,
   cookies,
@@ -17,7 +17,7 @@ import {
   invalidCookie,
   invalidFormatId,
   invalidValueId,
-} from '../test.utils';
+} from '../../test.utils';
 
 beforeAll(async () => {
   await resetDB();

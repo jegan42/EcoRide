@@ -3,9 +3,5 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.ts'],
   collectCoverage: true,
-  coveragePathIgnorePatterns: [
-    '/node_modules/',
-    '/generated/',
-    '/coverage/',
-  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/generated/', '/coverage/'],
 };

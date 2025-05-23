@@ -57,7 +57,6 @@ describe('setSessionToken', () => {
   });
 });
 
-
 describe('AuthService', () => {
   describe('hashPassword & verifyPassword', () => {
     it('should hash and verify password correctly', async () => {

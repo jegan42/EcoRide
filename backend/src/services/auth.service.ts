@@ -79,11 +79,17 @@ export class AuthService {
     email: string,
     username: string
   ): Promise<string | null> {
-    if (email && (await prismaNewClient.user.findUnique({ where: { email } }))) {
+    if (
+      email &&
+      (await prismaNewClient.user.findUnique({ where: { email } }))
+    ) {
       return 'already used email';
     }
 
-    if (username && await prismaNewClient.user.findUnique({ where: { username } })) {
+    if (
+      username &&
+      (await prismaNewClient.user.findUnique({ where: { username } }))
+    ) {
       return 'already used username';
     }
 

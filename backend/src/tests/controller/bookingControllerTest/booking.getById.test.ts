@@ -1,7 +1,7 @@
 // backend/src/tests/bookingControllerTest/booking.getById.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   resetDB,
   cookies,
@@ -17,8 +17,8 @@ import {
   bookingsIds,
   createBookingAndGetId,
   invalidCookie,
-} from '../test.utils';
-import { UUID_REGEX } from '../../utils/validation';
+} from '../../test.utils';
+import { UUID_REGEX } from '../../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();

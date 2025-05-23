@@ -1,7 +1,7 @@
 // backend/src/tests/tripControllerTest/trip.read.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   createUserAndSignIn,
   testEmails,
@@ -13,7 +13,7 @@ import {
   vehicleIds,
   invalidFormatId,
   invalidValueId,
-} from '../test.utils';
+} from '../../test.utils';
 
 beforeAll(async () => {
   await resetDB();

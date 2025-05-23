@@ -32,7 +32,12 @@ export const authenticate = async (
       },
     });
     if (!user) {
-      sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'user not connected');
+      sendJsonResponse(
+        res,
+        'UNAUTHORIZED',
+        'Athenticate',
+        'user not connected'
+      );
       return;
     }
 

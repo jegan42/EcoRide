@@ -1,7 +1,7 @@
 // backend/src/tests/authControllerTest/auth.update.test.ts
 import request from 'supertest';
-import app from '../../app';
-import prismaNewClient from '../../lib/prisma';
+import app from '../../../app';
+import prismaNewClient from '../../../lib/prisma';
 import {
   adminMail,
   cookies,
@@ -14,8 +14,8 @@ import {
   testEmails,
   unikUserName,
   userIds,
-} from '../test.utils';
-import { UUID_REGEX } from '../../utils/validation';
+} from '../../test.utils';
+import { UUID_REGEX } from '../../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();
