@@ -95,7 +95,7 @@ describe('VehicleController: POST /api/vehicles', () => {
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Brand is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: brand is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -111,11 +111,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Brand is required'
+      'Bad request Validator: brand is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Model is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: model is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -131,11 +131,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Model is required'
+      'Bad request Validator: model is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Color is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: color is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -151,11 +151,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Color is required'
+      'Bad request Validator: color is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: vehicleYear is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -171,11 +171,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Vehicle year is required'
+      'Bad request Validator: vehicleYear is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year>', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: vehicleYear must be a valid year>', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -192,11 +192,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Vehicle year must be a valid year'
+      'Bad request Validator: vehicleYear must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year> 1850', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: vehicleYear must be a valid year> 1850', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -213,11 +213,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Vehicle year must be a valid year'
+      'Bad request Validator: vehicleYear must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Vehicle year must be a valid year> 2525', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: vehicleYear must be a valid year> 2525', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -234,11 +234,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Vehicle year must be a valid year'
+      'Bad request Validator: vehicleYear must be a valid year'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: License plate is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: licensePlate is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -254,11 +254,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: License plate is required'
+      'Bad request Validator: licensePlate is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: License plate must be between 3 and 20 characters> 1 character', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: licensePlate must be between 3 and 20 characters> 1 character', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -275,11 +275,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: License plate must be between 3 and 20 characters'
+      'Bad request Validator: licensePlate must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: License plate must be between 3 and 20 characters> 21 character', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: licensePlate must be between 3 and 20 characters> 21 character', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -296,11 +296,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: License plate must be between 3 and 20 characters'
+      'Bad request Validator: licensePlate must be between 3 and 20 characters'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Energy is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: energy is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -316,11 +316,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Energy is required'
+      'Bad request Validator: energy is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Seat count is required> missing fields', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: seatCount is required> missing fields', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -336,11 +336,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count is required'
+      'Bad request Validator: seatCount is required'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Seat count must be between 1 and 10> 0', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: seatCount must be between 1 and 10> 0', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -357,11 +357,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count must be between 1 and 10'
+      'Bad request Validator: seatCount must be between 1 and 10'
     );
   });
 
-  it('POST /api/vehicles: 400<Bad request Validator: Seat count must be between 1 and 10> 15', async () => {
+  it('POST /api/vehicles: 400<Bad request Validator: seatCount must be between 1 and 10> 15', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -378,11 +378,11 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count must be between 1 and 10'
+      'Bad request Validator: seatCount must be between 1 and 10'
     );
   });
 
-  it('POST /api/vehicles: 409<Conflict Vehicle: already used this license plate>', async () => {
+  it('POST /api/vehicles: 409<Conflict Vehicle: already used this licensePlate>', async () => {
     const res = await request(app)
       .post('/api/vehicles')
       .set('Cookie', cookies[0])
@@ -399,7 +399,31 @@ describe('VehicleController: POST /api/vehicles', () => {
     expect(res.status).toBe(409);
     expect(res.body).toHaveProperty(
       'message',
-      'Conflict Vehicle: already used this license plate'
+      'Conflict Vehicle: already used this licensePlate'
+    );
+  });
+
+  it('POST /api/vehicles: 500<Internal error Auth: failed to create>', async () => {
+    jest
+      .spyOn(prismaNewClient.vehicle, 'create')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .post('/api/vehicles')
+      .set('Cookie', cookies[0])
+      .send({
+        brand: 'Tesla',
+        model: 'Model S',
+        color: 'Red',
+        vehicleYear: 2022,
+        licensePlate: 'TESLA123ghhj',
+        energy: 'electric',
+        seatCount: 5,
+      });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Vehicle: failed to create'
     );
   });
 });

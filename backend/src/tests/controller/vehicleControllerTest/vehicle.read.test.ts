@@ -75,4 +75,40 @@ describe('VehicleController: GET /api/vehicles', () => {
       'Not found Vehicle: vehicle not found'
     );
   });
+
+  it('GET /api/vehicles: 404<Not found Vehicle: vehicle not found>', async () => {
+    await prismaNewClient.vehicle.deleteMany();
+    const res = await request(app).get('/api/vehicles');
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Vehicle: vehicle not found'
+    );
+  });
+
+  it('GET /api/vehicles: 500<Internal error Auth: failed to getAll>', async () => {
+    jest
+      .spyOn(prismaNewClient.vehicle, 'findMany')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app).get('/api/vehicles');
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Vehicle: failed to getAll'
+    );
+  });
+
+  it('GET /api/vehicles/:id: 500<Internal error Auth: failed to getById>', async () => {
+    jest
+      .spyOn(prismaNewClient.vehicle, 'findUnique')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app).get(`/api/vehicles/${vehicleIds[0]}`);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Vehicle: failed to getById'
+    );
+  });
 });

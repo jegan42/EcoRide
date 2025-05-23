@@ -2,43 +2,36 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { VehicleService } from '../services/vehicle.service';
-import { isId } from '../utils/validation';
-import { requireUser } from '../utils/request';
 import { sendJsonResponse } from '../utils/response';
+import { User } from '../../generated/prisma';
 
 export class VehicleController {
   static readonly create = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    if (!VehicleService.isCreateInputValid(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'missing fields');
-      return;
-    }
-
-    const {
-      brand,
-      model,
-      color,
-      vehicleYear,
-      licensePlate,
-      energy,
-      seatCount,
-    } = req.body;
-
     try {
+      const {
+        brand,
+        model,
+        color,
+        vehicleYear,
+        licensePlate,
+        energy,
+        seatCount,
+      } = req.body;
+
       if (await VehicleService.isVehicleExistsWithLicensePlate(licensePlate)) {
         sendJsonResponse(
           res,
           'CONFLICT',
           'Vehicle',
-          'already used this license plate'
+          'already used this licensePlate'
         );
         return;
       }
 
-      const user = requireUser(req, res);
-      if (!user) return;
+      const user = req.user as User;
 
       const vehicle = await prismaNewClient.vehicle.create({
         data: {
@@ -53,17 +46,13 @@ export class VehicleController {
         },
       });
 
-      if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
-        return;
-      }
-
       await prismaNewClient.user.update({
         where: { id: user.id },
         data: {
           role: Array.from(new Set([...user.role, 'driver'])),
         },
       });
+
       sendJsonResponse(
         res,
         'SUCCESS_CREATE',
@@ -92,7 +81,7 @@ export class VehicleController {
     try {
       const vehicles = await prismaNewClient.vehicle.findMany();
 
-      if (!vehicles) {
+      if (vehicles?.length === 0) {
         sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
         return;
       }
@@ -122,14 +111,9 @@ export class VehicleController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
-      return;
-    }
-
     try {
+      const { id } = req.params;
+
       const vehicle = await prismaNewClient.vehicle.findUnique({
         where: { id },
       });
@@ -151,7 +135,7 @@ export class VehicleController {
         res,
         'ERROR',
         'Vehicle',
-        'Failed to getById',
+        'failed to getById',
         undefined,
         undefined,
         error
@@ -163,40 +147,28 @@ export class VehicleController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-
-    if (!VehicleService.isUpdateInputValid(req.body)) {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'Vehicle',
-        'invalid or missing fields'
-      );
-      return;
-    }
-
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
-      return;
-    }
-
-    const user = requireUser(req, res);
-    if (!user) return;
-
     try {
-      if (!(await VehicleService.isAuthorized(user, id))) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not a driver');
-        return;
-      }
+      const { id } = req.params;
 
-      const vehicle = await prismaNewClient.vehicle.update({
+      const vehicle = await prismaNewClient.vehicle.findUnique({
         where: { id },
-        data: req.body,
       });
       if (!vehicle) {
         sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
         return;
       }
+
+      const user = req.user as User;
+
+      if (!(await VehicleService.isAuthorized(user, id))) {
+        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not the driver');
+        return;
+      }
+
+      const updateVehicle = await prismaNewClient.vehicle.update({
+        where: { id },
+        data: req.body,
+      });
 
       sendJsonResponse(
         res,
@@ -204,14 +176,14 @@ export class VehicleController {
         'Vehicle',
         'updated',
         'vehicle',
-        vehicle
+        updateVehicle
       );
     } catch (error) {
       sendJsonResponse(
         res,
         'ERROR',
         'Vehicle',
-        'Failed to update',
+        'failed to update',
         undefined,
         undefined,
         error
@@ -223,24 +195,21 @@ export class VehicleController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-
-    const user = requireUser(req, res);
-    if (!user) return;
-
-    if (!id) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'missing fields');
-      return;
-    }
-
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Vehicle', 'invalid ID');
-      return;
-    }
-
     try {
+      const { id } = req.params;
+
+      const vehicle = await prismaNewClient.vehicle.findUnique({
+        where: { id },
+      });
+      if (!vehicle) {
+        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        return;
+      }
+
+      const user = req.user as User;
+
       if (!(await VehicleService.isAuthorized(user, id))) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not a driver');
+        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not the driver');
         return;
       }
 
@@ -251,12 +220,11 @@ export class VehicleController {
         res,
         'ERROR',
         'Vehicle',
-        'Failed to delete',
+        'failed to delete',
         undefined,
         undefined,
         error
       );
-      return;
     }
   };
 }

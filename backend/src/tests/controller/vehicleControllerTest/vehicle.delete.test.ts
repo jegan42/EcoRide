@@ -60,19 +60,7 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     );
   });
 
-  it('DELETE /api/vehicles/:id: 403<Access denied Vehicle: not a driver> if invalidValueId Unauthorized', async () => {
-    const res = await request(app)
-      .delete(`/api/vehicles/${invalidValueId}`)
-      .set('Cookie', cookies[0]);
-
-    expect(res.status).toBe(403);
-    expect(res.body).toHaveProperty(
-      'message',
-      'Access denied Vehicle: not a driver'
-    );
-  });
-
-  it('DELETE /api/vehicles/:id: 400<Bad request Validator: Invalid ID> if invalidFormatId vehicle not found', async () => {
+  it('DELETE /api/vehicles/:id: 400<Bad request Validator: Invalid ID>  invalidFormatId ', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
@@ -84,7 +72,7 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     );
   });
 
-  it('DELETE /api/vehicles/:id: 403<Access denied Vehicle: not a driver> should not delete vehicle of another user', async () => {
+  it('DELETE /api/vehicles/:id: 403<Access denied Vehicle: not the driver> should not delete vehicle of another user', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${vehicleIds[1]}`)
       .set('Cookie', cookies[0]);
@@ -92,7 +80,34 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     expect(res.status).toBe(403);
     expect(res.body).toHaveProperty(
       'message',
-      'Access denied Vehicle: not a driver'
+      'Access denied Vehicle: not the driver'
+    );
+  });
+
+  it('DELETE /api/vehicles/:id: 404<Not found Vehicle: vehicle not found> if Invalid vehicle ID', async () => {
+    const res = await request(app)
+      .delete(`/api/vehicles/${invalidValueId}`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Vehicle: vehicle not found'
+    );
+  });
+
+  it('DELETE /api/vehicles/:id: 500<Internal error Auth: failed to delete>', async () => {
+    jest
+      .spyOn(prismaNewClient.vehicle, 'delete')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .delete(`/api/vehicles/${vehicleIds[1]}`)
+      .set('Cookie', cookies[1]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Vehicle: failed to delete'
     );
   });
 });

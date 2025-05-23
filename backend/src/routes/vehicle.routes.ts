@@ -37,7 +37,6 @@ router.put(
   authorize(['driver']),
   csrfProtection,
   updateVehicleValidator,
-  uuidParamValidator,
   handleValidationErrors,
   VehicleController.update
 );
