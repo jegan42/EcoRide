@@ -19,14 +19,21 @@ beforeAll(async () => {
   await resetDB();
 
   cookies[0] = (await createUserAndSignIn(testEmails[0])).headers['set-cookie'];
+  vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
+  tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
   cookies[1] = (await createUserAndSignIn(testEmails[1])).headers['set-cookie'];
   await prismaNewClient.user.update({
     where: { email: testEmails[1] },
     data: { role: { push: 'driver' } },
   });
+  vehicleIds[1] = await createVehicleAndGetId(testEmails[1], cookies[1], '1');
 
-  vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
-  tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
+  tripIds[1] = await createTripAndGetId(
+    vehicleIds[1],
+    cookies[1],
+    '2125-11-05T08:00:00Z',
+    '2125-11-05T10:00:00Z'
+  );
 });
 
 afterAll(async () => {
@@ -53,7 +60,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body.trip).toHaveProperty('arrivalCity', 'Brussels');
   });
 
-  it('PUT /api/trips/:id: 400<Bad request Validator: Invalid ID> trip ID is invalid format', async () => {
+  it('PUT /api/trips/:id: 400<Bad request Validator: invalid ID> trip ID is invalid format', async () => {
     const res = await request(app)
       .put(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0])
@@ -64,7 +71,7 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 
@@ -126,6 +133,30 @@ describe('TripController: PUT /api/trips/:id', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Access denied Authorize: insufficient permissions'
+    );
+  });
+
+  it('PUT /api/trips/:id: 500<Internal error Trip: failed to update>', async () => {
+    jest
+      .spyOn(prismaNewClient.trip, 'update')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .put(`/api/trips/${tripIds[1]}`)
+      .set('Cookie', cookies[1])
+      .send({
+        price: 22,
+        availableSeats: 2,
+        arrivalCity: 'Nice',
+      });
+
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Trip: failed to update'
+    );
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Trip: failed to update'
     );
   });
 });

@@ -32,6 +32,7 @@ afterAll(async () => {
 describe('TripController: GET /api/trips', () => {
   it('GET /api/trips: 200<Successfully Trip: getAll> should return all trips', async () => {
     const res = await request(app).get('/api/trips');
+
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
     expect(res.body.trips).toBeDefined();
@@ -76,6 +77,32 @@ describe('TripController: GET /api/trips', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Not found Trip: trip not found'
+    );
+  });
+
+  it('GET /api/trips: 500<Internal error Trip: failed to getAll>', async () => {
+    jest
+      .spyOn(prismaNewClient.trip, 'findMany')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app).get('/api/trips');
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Trip: failed to getAll'
+    );
+  });
+
+  it('GET /api/trips/:id: 500<Internal error Trip: failed to getById>', async () => {
+    jest
+      .spyOn(prismaNewClient.trip, 'findUnique')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app).get(`/api/trips/${tripIds[0]}`);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Trip: failed to getById'
     );
   });
 });

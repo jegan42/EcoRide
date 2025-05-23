@@ -2,7 +2,6 @@
 import prismaNewClient from '../lib/prisma';
 import { Trip, Prisma } from '../../generated/prisma';
 import { ParsedQs } from 'qs';
-import { UUID_REGEX } from '../utils/validation';
 
 type QueryValue =
   | (string | boolean)
@@ -11,63 +10,6 @@ type QueryValue =
   | undefined;
 
 export class TripService {
-  static isValidCreateInput(data: Partial<Trip>): boolean {
-    if (
-      !data.vehicleId ||
-      !data.departureCity ||
-      !data.arrivalCity ||
-      !data.departureDate ||
-      !data.arrivalDate ||
-      !data.availableSeats ||
-      !data.price
-    )
-      return false;
-
-    if (!UUID_REGEX.exec(data.vehicleId)) return false;
-
-    if (
-      typeof data.availableSeats !== 'number' ||
-      data.availableSeats <= 0 ||
-      typeof data.price !== 'number' ||
-      data.price <= 0
-    )
-      return false;
-
-    return true;
-  }
-
-  static isValidSearchInput(data: Partial<ParsedQs>): boolean {
-    const { from, to, date, flexible } = data;
-
-    const allEmpty = [from, to, date, flexible].every((v) => v === undefined);
-    if (allEmpty) return true;
-
-    if (
-      (from !== undefined && typeof from !== 'string') ||
-      (to !== undefined && typeof to !== 'string') ||
-      (date !== undefined && typeof date !== 'string') ||
-      (flexible !== undefined && typeof flexible !== 'string')
-    ) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static isValidUpdateInput(data: Partial<Trip>): boolean {
-    return Boolean(
-      data.vehicleId ||
-        data.departureCity ||
-        data.arrivalCity ||
-        data.departureDate ||
-        data.arrivalDate ||
-        (data.availableSeats &&
-          typeof data.availableSeats === 'number' &&
-          data.availableSeats > 0) ||
-        (data.price && typeof data.price === 'number' && data.price > 0)
-    );
-  }
-
   static async getMaxPassengerSeats(vehicleId: string): Promise<number | null> {
     const availableSeats = (
       await prismaNewClient.vehicle.findUnique({
@@ -123,24 +65,28 @@ export class TripService {
   }
 
   static buildWhereClause(
-    from: QueryValue,
-    to: QueryValue,
-    date: QueryValue,
-    flexible: QueryValue
+    data: Partial<Trip> & { flexible: boolean }
   ): Prisma.TripWhereInput {
     const departureCity =
-      from !== undefined && typeof from === 'string' ? from : undefined;
+      data.departureCity !== undefined && typeof data.departureCity === 'string'
+        ? data.departureCity
+        : undefined;
 
     const arrivalCity =
-      to !== undefined && typeof to === 'string' ? to : undefined;
+      data.arrivalCity !== undefined && typeof data.arrivalCity === 'string'
+        ? data.arrivalCity
+        : undefined;
 
     let departureDate: Prisma.DateTimeFilter | undefined;
 
-    if (date !== undefined && typeof date === 'string') {
-      if (flexible === 'true') {
-        departureDate = this.getFlexibleDateRange(date);
+    if (
+      data.departureDate !== undefined &&
+      typeof data.departureDate === 'string'
+    ) {
+      if (data.flexible === true) {
+        departureDate = this.getFlexibleDateRange(data.departureDate);
       } else {
-        const targetDate = new Date(date);
+        const targetDate = new Date(data.departureDate);
         departureDate = {
           gte: new Date(targetDate.setHours(0, 0, 0, 0)),
           lt: new Date(targetDate.setHours(23, 59, 59, 999)),
@@ -161,7 +107,7 @@ export class TripService {
     date: QueryValue,
     flexible: QueryValue
   ): Promise<Trip[] | null> {
-    if (date !== undefined && typeof date === 'string' && flexible !== 'true') {
+    if (date !== undefined && typeof date === 'string' && flexible !== true) {
       const flexibleRange = this.getFlexibleDateRange(date);
       const whereClause: Prisma.TripWhereInput = {
         ...baseWhereClause,

@@ -102,4 +102,19 @@ describe('TripController: DELETE /api/trips/:id', () => {
       'Access denied Trip: not a driver'
     );
   });
+
+  it('DELETE /api/trips/:id: 500<Internal error Trip: failed to delete>', async () => {
+    jest
+      .spyOn(prismaNewClient.trip, 'delete')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .delete(`/api/trips/${tripIds[1]}`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Trip: failed to delete'
+    );
+  });
 });

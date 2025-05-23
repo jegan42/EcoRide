@@ -28,7 +28,10 @@ afterAll(async () => {
 
 describe('TripController: GET /api/trips (search)', () => {
   it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips matching from/to params', async () => {
-    const res = await request(app).get('/api/trips?from=Paris&to=Lyon');
+    const res = await request(app).get('/api/trips').send({
+      departureCity: 'Paris',
+      arrivalCity: 'Lyon',
+    });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
     expect(Array.isArray(res.body.trips)).toBe(true);
@@ -37,7 +40,10 @@ describe('TripController: GET /api/trips (search)', () => {
   });
 
   it('GET /api/trips (search): 200<Successfully Trip: trips not found matching your criteria> should return no results for unmatched cities', async () => {
-    const res = await request(app).get('/api/trips?from=Berlin&to=Rome');
+    const res = await request(app).get('/api/trips').send({
+      departureCity: 'Berlin',
+      arrivalCity: 'Rome',
+    });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
@@ -46,23 +52,28 @@ describe('TripController: GET /api/trips (search)', () => {
   });
 
   it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips with exact date', async () => {
-    const res = await request(app).get('/api/trips?date=2125-12-01');
+    const res = await request(app).get('/api/trips').send({
+      departureDate: '2125-12-01T00:01:00.000Z',
+    });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips with flexible date', async () => {
-    const res = await request(app).get(
-      '/api/trips?date=2125-12-03&flexible=true'
-    );
+    const res = await request(app).get('/api/trips').send({
+      departureDate: '2125-12-02T00:00:00.000Z',
+      flexible: true,
+    });
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
+    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll'); ///////////////
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<Successfully Trip: alternative trips founded> should return alternative trips with no-match date', async () => {
-    const res = await request(app).get('/api/trips?date=2125-12-03');
+    const res = await request(app).get('/api/trips').send({
+      departureDate: '2125-12-03T00:00:00.000Z',
+    });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
@@ -72,7 +83,9 @@ describe('TripController: GET /api/trips (search)', () => {
   });
 
   it('GET /api/trips (search): 200<Successfully Trip: trips not found matching your criteria> no trip and no alternative for a date', async () => {
-    const res = await request(app).get('/api/trips?date=2125-01-01');
+    const res = await request(app).get('/api/trips').send({
+      departureDate: '2125-01-01T00:00:00.000Z',
+    });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
