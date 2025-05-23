@@ -5,12 +5,9 @@ import {
   signToken as generateToken,
   verifyToken as checkToken,
 } from '../utils/jwt';
+import { Response } from 'express';
 import prismaNewClient from '../lib/prisma';
-import {
-  isEmail,
-  isCorrectPassword,
-  isCorrectUsername,
-} from '../utils/validation';
+import { setTokenCookie } from '../utils/tokenCookie';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {
@@ -57,31 +54,6 @@ export class AuthService {
     });
   }
 
-  static isSignUpInputValid(user: User): boolean {
-    return Boolean(
-      user.email &&
-        user.password &&
-        user.firstName &&
-        user.lastName &&
-        user.username
-    );
-  }
-
-  static isSignInInputValid(user: User): boolean {
-    return Boolean(user.email && user.password);
-  }
-
-  static isUpdateInputValid(user: User): boolean {
-    return Boolean(
-      user.email &&
-        isEmail(user.email) &&
-        user.password &&
-        isCorrectPassword(user.password) &&
-        user.username &&
-        isCorrectUsername(user.username)
-    );
-  }
-
   static sanitizedUser(
     user: User
   ): Omit<
@@ -103,22 +75,70 @@ export class AuthService {
     return userCleanUp;
   }
 
-  static async isUsed(email: string, username: string): Promise<string | null> {
-    const existingUserEmail = email
-      ? await prismaNewClient.user.findUnique({ where: { email } })
-      : null;
-
-    if (existingUserEmail) {
+  static async isUsedEmailOrUsername(
+    email: string,
+    username: string
+  ): Promise<string | null> {
+    if (email && (await prismaNewClient.user.findUnique({ where: { email } }))) {
       return 'already used email';
     }
 
-    const existingUserUsername = username
-      ? await prismaNewClient.user.findUnique({ where: { username } })
-      : null;
-
-    if (existingUserUsername) {
+    if (username && await prismaNewClient.user.findUnique({ where: { username } })) {
       return 'already used username';
     }
+
     return null;
+  }
+
+  static async setSessionToken(
+    res: Response,
+    id: string,
+    email: string
+  ): Promise<void> {
+    const jwtToken = AuthService.signToken({ id, email });
+    await AuthService.updateUserToken(id, jwtToken);
+    setTokenCookie(res, jwtToken);
+  }
+
+  static async buildData(
+    data: Partial<User>,
+    user: User,
+    currentUser: User
+  ): Promise<Partial<User>> {
+    const {
+      firstName,
+      lastName,
+      username,
+      email,
+      password,
+      phone,
+      address,
+      avatar,
+      role,
+      credits,
+    } = data;
+
+    const updateData: any = {
+      firstName: firstName ?? user.firstName,
+      lastName: lastName ?? user.lastName,
+      phone: phone ?? user.phone,
+      address: address ?? user.address,
+      avatar: avatar ?? user.avatar,
+    };
+
+    if (password) {
+      updateData.password = await AuthService.hashPassword(password);
+    }
+
+    if (currentUser.role.includes('admin')) {
+      updateData.role = role
+        ? Array.from(new Set([...user.role, ...role]))
+        : user.role;
+      updateData.credits = credits ?? user.credits;
+      updateData.email = email ?? user.email;
+      updateData.username = username ?? user.username;
+    }
+
+    return updateData;
   }
 }

@@ -11,20 +11,11 @@ import { GoogleAuthController } from '../controllers/google.controller';
 import { csrfProtection } from '../middleware/csrf.middleware';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
-import rateLimit from 'express-rate-limit';
 
 const router = Router();
 
-const windowMs =
-  process.env.NODE_ENV !== 'test' ? 15 * 60 * 1000 : 60 * 60 * 1000; // 15 min
-const maxRequests = process.env.NODE_ENV !== 'test' ? 5 : 100; // Limit to 5 requests per window
-
 router.post(
   '/signup',
-  rateLimit({
-    windowMs,
-    max: maxRequests,
-  }),
   csrfProtection,
   signupValidator,
   handleValidationErrors,
@@ -33,10 +24,6 @@ router.post(
 
 router.post(
   '/signin',
-  rateLimit({
-    windowMs,
-    max: maxRequests,
-  }),
   csrfProtection,
   signinValidator,
   handleValidationErrors,

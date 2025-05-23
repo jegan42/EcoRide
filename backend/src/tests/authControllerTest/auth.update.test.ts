@@ -19,6 +19,7 @@ import { UUID_REGEX } from '../../utils/validation';
 
 beforeAll(async () => {
   await resetDB();
+  jest.clearAllMocks();
 
   const userRes = await createUserAndSignIn(testEmails[0], unikUserName);
   cookies[0] = userRes.headers['set-cookie'];
@@ -80,6 +81,25 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(cookiesRes[0]).toMatch(/HttpOnly/);
   });
 
+  it('PUT /api/auth/update: 404<Not found Auth: user not found> admin update invalidValueId', async () => {
+    const res = await request(app)
+      .put('/api/auth/update')
+      .set('Cookie', cookies[99])
+      .send({
+        id: invalidValueId,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        phone: '987654321',
+        address: '2 Test St',
+      });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Auth: user not found'
+    );
+  });
+
   it('PUT /api/auth/update: 400<Bad request Auth: invalid or missing fields>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
@@ -94,7 +114,7 @@ describe('AuthController: PUT /api/auth/update', () => {
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Auth: invalid ID> user with invalid format id', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: invalid ID> user with invalid format id', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[0])
@@ -107,7 +127,10 @@ describe('AuthController: PUT /api/auth/update', () => {
       });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Bad request Auth: invalid ID');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Validator: invalid ID'
+    );
   });
 
   it('PUT /api/auth/update: 403<Access denied Auth: not own user> user with invalid value id', async () => {
@@ -183,7 +206,7 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(res.body.user.role).toEqual(['passenger']);
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Please provide a valid email address>', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: email must be a valid email address>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -196,11 +219,11 @@ describe('AuthController: PUT /api/auth/update', () => {
 
     expect(res.body).toHaveProperty(
       'message',
-      `Bad request Validator: Please provide a valid email address`
+      `Bad request Validator: email must be a valid email address`
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Password must be at least 8 characters long>', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: password must be at least 8 characters long>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -211,11 +234,11 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Password must be at least 8 characters long'
+      'Bad request Validator: password must be at least 8 characters long'
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Password must contain a number>', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: password must contain a number>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -226,11 +249,11 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Password must contain a number'
+      'Bad request Validator: password must contain a number'
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Password must contain both letters and numbers>', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: password must contain both letters and numbers>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -241,11 +264,11 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Password must contain both letters and numbers'
+      'Bad request Validator: password must contain both letters and numbers'
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Password must contain a special character>', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: password must contain a special character>', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -256,11 +279,11 @@ describe('AuthController: PUT /api/auth/update', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Password must contain a special character'
+      'Bad request Validator: password must contain a special character'
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Username must be between 3 and 20 characters> 1 characters', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: username must be between 3 and 20 characters> 1 characters', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -273,11 +296,11 @@ describe('AuthController: PUT /api/auth/update', () => {
 
     expect(res.body).toHaveProperty(
       'message',
-      `Bad request Validator: Username must be between 3 and 20 characters`
+      `Bad request Validator: username must be between 3 and 20 characters`
     );
   });
 
-  it('PUT /api/auth/update: 400<Bad request Validator: Username must be between 3 and 20 characters> 24 characters', async () => {
+  it('PUT /api/auth/update: 400<Bad request Validator: username must be between 3 and 20 characters> 24 characters', async () => {
     const res = await request(app)
       .put('/api/auth/update')
       .set('Cookie', cookies[99])
@@ -290,7 +313,7 @@ describe('AuthController: PUT /api/auth/update', () => {
 
     expect(res.body).toHaveProperty(
       'message',
-      `Bad request Validator: Username must be between 3 and 20 characters`
+      `Bad request Validator: username must be between 3 and 20 characters`
     );
   });
 
@@ -331,5 +354,41 @@ describe('AuthController: PUT /api/auth/update', () => {
       'message',
       'Conflict Auth: already used username'
     );
+  });
+
+  it('PUT /api/auth/update: 200<Successfully Auth: update>(value unchanged) as non-admin should not update role or credits', async () => {
+    jest.spyOn(prismaNewClient.user, 'create').mockImplementation(() => {
+      throw new Error('DB exploded');
+    });
+    const res = await request(app)
+      .put('/api/auth/update')
+      .set('Cookie', cookies[0])
+      .send({
+        id: userIds[0],
+        firstname: 'testme',
+      });
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Successfully Auth: update');
+  });
+
+  it('PUT /api/auth/update: 500<Internal error Auth: failed to update>', async () => {
+    jest
+      .spyOn(prismaNewClient.user, 'update')
+      .mockRejectedValue(new Error('DB exploded'));
+
+    const res = await request(app)
+      .put('/api/auth/update')
+      .set('Cookie', cookies[0])
+      .send({
+        id: userIds[0],
+        firstname: 'testme',
+      });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Auth: failed to update'
+    );
+    expect(res.body.error).toBeDefined();
   });
 });

@@ -3,47 +3,51 @@ import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { AuthService } from '../services/auth.service';
 import { clearTokenCookie, setTokenCookie } from '../utils/tokenCookie';
-import { isId } from '../utils/validation';
-import { requireUser } from '../utils/request';
 import { sendJsonResponse } from '../utils/response';
+import { User } from '../../generated/prisma';
 
 export class AuthController {
   static readonly signup = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    if (!AuthService.isSignUpInputValid(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing fields');
-      return;
-    }
-
-    const { email, password, firstName, lastName, username, phone, address } =
-      req.body;
-
     try {
-      const alReadyUsed = await AuthService.isUsed(email, username);
+      const {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        phone,
+        address,
+        avatar,
+      } = req.body;
+
+      const alReadyUsed = await AuthService.isUsedEmailOrUsername(
+        email,
+        username
+      );
       if (alReadyUsed !== null) {
         sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
+        return;
       }
 
-      const hashedPassword = await AuthService.hashPassword(password);
-      const newUser = await prismaNewClient.user.create({
+      const user = await prismaNewClient.user.create({
         data: {
-          email,
-          password: hashedPassword,
           firstName,
           lastName,
           username,
+          email,
+          password: await AuthService.hashPassword(password),
           phone,
           address,
+          avatar: avatar ?? '',
           role: ['passenger'],
           credits: 20,
         },
       });
 
-      const jwtToken = AuthService.signToken({ id: newUser.id, email });
-      await AuthService.updateUserToken(newUser.id, jwtToken);
-      setTokenCookie(res, jwtToken);
+      await AuthService.setSessionToken(res, user.id, email);
 
       sendJsonResponse(
         res,
@@ -51,7 +55,7 @@ export class AuthController {
         'Auth',
         'signup',
         'user',
-        AuthService.sanitizedUser(newUser)
+        AuthService.sanitizedUser(user)
       );
     } catch (error) {
       sendJsonResponse(
@@ -70,32 +74,19 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    if (!AuthService.isSignInInputValid(req.body)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'missing fields');
-      return;
-    }
-
-    const { email, password } = req.body;
-
     try {
+      const { email, password } = req.body;
+
       const user = await prismaNewClient.user.findUnique({ where: { email } });
-      if (!user?.password) {
+      if (
+        !user?.password ||
+        !(await AuthService.verifyPassword(password, user.password))
+      ) {
         sendJsonResponse(res, 'UNAUTHORIZED', 'Auth', 'invalid credentials');
         return;
       }
 
-      const isValidPassword = await AuthService.verifyPassword(
-        password,
-        user.password
-      );
-      if (!isValidPassword) {
-        sendJsonResponse(res, 'UNAUTHORIZED', 'Auth', 'invalid credentials');
-        return;
-      }
-
-      const jwtToken = AuthService.signToken({ id: user.id, email });
-      await AuthService.updateUserToken(user.id, jwtToken);
-      setTokenCookie(res, jwtToken);
+      await AuthService.setSessionToken(res, user.id, email);
 
       sendJsonResponse(
         res,
@@ -122,41 +113,16 @@ export class AuthController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const user = requireUser(req, res);
-    if (!user) return;
+    const user = req.user as User;
 
-    if (!isId(user.id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid ID');
-      return;
-    }
-    try {
-      const userData = await prismaNewClient.user.findUnique({
-        where: { id: user.id },
-      });
-      if (!userData) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Auth', 'user not found');
-        return;
-      }
-
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Auth',
-        'getMe',
-        'user',
-        AuthService.sanitizedUser(userData)
-      );
-    } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Auth',
-        'failed to getMe',
-        undefined,
-        undefined,
-        error
-      );
-    }
+    sendJsonResponse(
+      res,
+      'SUCCESS',
+      'Auth',
+      'getMe',
+      'user',
+      AuthService.sanitizedUser(user)
+    );
   };
 
   static readonly update = async (
@@ -165,22 +131,12 @@ export class AuthController {
   ): Promise<void> => {
     const { id } = req.body;
 
-    if (
-      !id ||
-      Object.keys(req.body).length < 2 ||
-      AuthService.isUpdateInputValid(req.body)
-    ) {
+    if (Object.keys(req.body).length < 2) {
       sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid or missing fields');
       return;
     }
 
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid ID');
-      return;
-    }
-
-    const currentUser = requireUser(req, res);
-    if (!currentUser) return;
+    const currentUser = req.user as User;
 
     if (currentUser.id !== id && !currentUser.role.includes('admin')) {
       sendJsonResponse(res, 'FORBIDDEN', 'Auth', 'not own user');
@@ -196,50 +152,21 @@ export class AuthController {
         return;
       }
 
-      const {
-        firstName,
-        lastName,
-        username,
+      const { username, email } = req.body;
+      const alReadyUsed = await AuthService.isUsedEmailOrUsername(
         email,
-        password,
-        phone,
-        address,
-        avatar,
-        role,
-        credits,
-      } = req.body;
-
-      const updateData: any = {
-        firstName: firstName ?? user.firstName,
-        lastName: lastName ?? user.lastName,
-        phone: phone ?? user.phone,
-        address: address ?? user.address,
-        avatar: avatar ?? user.avatar,
-      };
-
-      if (password) {
-        updateData.password = await AuthService.hashPassword(password);
-      }
-
-      if (currentUser.role.includes('admin')) {
-        updateData.role = role
-          ? Array.from(new Set([...user.role, ...role]))
-          : user.role;
-        updateData.credits = credits ?? user.credits;
-
-        const alReadyUsed = await AuthService.isUsed(email, username);
-        if (alReadyUsed !== null) {
-          sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
-        }
-
-        updateData.email = email ?? user.email;
-        updateData.username = username ?? user.username;
-      }
-
-      if (!updateData) {
-        sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'empty request');
+        username
+      );
+      if (alReadyUsed !== null) {
+        sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
         return;
       }
+
+      const updateData = await AuthService.buildData(
+        req.body,
+        user,
+        currentUser
+      );
 
       const updatedUser = await prismaNewClient.user.update({
         where: { id },
@@ -247,6 +174,7 @@ export class AuthController {
       });
 
       updatedUser.jwtToken && setTokenCookie(res, updatedUser.jwtToken);
+
       sendJsonResponse(
         res,
         'SUCCESS',
