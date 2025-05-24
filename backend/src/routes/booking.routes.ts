@@ -27,12 +27,18 @@ router.delete(
   authenticate,
   csrfProtection,
   uuidParamValidator,
+  handleValidationErrors,
   BookingController.cancel
 );
 
 router.get('/me', authenticate, BookingController.getAllByUser);
 
-router.get('/driver', authenticate, BookingController.getAllByDriver);
+router.get(
+  '/driver',
+  authenticate,
+  authorize(['driver']),
+  BookingController.getAllByDriver
+);
 
 router.get(
   '/trip/:id',
@@ -47,7 +53,6 @@ router.post(
   authenticate,
   authorize(['driver']),
   csrfProtection,
-  uuidParamValidator,
   actionValidator,
   handleValidationErrors,
   BookingController.validate

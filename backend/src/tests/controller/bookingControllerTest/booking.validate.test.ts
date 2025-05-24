@@ -48,12 +48,17 @@ beforeAll(async () => {
   const user2 = await createUserAndSignIn(testEmails[2]);
   userIds[2] = user2.body.user.id;
   cookies[2] = user2.headers['set-cookie'];
+  vehicleIds[2] = await createVehicleAndGetId(testEmails[2], cookies[2]);
   users[2] = await prismaNewClient.user.update({
     where: { id: userIds[2] },
     data: { credits: { increment: 200 } },
   });
   bookingsIds[2] = await createBookingAndGetId(tripIds[0] ?? '', cookies[2], 1);
   bookingsIds[3] = await createBookingAndGetId(tripIds[1] ?? '', cookies[2], 1);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 afterAll(async () => {
@@ -90,6 +95,19 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
       where: { id: bookingsIds[0] },
     });
     expect(afterBooking?.status).toBe(BookingStatus.confirmed);
+  });
+
+  it('POST /api/bookings/:id/validate: 403<Access denied Authorize: insufficient permissions>', async () => {
+    const res = await request(app)
+      .post(`/api/bookings/${bookingsIds[0]}/validate`)
+      .set('Cookie', cookies[1])
+      .send({ action: 'accept' });
+
+    expect(res.status).toBe(403);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Authorize: insufficient permissions'
+    );
   });
 
   it('POST /api/bookings/:id/validate: 409<Conflict Booking: booking not pending>', async () => {
@@ -149,7 +167,7 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action is required>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: action is required>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0]);
@@ -157,11 +175,11 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Action is required'
+      'Bad request Validator: action is required'
     );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action must be a string>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: action must be a string>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0])
@@ -170,11 +188,11 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Action must be a string'
+      'Bad request Validator: action must be a string'
     );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Action must be either "accept" or "reject">', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: action must be either "accept" or "reject">', async () => {
     const res = await request(app)
       .post(`/api/bookings/${bookingsIds[2]}/validate`)
       .set('Cookie', cookies[0])
@@ -183,7 +201,36 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Action must be either "accept" or "reject"'
+      'Bad request Validator: action must be either "accept" or "reject"'
+    );
+  });
+
+  it('POST /api/bookings/:id/validate: 500<Internal error Booking: failed to validate>', async () => {
+    jest
+      .spyOn(prismaNewClient, '$transaction')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .post(`/api/bookings/${bookingsIds[2]}/validate`)
+      .set('Cookie', cookies[0])
+      .send({ action: 'accept' });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to validate'
+    );
+  });
+
+  it('POST /api/bookings/:id/validate: 403<Access denied Booking: only the driver can validate>', async () => {
+    const res = await request(app)
+      .post(`/api/bookings/${bookingsIds[2]}/validate`)
+      .set('Cookie', cookies[2])
+      .send({ action: 'accept' });
+
+    expect(res.status).toBe(403);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Booking: only the driver can validate'
     );
   });
 
@@ -225,7 +272,7 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     );
   });
 
-  it('POST /api/bookings/:id/validate: 400<Bad request Validator: Invalid ID>', async () => {
+  it('POST /api/bookings/:id/validate: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .post(`/api/bookings/${invalidFormatId}/validate`)
       .set('Cookie', cookies[0])
@@ -234,7 +281,7 @@ describe('TripController: POST /api/bookings/:id/validate', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

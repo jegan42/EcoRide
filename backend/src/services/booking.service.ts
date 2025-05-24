@@ -1,22 +1,8 @@
 // backend/src/services/booking.service.ts
 import prismaNewClient from '../lib/prisma';
 import { Booking, BookingStatus, Trip, User } from '../../generated/prisma';
-import { isId } from '../utils/validation';
 
 export class BookingService {
-  static readonly isValidCreateInput = async (
-    data: Partial<Booking>
-  ): Promise<boolean> => {
-    if (!data.seatCount || data.seatCount <= 0) return false;
-    if (!data.tripId || !isId(data.tripId)) return false;
-    const existingTrip = await prismaNewClient.trip.findUnique({
-      where: { id: data.tripId },
-    });
-    if (!existingTrip) return false;
-
-    return true;
-  };
-
   static readonly create = async (
     user: User,
     trip: Trip,
@@ -49,29 +35,6 @@ export class BookingService {
       });
       return booking;
     });
-  };
-
-  static readonly getById = async (
-    userId: string,
-    bookingId: string
-  ): Promise<Booking | string | null> => {
-    if (!isId(bookingId)) return 'Invalid booking ID';
-
-    const booking = await prismaNewClient.booking.findUnique({
-      where: { id: bookingId },
-      include: { trip: true },
-    });
-
-    if (!booking) return 'Booking not found';
-
-    const isUserPassenger = booking.userId === userId;
-    const isUserDriver = booking.trip.driverId === userId;
-
-    if (!isUserPassenger && !isUserDriver) {
-      return 'Access denied';
-    }
-
-    return booking;
   };
 
   static readonly getAllByUserId = async (userId: string) => {

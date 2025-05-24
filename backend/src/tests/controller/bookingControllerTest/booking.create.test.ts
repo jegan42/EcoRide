@@ -24,7 +24,15 @@ beforeAll(async () => {
   userIds[0] = user0.body.user.id;
   cookies[0] = user0.headers['set-cookie'];
   vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
+  vehicleIds[1] = await createVehicleAndGetId(testEmails[0], cookies[0], '1');
+  vehicleIds[2] = await createVehicleAndGetId(testEmails[0], cookies[0], '2');
   tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
+  tripIds[1] = await createTripAndGetId(vehicleIds[1], cookies[0]);
+  await prismaNewClient.trip.update({
+    where: { id: tripIds[1] },
+    data: { status: 'full' },
+  });
+  tripIds[2] = await createTripAndGetId(vehicleIds[2], cookies[0]);
   const user1 = await createUserAndSignIn(testEmails[1]);
   userIds[1] = user1.body.user.id;
   cookies[1] = user1.headers['set-cookie'];
@@ -63,7 +71,7 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.body.booking).toHaveProperty('seatCount', 2);
   });
 
-  it('POST /api/bookings: 400<Bad request Validator: Trip ID is required>', async () => {
+  it('POST /api/bookings: 400<Bad request Validator: tripId is required>', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -74,11 +82,11 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Trip ID is required'
+      'Bad request Validator: tripId is required'
     );
   });
 
-  it('POST /api/bookings: 400<Bad request Validator: Invalid Trip ID>', async () => {
+  it('POST /api/bookings: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -90,11 +98,11 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid Trip ID'
+      'Bad request Validator: invalid ID'
     );
   });
 
-  it('POST /api/bookings: 400<Bad request Validator: Seat count is required>', async () => {
+  it('POST /api/bookings: 400<Bad request Validator: seatCount is required>', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -105,11 +113,11 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count is required'
+      'Bad request Validator: seatCount is required'
     );
   });
 
-  it('POST /api/bookings: 400<Bad request Validator: Seat count must be between 1 and 10> 0', async () => {
+  it('POST /api/bookings: 400<Bad request Validator: seatCount must be between 1 and 10> 0', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -121,11 +129,11 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count must be between 1 and 10'
+      'Bad request Validator: seatCount must be between 1 and 10'
     );
   });
 
-  it('POST /api/bookings: 400<Bad request Validator: Seat count must be between 1 and 10> 20', async () => {
+  it('POST /api/bookings: 400<Bad request Validator: seatCount must be between 1 and 10> 20', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -137,11 +145,11 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Seat count must be between 1 and 10'
+      'Bad request Validator: seatCount must be between 1 and 10'
     );
   });
 
-  it('POST /api/bookings: 400<Bad request Booking: invalid or missing fields>', async () => {
+  it('POST /api/bookings: 404<Not found Booking: trip not found>', async () => {
     const res = await request(app)
       .post('/api/bookings')
       .set('Cookie', cookies[1])
@@ -150,10 +158,26 @@ describe('TripController: POST /api/bookings', () => {
         seatCount: 1,
       });
 
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Booking: trip not found'
+    );
+  });
+
+  it('POST /api/bookings: 400<Bad request Booking: trip not open>', async () => {
+    const res = await request(app)
+      .post('/api/bookings')
+      .set('Cookie', cookies[1])
+      .send({
+        tripId: tripIds[1],
+        seatCount: 1,
+      });
+
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Booking: invalid or missing fields'
+      'Bad request Booking: trip not open'
     );
   });
 
@@ -226,6 +250,25 @@ describe('TripController: POST /api/bookings', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Bad request Booking: already booked this trip'
+    );
+  });
+
+  it('POST /api/bookings: 500<Internal error Booking: failed to create>', async () => {
+    jest
+      .spyOn(prismaNewClient, '$transaction')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .post('/api/bookings')
+      .set('Cookie', cookies[1])
+      .send({
+        tripId: tripIds[2],
+        seatCount: 1,
+      });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to create'
     );
   });
 });

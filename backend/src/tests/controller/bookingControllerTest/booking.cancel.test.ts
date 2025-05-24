@@ -25,6 +25,7 @@ beforeAll(async () => {
   userIds[0] = user0.body.user.id;
   cookies[0] = user0.headers['set-cookie'];
   vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
+  vehicleIds[1] = await createVehicleAndGetId(testEmails[0], cookies[0], '1');
   tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
   tripIds[1] = await createTripAndGetId(
     vehicleIds[0],
@@ -32,6 +33,7 @@ beforeAll(async () => {
     '2127-12-01T08:00:00Z',
     '2127-12-01T18:00:00Z'
   );
+  tripIds[2] = await createTripAndGetId(vehicleIds[1], cookies[0]);
   const user1 = await createUserAndSignIn(testEmails[1]);
   userIds[1] = user1.body.user.id;
   cookies[1] = user1.headers['set-cookie'];
@@ -41,6 +43,20 @@ beforeAll(async () => {
   });
   bookingsIds[0] = await createBookingAndGetId(tripIds[0] ?? '', cookies[1], 1);
   bookingsIds[1] = await createBookingAndGetId(tripIds[1] ?? '', cookies[1], 1);
+
+  const user2 = await createUserAndSignIn(testEmails[2]);
+  userIds[2] = user2.body.user.id;
+  cookies[2] = user2.headers['set-cookie'];
+  await prismaNewClient.user.update({
+    where: { id: userIds[2] },
+    data: { credits: { increment: 200 } },
+  });
+  bookingsIds[2] = await createBookingAndGetId(tripIds[0] ?? '', cookies[2], 1);
+  bookingsIds[3] = await createBookingAndGetId(tripIds[1] ?? '', cookies[2], 1);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 afterAll(async () => {
@@ -61,6 +77,18 @@ describe('TripController: DELETE /api/bookings', () => {
     );
   });
 
+  it('DELETE /api/bookings: 400<Bad request Booking: not a passenger or not a driver>', async () => {
+    const res = await request(app)
+      .delete(`/api/bookings/${bookingsIds[1]}`)
+      .set('Cookie', cookies[2]);
+
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Bad request Booking: not a passenger or not a driver'
+    );
+  });
+
   it('DELETE /api/bookings: 401<Unauthorized access Athenticate: missing token>', async () => {
     const res = await request(app).delete(`/api/bookings/${bookingsIds[0]}`);
 
@@ -71,7 +99,7 @@ describe('TripController: DELETE /api/bookings', () => {
     );
   });
 
-  it('DELETE /api/bookings: 400<Bad request Booking: invalid ID>', async () => {
+  it('DELETE /api/bookings: 400<Bad request Validator: Invalid ID>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${invalidFormatId}`)
       .set('Cookie', cookies[1]);
@@ -79,7 +107,7 @@ describe('TripController: DELETE /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Booking: invalid ID'
+      'Bad request Validator: Invalid ID'
     );
   });
 
@@ -105,5 +133,33 @@ describe('TripController: DELETE /api/bookings', () => {
       'message',
       'Bad request Booking: already cancelled'
     );
+  });
+
+  it('DELETE /api/bookings: 404<Not found Booking: trip not found>', async () => {
+    jest.spyOn(prismaNewClient.trip, 'findUnique').mockResolvedValue(null);
+    const res = await request(app)
+      .delete(`/api/bookings/${bookingsIds[2]}`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Not found Booking: trip not found'
+    );
+  });
+
+  it('DELETE /api/bookings: 500<Internal error Booking: failed to cancel>', async () => {
+    jest
+      .spyOn(prismaNewClient, '$transaction')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .delete(`/api/bookings/${bookingsIds[3]}`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to cancel'
+    );
+    expect(res.status).toBe(500);
   });
 });

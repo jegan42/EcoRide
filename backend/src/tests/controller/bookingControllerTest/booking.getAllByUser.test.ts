@@ -42,6 +42,10 @@ beforeAll(async () => {
   bookingsIds[1] = await createBookingAndGetId(tripIds[1] ?? '', cookies[1], 1);
 });
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 afterAll(async () => {
   await resetDB();
   await prismaNewClient.$disconnect();
@@ -63,17 +67,16 @@ describe('TripController: GET /api/bookings/me', () => {
     expect(res.body.bookings[0]).toHaveProperty('userId', userIds[1]);
   });
 
-  it('GET /api/bookings/me: 200<Successfully Booking: getAllByUser> return BOOKINGS', async () => {
+  it('GET /api/bookings/me: 404<Not found Booking: booking not found>', async () => {
     const res = await request(app)
       .get(`/api/bookings/me`)
       .set('Cookie', cookies[0]);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(404);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Booking: getAllByUser'
+      'Not found Booking: booking not found'
     );
-    expect(Array.isArray(res.body.bookings)).toBe(true);
   });
 
   it('GET /api/bookings/me: 401<Unauthorized access Athenticate: invalid token>', async () => {
@@ -95,6 +98,21 @@ describe('TripController: GET /api/bookings/me', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Unauthorized access Athenticate: missing token'
+    );
+  });
+
+  it('GET /api/bookings/me: 500<Internal error Booking: failed to getAllByUser>', async () => {
+    jest
+      .spyOn(prismaNewClient.booking, 'findMany')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .get(`/api/bookings/me`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to getAllByUser'
     );
   });
 });

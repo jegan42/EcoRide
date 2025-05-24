@@ -36,6 +36,11 @@ beforeAll(async () => {
     data: { credits: { increment: 200 } },
   });
   bookingsIds[0] = await createBookingAndGetId(tripIds[0] ?? '', cookies[1], 1);
+  cookies[2] = (await createUserAndSignIn(testEmails[2])).headers['set-cookie'];
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 afterAll(async () => {
@@ -67,6 +72,33 @@ describe('TripController: GET /api/bookings/:id', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Unauthorized access Athenticate: missing token'
+    );
+  });
+
+  it('GET /api/bookings/:id: 500<Internal error Booking: failed to getById>', async () => {
+    jest
+      .spyOn(prismaNewClient.booking, 'findUnique')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .get(`/api/bookings/${bookingsIds[0]}`)
+      .set('Cookie', cookies[1]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to getById'
+    );
+  });
+
+  it('GET /api/bookings/:id: 403<Access denied Booking: not a passenger or not a driver>', async () => {
+    const res = await request(app)
+      .get(`/api/bookings/${bookingsIds[0]}`)
+      .set('Cookie', cookies[2]);
+
+    expect(res.status).toBe(403);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Access denied Booking: not a passenger or not a driver'
     );
   });
 

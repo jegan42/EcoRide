@@ -54,6 +54,10 @@ beforeAll(async () => {
   bookingsIds[3] = await createBookingAndGetId(tripIds[1] ?? '', cookies[2], 1);
 });
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 afterAll(async () => {
   await resetDB();
   await prismaNewClient.$disconnect();
@@ -75,7 +79,7 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     expect(res.body.bookings[1]).toHaveProperty('id', bookingsIds[2]);
   });
 
-  it('GET /api/bookings/trip/:id: 200<> return BOOKINGS', async () => {
+  it('GET /api/bookings/trip/:id: 200<Successfully Booking: getAllByTrip> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/trip/${tripIds[1]}`)
       .set('Cookie', cookies[0]);
@@ -124,17 +128,30 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     );
   });
 
-  it('GET /api/bookings/trip/:id: 200<Successfully Booking: getAllByTrip> return empty array if uuid not exist', async () => {
+  it('GET /api/bookings/trip/:id: 404<Not found Booking: booking not found>', async () => {
     const res = await request(app)
       .get(`/api/bookings/trip/${invalidValueId}`)
       .set('Cookie', cookies[0]);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(404);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Booking: getAllByTrip'
+      'Not found Booking: booking not found'
     );
-    expect(Array.isArray(res.body.bookings)).toBe(true);
-    expect(res.body.bookings.length === 0).toBe(true);
+  });
+
+  it('GET /api/bookings/trip/:id: 500<Internal error Booking: failed to getAllByTrip>', async () => {
+    jest
+      .spyOn(prismaNewClient.booking, 'findMany')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .get(`/api/bookings/trip/${tripIds[1]}`)
+      .set('Cookie', cookies[0]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error Booking: failed to getAllByTrip'
+    );
   });
 });

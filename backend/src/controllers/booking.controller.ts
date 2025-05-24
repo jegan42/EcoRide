@@ -1,10 +1,8 @@
 // backend/src/controllers/booking.controller.ts
 import { Request, Response } from 'express';
 import { BookingService } from '../services/booking.service';
-import { requireUser } from '../utils/request';
-import { BookingStatus } from '../../generated/prisma';
+import { BookingStatus, User } from '../../generated/prisma';
 import prismaNewClient from '../lib/prisma';
-import { isId } from '../utils/validation';
 import { sendJsonResponse } from '../utils/response';
 
 export class BookingController {
@@ -12,19 +10,8 @@ export class BookingController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const user = requireUser(req, res);
-    if (!user) return;
-
     try {
-      if (!(await BookingService.isValidCreateInput(req.body))) {
-        sendJsonResponse(
-          res,
-          'BAD_REQUEST',
-          'Booking',
-          'invalid or missing fields'
-        );
-        return;
-      }
+      const user = req.user as User;
 
       const { tripId, seatCount } = req.body;
       const trip = await prismaNewClient.trip.findUnique({
@@ -81,11 +68,6 @@ export class BookingController {
 
       const booking = await BookingService.create(user, trip, seatCount);
 
-      if (!booking) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
-        return;
-      }
-
       sendJsonResponse(
         res,
         'SUCCESS_CREATE',
@@ -108,16 +90,10 @@ export class BookingController {
   };
 
   static readonly cancel = async (req: Request, res: Response) => {
-    const user = requireUser(req, res);
-    if (!user) return;
-
-    const { id } = req.params;
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
-      return;
-    }
-
     try {
+      const { id } = req.params;
+      const user = req.user as User;
+
       const booking = await prismaNewClient.booking.findUnique({
         where: { id: id },
         include: { trip: true },
@@ -175,13 +151,12 @@ export class BookingController {
   };
 
   static readonly getAllByUser = async (req: Request, res: Response) => {
-    const user = requireUser(req, res);
-    if (!user) return;
-
     try {
+      const user = req.user as User;
+
       const bookings = await BookingService.getAllByUserId(user.id);
 
-      if (!bookings) {
+      if (!bookings.length) {
         sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
@@ -208,12 +183,11 @@ export class BookingController {
   };
 
   static readonly getAllByDriver = async (req: Request, res: Response) => {
-    const user = requireUser(req, res);
-    if (!user) return;
-
     try {
+      const user = req.user as User;
+
       const bookings = await BookingService.getAllByDriverId(user.id);
-      if (!bookings) {
+      if (!bookings.length) {
         sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
@@ -240,12 +214,12 @@ export class BookingController {
   };
 
   static readonly getAllByTrip = async (req: Request, res: Response) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
+
       const bookings = await BookingService.getAllByTripId(id);
 
-      if (!bookings) {
+      if (!bookings.length) {
         sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
         return;
       }
@@ -274,40 +248,18 @@ export class BookingController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-    const { action } = req.body;
-    const user = requireUser(req, res);
-    if (!user?.role?.includes('driver')) {
-      sendJsonResponse(res, 'FORBIDDEN', 'Booking', 'not a driver');
-      return;
-    }
-
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
-      return;
-    }
-
-    if (action !== 'accept' && action !== 'reject') {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'Booking',
-        'action must be either accept or reject'
-      );
-      return;
-    }
     try {
+      const { action } = req.body;
+
+      const { id } = req.params;
+      const user = req.user as User;
+
       const booking = await prismaNewClient.booking.findUnique({
         where: { id },
         include: { trip: true },
       });
       if (!booking) {
         sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'booking not found');
-        return;
-      }
-
-      if (!booking.trip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Booking', 'trip not found');
         return;
       }
 
@@ -344,16 +296,10 @@ export class BookingController {
   };
 
   static readonly getById = async (req: Request, res: Response) => {
-    const user = requireUser(req, res);
-    if (!user) return;
-    const { id } = req.params;
-
-    if (!isId(id)) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Booking', 'invalid ID');
-      return;
-    }
-
     try {
+      const user = req.user as User;
+      const { id } = req.params;
+
       const booking = await prismaNewClient.booking.findUnique({
         where: { id },
         include: { trip: true },
@@ -370,7 +316,7 @@ export class BookingController {
       if (!isUserPassenger && !isUserDriver) {
         sendJsonResponse(
           res,
-          'BAD_REQUEST',
+          'FORBIDDEN',
           'Booking',
           'not a passenger or not a driver'
         );
