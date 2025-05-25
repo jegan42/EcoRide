@@ -15,8 +15,6 @@ export const messages = {
     `Not found ${method}: ${item}`,
   CONFLICT: (method: string, item: string): string =>
     `Conflict ${method}: ${item}`,
-  LIMIT_EXCEEDED: (method: string, item: string): string =>
-    `Limit exceeded ${method}: ${item}`,
 
   ERROR: (method: string, item: string): string =>
     `Internal error ${method}: ${item}`,

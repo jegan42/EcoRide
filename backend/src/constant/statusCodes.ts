@@ -8,7 +8,6 @@ export const statusCodes = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
-  LIMIT_EXCEEDED: 429,
 
   ERROR: 500,
 };

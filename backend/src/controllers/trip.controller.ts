@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { TripService } from '../services/trip.service';
-import { requireUser } from '../utils/request';
 import { sendJsonResponse } from '../utils/response';
 import { User, Prisma } from '../../generated/prisma';
 
@@ -196,7 +195,9 @@ export class TripController {
         return;
       }
 
-      if (requireUser(req, res)?.id !== existingTrip.driverId) {
+      const user = req.user as User;
+
+      if (user.id !== existingTrip.driverId) {
         sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
         return;
       }
@@ -236,7 +237,9 @@ export class TripController {
         return;
       }
 
-      if (requireUser(req, res)?.id !== trip.driverId) {
+      const user = req.user as User;
+
+      if (user.id !== trip.driverId) {
         sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
         return;
       }
