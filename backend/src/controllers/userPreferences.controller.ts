@@ -1,30 +1,24 @@
 // backend/src/controllers/userPreferences.controller.ts
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
-import { PreferenceService } from '../services/userPreferences.service';
-import { assertOwnership, requireUser } from '../utils/request';
+import { assertOwnership } from '../utils/request';
 import { sendJsonResponse } from '../utils/response';
+import { User } from '../../generated/prisma';
 
 export class PreferencesController {
   static readonly create = async (
     req: Request,
     res: Response
   ): Promise<void> => {
-    if (!PreferenceService.isCreateInputValid(req.body)) {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'UserPreferences',
-        'invalid or missing fields'
-      );
-      return;
-    }
-
     const { id } = req.params;
     if (!assertOwnership(req, res, id)) return;
 
     try {
-      if (await PreferenceService.isExistUserPreferences(id)) {
+      const existUserPreferences =
+        await prismaNewClient.userPreferences.findUnique({
+          where: { userId: id },
+        });
+      if (existUserPreferences) {
         sendJsonResponse(
           res,
           'CONFLICT',
@@ -47,16 +41,6 @@ export class PreferencesController {
         },
       });
 
-      if (!userPreferences) {
-        sendJsonResponse(
-          res,
-          'NOT_FOUND',
-          'UserPreferences',
-          'userPreferences not found'
-        );
-        return;
-      }
-
       sendJsonResponse(
         res,
         'SUCCESS_CREATE',
@@ -66,7 +50,7 @@ export class PreferencesController {
         userPreferences
       );
     } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to create');
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to create');
     }
   };
 
@@ -74,8 +58,7 @@ export class PreferencesController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const user = requireUser(req, res);
-    if (!user) return;
+    const user = req.user as User;
 
     req.params.id = user.id;
     return PreferencesController.getByUserId(req, res);
@@ -115,9 +98,8 @@ export class PreferencesController {
         res,
         'ERROR',
         'UserPreferences',
-        'Failed to getByUserId'
+        'failed to getByUserId'
       );
-      return;
     }
   };
 
@@ -125,33 +107,19 @@ export class PreferencesController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    if (!PreferenceService.isUpdateInputValid(req.body)) {
-      sendJsonResponse(
-        res,
-        'BAD_REQUEST',
-        'UserPreferences',
-        'invalid or missing fields'
-      );
-      return;
-    }
     const { id } = req.params;
     if (!assertOwnership(req, res, id)) return;
+
+    if (Object.keys(req.body).length < 1) {
+      sendJsonResponse(res, 'BAD_REQUEST', 'UserPreferences', 'missing fields');
+      return;
+    }
 
     try {
       const userPreferences = await prismaNewClient.userPreferences.update({
         where: { userId: id },
         data: req.body,
       });
-
-      if (!userPreferences) {
-        sendJsonResponse(
-          res,
-          'NOT_FOUND',
-          'UserPreferences',
-          'userPreferences not found'
-        );
-        return;
-      }
 
       sendJsonResponse(
         res,
@@ -162,8 +130,7 @@ export class PreferencesController {
         userPreferences
       );
     } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to update');
-      return;
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to update');
     }
   };
 
@@ -178,8 +145,7 @@ export class PreferencesController {
       await prismaNewClient.userPreferences.delete({ where: { userId: id } });
       sendJsonResponse(res, 'SUCCESS', 'UserPreferences', 'deleted');
     } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'Failed to delete');
-      return;
+      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to delete');
     }
   };
 }

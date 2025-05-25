@@ -69,7 +69,7 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.body.userPreferences).toHaveProperty('acceptsChatter', true);
   });
 
-  it('PUT /api/user-preferences/:id: 400<Bad request Validator: Must be true or false>', async () => {
+  it('PUT /api/user-preferences/:id: 400<Bad request Validator: must be true or false>', async () => {
     const res = await request(app)
       .put(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -80,11 +80,11 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Must be true or false'
+      'Bad request Validator: must be true or false'
     );
   });
 
-  it('PUT /api/user-preferences/:id: 400<Bad request Validator: Must be true or false>', async () => {
+  it('PUT /api/user-preferences/:id: 400<Bad request Validator: must be true or false>', async () => {
     const res = await request(app)
       .put(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -95,11 +95,11 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Must be true or false'
+      'Bad request Validator: must be true or false'
     );
   });
 
-  it('PUT /api/user-preferences/:id: 400<Bad request UserPreferences: invalid or missing fields>', async () => {
+  it('PUT /api/user-preferences/:id: 400<Bad request UserPreferences: missing fields>', async () => {
     const res = await request(app)
       .put(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -108,7 +108,7 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request UserPreferences: invalid or missing fields'
+      'Bad request UserPreferences: missing fields'
     );
   });
 
@@ -141,7 +141,7 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     );
   });
 
-  it('PUT /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
+  it('PUT /api/user-preferences/:id: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .put(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0])
@@ -152,7 +152,7 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 
@@ -168,6 +168,24 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Access denied Owner: not the owner'
+    );
+  });
+
+  it('PUT /api/user-preferences/:id: 500<Internal error UserPreferences: failed to update>', async () => {
+    jest
+      .spyOn(prismaNewClient.userPreferences, 'update')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .put(`/api/user-preferences/${userIds[0]}`)
+      .set('Cookie', cookies[0])
+      .send({
+        acceptsSmoker: false,
+      });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error UserPreferences: failed to update'
     );
   });
 });

@@ -20,6 +20,14 @@ beforeAll(async () => {
   const user = await createUserAndSignIn(testEmails[0]);
   userIds[0] = user.body.user.id;
   cookies[0] = user.headers['set-cookie'];
+
+  const user1 = await createUserAndSignIn(testEmails[1]);
+  userIds[1] = user1.body.user.id;
+  cookies[1] = user1.headers['set-cookie'];
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 afterAll(async () => {
@@ -72,7 +80,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     );
   });
 
-  it('POST /api/user-preferences/:id: 400<Bad request Validator: Must be true or false>', async () => {
+  it('POST /api/user-preferences/:id: 400<Bad request Validator: must be true or false>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${userIds[0]}`)
       .set('Cookie', cookies[0])
@@ -86,7 +94,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Must be true or false'
+      'Bad request Validator: must be true or false'
     );
   });
 
@@ -125,7 +133,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     );
   });
 
-  it('POST /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
+  it('POST /api/user-preferences/:id: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .post(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0])
@@ -139,7 +147,7 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 
@@ -176,6 +184,27 @@ describe('UserPreferencesController: POST /api/user-preferences/:id', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Conflict UserPreferences: already created userPreferences'
+    );
+  });
+
+  it('POST /api/user-preferences/:id: 500<Internal error UserPreferences: failed to create>', async () => {
+    jest
+      .spyOn(prismaNewClient.userPreferences, 'create')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .post(`/api/user-preferences/${userIds[1]}`)
+      .set('Cookie', cookies[1])
+      .send({
+        acceptsSmoker: true,
+        acceptsPets: false,
+        acceptsMusic: true,
+        acceptsChatter: false,
+      });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error UserPreferences: failed to create'
     );
   });
 });

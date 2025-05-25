@@ -21,6 +21,10 @@ beforeAll(async () => {
   userIds[0] = user.body.user.id;
   cookies[0] = user.headers['set-cookie'];
   await createUserPreferences(userIds[0], cookies[0]);
+  const user1 = await createUserAndSignIn(testEmails[1]);
+  userIds[1] = user1.body.user.id;
+  cookies[1] = user1.headers['set-cookie'];
+  await createUserPreferences(userIds[1], cookies[1]);
 });
 
 afterAll(async () => {
@@ -86,6 +90,21 @@ describe('UserPreferencesController: DELETE /api/user-preferences/:id', () => {
     expect(res.body).toHaveProperty(
       'message',
       'Access denied Owner: not the owner'
+    );
+  });
+
+  it('DELETE /api/user-preferences/:id: 500<Internal error UserPreferences: failed to delete>', async () => {
+    jest
+      .spyOn(prismaNewClient.userPreferences, 'delete')
+      .mockRejectedValue(new Error('DB exploded'));
+    const res = await request(app)
+      .delete(`/api/user-preferences/${userIds[1]}`)
+      .set('Cookie', cookies[1]);
+
+    expect(res.status).toBe(500);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Internal error UserPreferences: failed to delete'
     );
   });
 });

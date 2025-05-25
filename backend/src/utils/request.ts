@@ -1,7 +1,6 @@
 // src/utils/request.ts
 import { Request, Response } from 'express';
 import { User } from '../../generated/prisma';
-import { isId } from './validation';
 import { sendJsonResponse } from './response';
 
 export const requireUser = (req: Request, res: Response): User | null => {
@@ -20,13 +19,7 @@ export const assertOwnership = (
   res: Response,
   ownerId: string
 ): User | null => {
-  const user = requireUser(req, res);
-  if (!user) return null;
-
-  if (!isId(ownerId)) {
-    sendJsonResponse(res, 'BAD_REQUEST', 'Owner', 'invalid ID');
-    return null;
-  }
+  const user = req.user as User;
 
   if (user.id !== ownerId) {
     sendJsonResponse(res, 'FORBIDDEN', 'Owner', 'not the owner');

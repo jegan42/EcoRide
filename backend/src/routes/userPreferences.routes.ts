@@ -16,7 +16,6 @@ router.post(
   '/:id',
   authenticate,
   csrfProtection,
-  uuidParamValidator,
   createPreferencesValidator,
   handleValidationErrors,
   PreferencesController.create
@@ -36,7 +35,6 @@ router.put(
   '/:id',
   authenticate,
   csrfProtection,
-  uuidParamValidator,
   updatePreferencesValidator,
   handleValidationErrors,
   PreferencesController.update
