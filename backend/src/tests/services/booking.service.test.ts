@@ -1,3 +1,4 @@
+// backend/tests/services/booking.service.test.ts
 import { BookingService } from '../../services/booking.service';
 import prismaNewClient from '../../lib/prisma';
 import { BookingStatus } from '../../../generated/prisma';

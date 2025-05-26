@@ -103,7 +103,7 @@ export class AuthService {
   ): Promise<void> {
     const jwtToken = AuthService.signToken({ id, email });
     await AuthService.updateUserToken(id, jwtToken);
-    setTokenCookie(res, jwtToken);
+    !!res && setTokenCookie(res, jwtToken);
   }
 
   static async buildData(

@@ -73,7 +73,7 @@ describe('UserPreferencesController: GET /api/user-preferences/:id', () => {
     );
   });
 
-  it('GET /api/user-preferences/:id: 400<Bad request Validator: Invalid ID>', async () => {
+  it('GET /api/user-preferences/:id: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .get(`/api/user-preferences/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
@@ -81,7 +81,7 @@ describe('UserPreferencesController: GET /api/user-preferences/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

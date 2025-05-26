@@ -55,7 +55,7 @@ describe('TripController: DELETE /api/trips/:id', () => {
     expect(check).toBeNull();
   });
 
-  it('DELETE /api/trips/:id: 400<Bad request Validator: Invalid ID> with invalid format Id', async () => {
+  it('DELETE /api/trips/:id: 400<Bad request Validator: invalid ID> with invalid format Id', async () => {
     const res = await request(app)
       .delete(`/api/trips/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
@@ -63,7 +63,7 @@ describe('TripController: DELETE /api/trips/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

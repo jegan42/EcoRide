@@ -310,10 +310,10 @@ export class BookingController {
         return;
       }
 
-      const isUserPassenger = booking.userId === user.id;
-      const isUserDriver = booking.trip.driverId === user.id;
+      const isPassenger = booking.userId === user.id;
+      const isDriver = booking.trip.driverId === user.id;
 
-      if (!isUserPassenger && !isUserDriver) {
+      if (!isPassenger && !isDriver) {
         sendJsonResponse(
           res,
           'FORBIDDEN',

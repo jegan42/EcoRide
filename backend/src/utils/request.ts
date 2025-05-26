@@ -1,4 +1,4 @@
-// src/utils/request.ts
+// backend/src/utils/request.ts
 import { Request, Response } from 'express';
 import { User } from '../../generated/prisma';
 import { sendJsonResponse } from './response';

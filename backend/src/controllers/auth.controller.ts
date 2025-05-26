@@ -153,12 +153,12 @@ export class AuthController {
       }
 
       const { username, email } = req.body;
-      const alReadyUsed = await AuthService.isUsedEmailOrUsername(
+      const allReadyUsed = await AuthService.isUsedEmailOrUsername(
         email,
         username
       );
-      if (alReadyUsed !== null) {
-        sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
+      if (allReadyUsed !== null) {
+        sendJsonResponse(res, 'CONFLICT', 'Auth', allReadyUsed);
         return;
       }
 

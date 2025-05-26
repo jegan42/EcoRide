@@ -116,7 +116,7 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     );
   });
 
-  it('GET /api/bookings/trip/:id: 400<Bad request Validator: Invalid ID>', async () => {
+  it('GET /api/bookings/trip/:id: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .get(`/api/bookings/trip/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
@@ -124,7 +124,7 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

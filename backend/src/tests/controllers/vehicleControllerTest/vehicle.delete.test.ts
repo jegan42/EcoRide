@@ -60,7 +60,7 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     );
   });
 
-  it('DELETE /api/vehicles/:id: 400<Bad request Validator: Invalid ID>  invalidFormatId ', async () => {
+  it('DELETE /api/vehicles/:id: 400<Bad request Validator: invalid ID>  invalidFormatId ', async () => {
     const res = await request(app)
       .delete(`/api/vehicles/${invalidFormatId}`)
       .set('Cookie', cookies[0]);
@@ -68,7 +68,7 @@ describe('VehicleController: DELETE /api/vehicles', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

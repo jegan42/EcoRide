@@ -60,13 +60,13 @@ describe('TripController: GET /api/trips', () => {
     expect(res.body.trip).toHaveProperty('status', 'open');
   });
 
-  it('GET /api/trips/:id: 400<Bad request Validator: Invalid ID> if trip not found or ID is not UUID', async () => {
+  it('GET /api/trips/:id: 400<Bad request Validator: invalid ID> if trip not found or ID is not UUID', async () => {
     const res = await request(app).get(`/api/trips/${invalidFormatId}`);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

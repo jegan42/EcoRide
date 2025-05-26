@@ -56,13 +56,13 @@ describe('VehicleController: GET /api/vehicles', () => {
     expect(res.body.vehicle).toHaveProperty('seatCount', 4);
   });
 
-  it('GET /api/vehicles/:id: 400<Bad request Validator: Invalid ID> if invalid Format Id', async () => {
+  it('GET /api/vehicles/:id: 400<Bad request Validator: invalid ID> if invalid Format Id', async () => {
     const res = await request(app).get(`/api/vehicles/${invalidFormatId}`);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 

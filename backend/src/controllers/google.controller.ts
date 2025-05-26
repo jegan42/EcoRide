@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { User } from '../../generated/prisma';
-import { setTokenCookie } from '../utils/tokenCookie';
 import { sendJsonResponse } from '../utils/response';
 
 export class GoogleAuthController {
@@ -17,10 +16,7 @@ export class GoogleAuthController {
       return;
     }
 
-    const jwtToken = AuthService.signToken({ id: user.id, email: user.email });
-    await AuthService.updateUserToken(user.id, jwtToken);
-
-    setTokenCookie(res, jwtToken);
+    await AuthService.setSessionToken(res, user.id, user.email);
 
     const clientURL = process.env.CLIENT_URL ?? 'http://localhost:3000';
     res.redirect(`${clientURL}/`);

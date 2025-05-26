@@ -1,3 +1,4 @@
+// backend/tests/services/auth.service.test.ts
 import type { Response } from 'express';
 import bcrypt from 'bcrypt';
 import { AuthService } from '../../services/auth.service';

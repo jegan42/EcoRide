@@ -1,5 +1,5 @@
 // backend/src/app.ts
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
@@ -11,8 +11,9 @@ import dotenv from 'dotenv';
 
 import apiRoutes from './routes/api.routes';
 import { csrfErrorHandler } from './middleware/csrf.middleware';
-import { sendJsonResponse } from './utils/response';
 import { errorHandler } from './middleware/error.middleware';
+import { getRateLimitConfig } from './utils/rateLimitConfig';
+import { getNodeEnv, getSessionSecret } from './utils/env';
 
 dotenv.config();
 
@@ -37,22 +38,15 @@ app.use(
 );
 app.use(morgan('dev'));
 
-const windowMs =
-  process.env.NODE_ENV !== 'test' ? 15 * 60 * 1000 : 60 * 60 * 1000; // 15 minutes
-const maxRequests = process.env.NODE_ENV !== 'test' ? 25 : 100; // Limit to 25 requests per window
+const mode = getNodeEnv();
+app.use(rateLimit(getRateLimitConfig(mode)));
 
-app.use(
-  rateLimit({
-    windowMs,
-    max: maxRequests,
-  })
-);
-
+const secret = getSessionSecret();
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   session({
-    secret: process.env.SESSION_SECRET ?? 'secret',
+    secret,
     resave: false,
     saveUninitialized: true,
   })
@@ -65,22 +59,11 @@ app.use(passport.session());
 app.use('/api', apiRoutes);
 
 app.use(csrfErrorHandler);
-app.use(errorHandler);
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('EcoRide backend is running 🚗');
 });
 
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  sendJsonResponse(
-    res,
-    'ERROR',
-    'APP',
-    'server Error',
-    undefined,
-    undefined,
-    err
-  );
-});
+app.use(errorHandler);
 
 export default app;

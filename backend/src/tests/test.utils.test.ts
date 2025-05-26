@@ -19,6 +19,7 @@ import {
   createBookingAndGetId,
   names,
   createUserPreferences,
+  getAvailableSeats,
 } from './test.utils';
 
 beforeAll(async () => {
@@ -326,6 +327,54 @@ describe('Test Utils Funtions createUserPreferences', () => {
     expect(res.body.userPreferences).toHaveProperty('acceptsPets', false);
     expect(res.body.userPreferences).toHaveProperty('acceptsMusic', true);
     expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
+  });
+
+  describe('getAvailableSeats', () => {
+    const vehicleId = 'vehicle-123';
+
+    beforeEach(() => {
+      jest.spyOn(prismaNewClient.vehicle, 'findUnique');
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('should return seatCount - 1 when vehicle found and seatCount >= 1', async () => {
+      (prismaNewClient.vehicle.findUnique as jest.Mock).mockResolvedValue({
+        id: vehicleId,
+        seatCount: 5,
+      });
+
+      const result = await getAvailableSeats(vehicleId);
+      expect(result).toBe(4);
+    });
+
+    it('should return undefined when vehicle not found', async () => {
+      (prismaNewClient.vehicle.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const result = await getAvailableSeats(vehicleId);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined when seatCount < 1', async () => {
+      (prismaNewClient.vehicle.findUnique as jest.Mock).mockResolvedValue({
+        id: vehicleId,
+        seatCount: 0,
+      });
+
+      const result = await getAvailableSeats(vehicleId);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if availableSeats is undefined', async () => {
+      jest
+        .spyOn(require('./test.utils'), 'getAvailableSeats')
+        .mockResolvedValue(undefined);
+
+      const result = await createTripAndGetId('fakeVehicleId', 'fakeCookies');
+      expect(result).toBeUndefined();
+    });
   });
 
   it('FUNCTION: createUserPreferences: 201<> return a new UserPreferences with POST /api/user-preferences/:id', async () => {

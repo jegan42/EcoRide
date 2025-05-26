@@ -89,7 +89,7 @@ export const createVehicleAndGetId = async (
   ).body.vehicle.id;
 };
 
-const getAvailableSeats = async (
+export const getAvailableSeats = async (
   vehicleId: string
 ): Promise<number | undefined> => {
   const res = await prismaNewClient.vehicle.findUnique({

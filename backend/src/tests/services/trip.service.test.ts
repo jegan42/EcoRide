@@ -1,3 +1,4 @@
+// backend/tests/services/trip.service.test.ts
 import { TripService } from '../../services/trip.service';
 import prismaNewClient from '../../lib/prisma';
 
@@ -31,7 +32,7 @@ describe('TripService', () => {
     });
 
     it('returns error if both dates are the same timestamp', () => {
-      const date = new Date().toISOString();
+      const date = new Date('2125-01-02').toISOString();
       const result = TripService.isValidDates(date, date);
       expect(result).toBe(
         'departureDate and arrivalDate can start at the same date but not same time'

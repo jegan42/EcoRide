@@ -7,7 +7,7 @@ export class BookingService {
     user: User,
     trip: Trip,
     seatCount: number
-  ): Promise<Booking | string> => {
+  ): Promise<Booking> => {
     return await prismaNewClient.$transaction(async (tx) => {
       const totalPrice = trip.price * seatCount;
       const booking = await tx.booking.create({
@@ -37,14 +37,18 @@ export class BookingService {
     });
   };
 
-  static readonly getAllByUserId = async (userId: string) => {
+  static readonly getAllByUserId = async (
+    userId: string
+  ): Promise<Booking[]> => {
     return prismaNewClient.booking.findMany({
       where: { userId },
       include: { trip: true },
     });
   };
 
-  static readonly getAllByDriverId = async (driverId: string) => {
+  static readonly getAllByDriverId = async (
+    driverId: string
+  ): Promise<Booking[]> => {
     return prismaNewClient.booking.findMany({
       where: {
         trip: {
@@ -55,7 +59,9 @@ export class BookingService {
     });
   };
 
-  static readonly getAllByTripId = async (tripId: string) => {
+  static readonly getAllByTripId = async (
+    tripId: string
+  ): Promise<Booking[]> => {
     return prismaNewClient.booking.findMany({
       where: { tripId },
     });
@@ -65,7 +71,7 @@ export class BookingService {
     booking: Booking & { trip: Trip },
     driverId: string,
     action: 'accept' | 'reject'
-  ) => {
+  ): Promise<string> => {
     return await prismaNewClient.$transaction(async (tx) => {
       let bookingData = {};
       let userToCreditId = '';
@@ -107,7 +113,7 @@ export class BookingService {
     booking: Booking,
     bookingId: string,
     userId: string
-  ) => {
+  ): Promise<string> => {
     return await prismaNewClient.$transaction(async (tx) => {
       await tx.booking.update({
         where: { id: bookingId },

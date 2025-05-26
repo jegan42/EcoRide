@@ -126,7 +126,10 @@ export class TripService {
     return null;
   }
 
-  private static getFlexibleDateRange(dateStr: string) {
+  private static getFlexibleDateRange(dateStr: string): {
+    gte: Date;
+    lte: Date;
+  } {
     const targetDate = new Date(dateStr);
     const minDate = new Date(targetDate);
     const maxDate = new Date(targetDate);

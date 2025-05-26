@@ -99,7 +99,7 @@ describe('TripController: DELETE /api/bookings', () => {
     );
   });
 
-  it('DELETE /api/bookings: 400<Bad request Validator: Invalid ID>', async () => {
+  it('DELETE /api/bookings: 400<Bad request Validator: invalid ID>', async () => {
     const res = await request(app)
       .delete(`/api/bookings/${invalidFormatId}`)
       .set('Cookie', cookies[1]);
@@ -107,7 +107,7 @@ describe('TripController: DELETE /api/bookings', () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty(
       'message',
-      'Bad request Validator: Invalid ID'
+      'Bad request Validator: invalid ID'
     );
   });
 
