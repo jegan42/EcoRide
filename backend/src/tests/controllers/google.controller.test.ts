@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import { GoogleAuthController } from '../../controllers/google.controller';
 import { AuthService } from '../../services/auth.service';
-import { sendJsonResponse } from '../../utils/response';
+import { unauthorizedResponse } from '../../utils/response';
 
 jest.mock('../../services/auth.service');
 
@@ -31,9 +31,8 @@ describe('GoogleAuthController.callback', () => {
 
     await GoogleAuthController.callback(req, res);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(unauthorizedResponse).toHaveBeenCalledWith(
       res,
-      'UNAUTHORIZED',
       'Google',
       'user not connected'
     );
@@ -64,9 +63,8 @@ describe('GoogleAuthController.callback', () => {
 
     await GoogleAuthController.callback(req, mockRes);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(unauthorizedResponse).toHaveBeenCalledWith(
       mockRes,
-      'UNAUTHORIZED',
       'Google',
       'user not connected'
     );

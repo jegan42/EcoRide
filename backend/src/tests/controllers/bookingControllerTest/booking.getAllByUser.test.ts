@@ -52,7 +52,7 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/bookings/me', () => {
-  it('GET /api/bookings/me: 200<Successfully Booking: getAllByUser> return BOOKINGS', async () => {
+  it('GET /api/bookings/me: 200<Successfully Bookings: getAllByUser> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/me`)
       .set('Cookie', cookies[1]);
@@ -60,7 +60,7 @@ describe('TripController: GET /api/bookings/me', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Booking: getAllByUser'
+      'Successfully Bookings: getAllByUser'
     );
     expect(Array.isArray(res.body.bookings)).toBe(true);
     expect(res.body.bookings[0]).toHaveProperty('id', bookingsIds[0]);

@@ -3,7 +3,16 @@ import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { AuthService } from '../services/auth.service';
 import { clearTokenCookie, setTokenCookie } from '../utils/tokenCookie';
-import { sendJsonResponse } from '../utils/response';
+import {
+  badRequestResponse,
+  conflictResponse,
+  errorResponse,
+  forbiddenResponse,
+  notFoundResponse,
+  successCreateResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '../utils/response';
 import { User } from '../../generated/prisma';
 
 export class AuthController {
@@ -28,7 +37,7 @@ export class AuthController {
         username
       );
       if (alReadyUsed !== null) {
-        sendJsonResponse(res, 'CONFLICT', 'Auth', alReadyUsed);
+        conflictResponse(res, 'Auth', alReadyUsed);
         return;
       }
 
@@ -49,24 +58,14 @@ export class AuthController {
 
       await AuthService.setSessionToken(res, user.id, email);
 
-      sendJsonResponse(
+      successCreateResponse(
         res,
-        'SUCCESS_CREATE',
         'Auth',
         'signup',
-        'user',
         AuthService.sanitizedUser(user)
       );
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Auth',
-        'failed to signup',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Auth', 'failed to signup', error);
     }
   };
 
@@ -82,30 +81,15 @@ export class AuthController {
         !user?.password ||
         !(await AuthService.verifyPassword(password, user.password))
       ) {
-        sendJsonResponse(res, 'UNAUTHORIZED', 'Auth', 'invalid credentials');
+        unauthorizedResponse(res, 'Auth', 'invalid credentials');
         return;
       }
 
       await AuthService.setSessionToken(res, user.id, email);
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Auth',
-        'signin',
-        'user',
-        AuthService.sanitizedUser(user)
-      );
+      successResponse(res, 'Auth', 'signin', AuthService.sanitizedUser(user));
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Auth',
-        'failed to signin',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Auth', 'failed to signin', error);
     }
   };
 
@@ -115,14 +99,7 @@ export class AuthController {
   ): Promise<void> => {
     const user = req.user as User;
 
-    sendJsonResponse(
-      res,
-      'SUCCESS',
-      'Auth',
-      'getMe',
-      'user',
-      AuthService.sanitizedUser(user)
-    );
+    successResponse(res, 'Auth', 'getMe', AuthService.sanitizedUser(user));
   };
 
   static readonly update = async (
@@ -132,14 +109,14 @@ export class AuthController {
     const { id } = req.body;
 
     if (Object.keys(req.body).length < 2) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Auth', 'invalid or missing fields');
+      badRequestResponse(res, 'Auth', 'invalid or missing fields');
       return;
     }
 
     const currentUser = req.user as User;
 
     if (currentUser.id !== id && !currentUser.role.includes('admin')) {
-      sendJsonResponse(res, 'FORBIDDEN', 'Auth', 'not own user');
+      forbiddenResponse(res, 'Auth', 'not own user');
       return;
     }
 
@@ -148,7 +125,7 @@ export class AuthController {
         where: { id },
       });
       if (!user) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Auth', 'user not found');
+        notFoundResponse(res, 'Auth', 'user not found');
         return;
       }
 
@@ -158,7 +135,7 @@ export class AuthController {
         username
       );
       if (allReadyUsed !== null) {
-        sendJsonResponse(res, 'CONFLICT', 'Auth', allReadyUsed);
+        conflictResponse(res, 'Auth', allReadyUsed);
         return;
       }
 
@@ -175,24 +152,14 @@ export class AuthController {
 
       updatedUser.jwtToken && setTokenCookie(res, updatedUser.jwtToken);
 
-      sendJsonResponse(
+      successResponse(
         res,
-        'SUCCESS',
         'Auth',
         'update',
-        'user',
         AuthService.sanitizedUser(updatedUser)
       );
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Auth',
-        'failed to update',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Auth', 'failed to update', error);
     }
   };
 
@@ -201,6 +168,6 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     clearTokenCookie(res);
-    sendJsonResponse(res, 'SUCCESS', 'Auth', 'signout');
+    successResponse(res, 'Auth', 'signout');
   };
 }

@@ -1,6 +1,6 @@
 // backend/src/middleware/error.middleware.ts
 import { Request, Response, NextFunction } from 'express';
-import { sendJsonResponse } from '../utils/response';
+import { errorResponse } from '../utils/response';
 
 export const errorHandler = (
   err: Error,
@@ -8,13 +8,5 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ): void => {
-  sendJsonResponse(
-    res,
-    'ERROR',
-    'Middleware',
-    'something went wrong',
-    undefined,
-    undefined,
-    err
-  );
+  errorResponse(res, 'Middleware', 'something went wrong', err);
 };

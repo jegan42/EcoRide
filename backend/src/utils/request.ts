@@ -1,7 +1,7 @@
 // backend/src/utils/request.ts
 import { Request, Response } from 'express';
 import { User } from '../../generated/prisma';
-import { sendJsonResponse } from './response';
+import { forbiddenResponse } from './response';
 
 export const assertOwnership = (
   req: Request,
@@ -11,7 +11,7 @@ export const assertOwnership = (
   const user = req.user as User;
 
   if (user.id !== ownerId) {
-    sendJsonResponse(res, 'FORBIDDEN', 'Owner', 'not the owner');
+    forbiddenResponse(res, 'Owner', 'not the owner');
     return null;
   }
 

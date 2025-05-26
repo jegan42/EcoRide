@@ -2,7 +2,14 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { assertOwnership } from '../utils/request';
-import { sendJsonResponse } from '../utils/response';
+import {
+  badRequestResponse,
+  conflictResponse,
+  errorResponse,
+  notFoundResponse,
+  successCreateResponse,
+  successResponse,
+} from '../utils/response';
 import { User } from '../../generated/prisma';
 
 export class PreferencesController {
@@ -19,9 +26,8 @@ export class PreferencesController {
           where: { userId: id },
         });
       if (existUserPreferences) {
-        sendJsonResponse(
+        conflictResponse(
           res,
-          'CONFLICT',
           'UserPreferences',
           'already created userPreferences'
         );
@@ -41,16 +47,9 @@ export class PreferencesController {
         },
       });
 
-      sendJsonResponse(
-        res,
-        'SUCCESS_CREATE',
-        'UserPreferences',
-        'created',
-        'userPreferences',
-        userPreferences
-      );
-    } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to create');
+      successCreateResponse(res, 'UserPreferences', 'created', userPreferences);
+    } catch (error) {
+      errorResponse(res, 'UserPreferences', 'failed to create', error);
     }
   };
 
@@ -76,30 +75,13 @@ export class PreferencesController {
         where: { userId: id },
       });
       if (!userPreferences) {
-        sendJsonResponse(
-          res,
-          'NOT_FOUND',
-          'UserPreferences',
-          'userPreferences not found'
-        );
+        notFoundResponse(res, 'UserPreferences', 'userPreferences not found');
         return;
       }
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'UserPreferences',
-        'getByUserId',
-        'userPreferences',
-        userPreferences
-      );
-    } catch {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'UserPreferences',
-        'failed to getByUserId'
-      );
+      successResponse(res, 'UserPreferences', 'getByUserId', userPreferences);
+    } catch (error) {
+      errorResponse(res, 'UserPreferences', 'failed to getByUserId', error);
     }
   };
 
@@ -111,7 +93,7 @@ export class PreferencesController {
     if (!assertOwnership(req, res, id)) return;
 
     if (Object.keys(req.body).length < 1) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'UserPreferences', 'missing fields');
+      badRequestResponse(res, 'UserPreferences', 'missing fields');
       return;
     }
 
@@ -121,16 +103,9 @@ export class PreferencesController {
         data: req.body,
       });
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'UserPreferences',
-        'updated',
-        'userPreferences',
-        userPreferences
-      );
-    } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to update');
+      successResponse(res, 'UserPreferences', 'updated', userPreferences);
+    } catch (error) {
+      errorResponse(res, 'UserPreferences', 'failed to update', error);
     }
   };
 
@@ -143,9 +118,9 @@ export class PreferencesController {
 
     try {
       await prismaNewClient.userPreferences.delete({ where: { userId: id } });
-      sendJsonResponse(res, 'SUCCESS', 'UserPreferences', 'deleted');
-    } catch {
-      sendJsonResponse(res, 'ERROR', 'UserPreferences', 'failed to delete');
+      successResponse(res, 'UserPreferences', 'deleted');
+    } catch (error) {
+      errorResponse(res, 'UserPreferences', 'failed to delete', error);
     }
   };
 }

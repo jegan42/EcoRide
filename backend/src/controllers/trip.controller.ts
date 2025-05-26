@@ -2,7 +2,15 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { TripService } from '../services/trip.service';
-import { sendJsonResponse } from '../utils/response';
+import {
+  badRequestResponse,
+  conflictResponse,
+  errorResponse,
+  forbiddenResponse,
+  notFoundResponse,
+  successCreateResponse,
+  successResponse,
+} from '../utils/response';
 import { User, Prisma } from '../../generated/prisma';
 
 export class TripController {
@@ -17,7 +25,7 @@ export class TripController {
       arrivalDate
     );
     if (dateValidationMsg) {
-      sendJsonResponse(res, 'BAD_REQUEST', 'Trip', dateValidationMsg);
+      badRequestResponse(res, 'Trip', dateValidationMsg);
       return;
     }
 
@@ -28,14 +36,13 @@ export class TripController {
       const maxPassengerSeats =
         await TripService.getMaxPassengerSeats(vehicleId);
       if (maxPassengerSeats === null) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'vehicle not found');
+        notFoundResponse(res, 'Trip', 'vehicle not found');
         return;
       }
 
       if (maxPassengerSeats < availableSeats) {
-        sendJsonResponse(
+        badRequestResponse(
           res,
-          'BAD_REQUEST',
           'Trip',
           'availableSeats cannot exceed maxPassengerSeats (total seats minus 1 for the driver)'
         );
@@ -45,9 +52,8 @@ export class TripController {
       const user = req.user as User;
 
       if (await TripService.isExistTrip(user.id, vehicleId, departureDate)) {
-        sendJsonResponse(
+        conflictResponse(
           res,
-          'CONFLICT',
           'Trip',
           'already exists a trip with the same vehicle and user on this date'
         );
@@ -67,17 +73,9 @@ export class TripController {
         },
       });
 
-      sendJsonResponse(res, 'SUCCESS_CREATE', 'Trip', 'created', 'trip', trip);
+      successCreateResponse(res, 'Trip', 'created', trip);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Trip',
-        'failed to create',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Trip', 'failed to create', error);
     }
   };
 
@@ -110,39 +108,27 @@ export class TripController {
           flexible
         );
         if (alternative === null || alternative.length === 0) {
-          sendJsonResponse(
+          successResponse(
             res,
-            'SUCCESS',
-            'Trip',
+            'Trips',
             'trips not found matching your criteria',
-            'trips',
             []
           );
           return;
         } else {
-          sendJsonResponse(
+          successResponse(
             res,
-            'SUCCESS',
-            'Trip',
+            'Trips',
             'alternative trips founded',
-            'trips',
             alternative
           );
           return;
         }
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'getAll', 'trips', trips);
+      successResponse(res, 'Trips', 'getAll', trips);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Trip',
-        'failed to getAll',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Trip', 'failed to getAll', error);
     }
   };
 
@@ -162,21 +148,13 @@ export class TripController {
       });
 
       if (!trip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
+        notFoundResponse(res, 'Trip', 'trip not found');
         return;
       }
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'getById', 'trip', trip);
+      successResponse(res, 'Trip', 'getById', trip);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Trip',
-        'failed to getById',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Trip', 'failed to getById', error);
     }
   };
 
@@ -191,14 +169,14 @@ export class TripController {
         where: { id },
       });
       if (!existingTrip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
+        notFoundResponse(res, 'Trip', 'trip not found');
         return;
       }
 
       const user = req.user as User;
 
       if (user.id !== existingTrip.driverId) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
+        forbiddenResponse(res, 'Trip', 'not a driver');
         return;
       }
 
@@ -207,17 +185,9 @@ export class TripController {
         data: req.body,
       });
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'updated', 'trip', trip);
+      successResponse(res, 'Trip', 'updated', trip);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Trip',
-        'failed to update',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Trip', 'failed to update', error);
     }
   };
 
@@ -233,14 +203,14 @@ export class TripController {
       });
 
       if (!trip) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Trip', 'trip not found');
+        notFoundResponse(res, 'Trip', 'trip not found');
         return;
       }
 
       const user = req.user as User;
 
       if (user.id !== trip.driverId) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Trip', 'not a driver');
+        forbiddenResponse(res, 'Trip', 'not a driver');
         return;
       }
 
@@ -248,17 +218,9 @@ export class TripController {
         where: { id },
       });
 
-      sendJsonResponse(res, 'SUCCESS', 'Trip', 'deleted');
+      successResponse(res, 'Trip', 'deleted');
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Trip',
-        'failed to delete',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Trip', 'failed to delete', error);
     }
   };
 }

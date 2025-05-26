@@ -27,10 +27,10 @@ afterAll(async () => {
 });
 
 describe('VehicleController: GET /api/vehicles', () => {
-  it('GET /api/vehicles: 200<Successfully Vehicle: getAll> should return all vehicles', async () => {
+  it('GET /api/vehicles: 200<Successfully Vehicles: getAll> should return all vehicles', async () => {
     const res = await request(app).get('/api/vehicles');
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Vehicle: getAll');
+    expect(res.body).toHaveProperty('message', 'Successfully Vehicles: getAll');
     expect(res.body.vehicles).toBeDefined();
     expect(Array.isArray(res.body.vehicles)).toBe(true);
   });
@@ -86,7 +86,7 @@ describe('VehicleController: GET /api/vehicles', () => {
     );
   });
 
-  it('GET /api/vehicles: 500<Internal error Auth: failed to getAll>', async () => {
+  it('GET /api/vehicles: 500<Internal error Vehicles: failed to getAll>', async () => {
     jest
       .spyOn(prismaNewClient.vehicle, 'findMany')
       .mockRejectedValue(new Error('DB exploded'));
@@ -95,11 +95,11 @@ describe('VehicleController: GET /api/vehicles', () => {
     expect(res.status).toBe(500);
     expect(res.body).toHaveProperty(
       'message',
-      'Internal error Vehicle: failed to getAll'
+      'Internal error Vehicles: failed to getAll'
     );
   });
 
-  it('GET /api/vehicles/:id: 500<Internal error Auth: failed to getById>', async () => {
+  it('GET /api/vehicles/:id: 500<Internal error Vehicle: failed to getById>', async () => {
     jest
       .spyOn(prismaNewClient.vehicle, 'findUnique')
       .mockRejectedValue(new Error('DB exploded'));

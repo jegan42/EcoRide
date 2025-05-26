@@ -64,7 +64,7 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/bookings/trip/:id', () => {
-  it('GET /api/bookings/trip/:id: 200<Successfully Booking: getAllByTrip> return BOOKINGS', async () => {
+  it('GET /api/bookings/trip/:id: 200<Successfully Bookings: getAllByTrip> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/trip/${tripIds[0]}`)
       .set('Cookie', cookies[1]);
@@ -72,14 +72,14 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Booking: getAllByTrip'
+      'Successfully Bookings: getAllByTrip'
     );
     expect(Array.isArray(res.body.bookings)).toBe(true);
     expect(res.body.bookings[0]).toHaveProperty('id', bookingsIds[0]);
     expect(res.body.bookings[1]).toHaveProperty('id', bookingsIds[2]);
   });
 
-  it('GET /api/bookings/trip/:id: 200<Successfully Booking: getAllByTrip> return BOOKINGS', async () => {
+  it('GET /api/bookings/trip/:id: 200<Successfully Bookings: getAllByTrip> return BOOKINGS', async () => {
     const res = await request(app)
       .get(`/api/bookings/trip/${tripIds[1]}`)
       .set('Cookie', cookies[0]);
@@ -87,7 +87,7 @@ describe('TripController: GET /api/bookings/trip/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Booking: getAllByTrip'
+      'Successfully Bookings: getAllByTrip'
     );
     expect(Array.isArray(res.body.bookings)).toBe(true);
     expect(res.body.bookings[0]).toHaveProperty('id', bookingsIds[1]);

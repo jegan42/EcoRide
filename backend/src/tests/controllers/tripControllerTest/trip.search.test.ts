@@ -27,19 +27,19 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/trips (search)', () => {
-  it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips matching from/to params', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: getAll> should return trips matching from/to params', async () => {
     const res = await request(app).get('/api/trips').send({
       departureCity: 'Paris',
       arrivalCity: 'Lyon',
     });
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
+    expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
     expect(Array.isArray(res.body.trips)).toBe(true);
     expect(res.body.trips[0]).toHaveProperty('departureCity', 'Paris');
     expect(res.body.trips[0]).toHaveProperty('arrivalCity', 'Lyon');
   });
 
-  it('GET /api/trips (search): 200<Successfully Trip: trips not found matching your criteria> should return no results for unmatched cities', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: trips not found matching your criteria> should return no results for unmatched cities', async () => {
     const res = await request(app).get('/api/trips').send({
       departureCity: 'Berlin',
       arrivalCity: 'Rome',
@@ -47,49 +47,49 @@ describe('TripController: GET /api/trips (search)', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Trip: trips not found matching your criteria'
+      'Successfully Trips: trips not found matching your criteria'
     );
   });
 
-  it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips with exact date', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: getAll> should return trips with exact date', async () => {
     const res = await request(app).get('/api/trips').send({
       departureDate: '2125-12-01T00:01:00.000Z',
     });
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
+    expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
-  it('GET /api/trips (search): 200<Successfully Trip: getAll> should return trips with flexible date', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: getAll> should return trips with flexible date', async () => {
     const res = await request(app).get('/api/trips').send({
       departureDate: '2125-12-02T00:00:00.000Z',
       flexible: true,
     });
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll'); ///////////////
+    expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll'); ///////////////
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
-  it('GET /api/trips (search): 200<Successfully Trip: alternative trips founded> should return alternative trips with no-match date', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: alternative trips founded> should return alternative trips with no-match date', async () => {
     const res = await request(app).get('/api/trips').send({
       departureDate: '2125-12-03T00:00:00.000Z',
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Trip: alternative trips founded'
+      'Successfully Trips: alternative trips founded'
     );
     expect(Array.isArray(res.body.trips)).toBe(true);
   });
 
-  it('GET /api/trips (search): 200<Successfully Trip: trips not found matching your criteria> no trip and no alternative for a date', async () => {
+  it('GET /api/trips (search): 200<Successfully Trips: trips not found matching your criteria> no trip and no alternative for a date', async () => {
     const res = await request(app).get('/api/trips').send({
       departureDate: '2125-01-01T00:00:00.000Z',
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty(
       'message',
-      'Successfully Trip: trips not found matching your criteria'
+      'Successfully Trips: trips not found matching your criteria'
     );
   });
 });

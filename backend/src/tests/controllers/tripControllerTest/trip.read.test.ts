@@ -30,11 +30,11 @@ afterAll(async () => {
 });
 
 describe('TripController: GET /api/trips', () => {
-  it('GET /api/trips: 200<Successfully Trip: getAll> should return all trips', async () => {
+  it('GET /api/trips: 200<Successfully Trips: getAll> should return all trips', async () => {
     const res = await request(app).get('/api/trips');
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: getAll');
+    expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
     expect(res.body.trips).toBeDefined();
     expect(Array.isArray(res.body.trips)).toBe(true);
   });

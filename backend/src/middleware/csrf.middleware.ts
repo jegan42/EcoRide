@@ -1,7 +1,7 @@
 // backend/src/middleware/csrf.middleware.ts
 import csrf from 'csurf';
 import { Request, Response, NextFunction } from 'express';
-import { sendJsonResponse } from '../utils/response';
+import { forbiddenResponse } from '../utils/response';
 
 export const csrfProtection =
   process.env.NODE_ENV !== 'test'
@@ -21,7 +21,7 @@ export const csrfErrorHandler = (
   next: NextFunction
 ): void => {
   if (err.code === 'EBADCSRFTOKEN') {
-    sendJsonResponse(res, 'FORBIDDEN', 'CSRF', 'invalid token');
+    forbiddenResponse(res, 'CSRF', 'invalid token');
     return;
   }
   next(err);

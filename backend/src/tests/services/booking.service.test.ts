@@ -80,8 +80,8 @@ describe('BookingService.create', () => {
   });
 
   it('should set trip status to full when no seats left', async () => {
-    const fullTrip = { ...mockTrip, availableSeats: 2 }; // 2 seats left
-    const fullSeatCount = 2; // exactly fills the trip
+    const fullTrip = { ...mockTrip, availableSeats: 2 };
+    const fullSeatCount = 2;
     const createMock = jest.fn().mockResolvedValue(mockBookingResult);
     const updateTripMock = jest.fn();
     const updateUserMock = jest.fn();
@@ -204,7 +204,7 @@ describe('BookingService.cancel', () => {
     expect(txUpdateTrip).toHaveBeenCalledWith({
       where: { id: trip.id },
       data: {
-        availableSeats: 2, // 1 + 1
+        availableSeats: 2,
         status: 'open',
       },
     });
@@ -370,7 +370,6 @@ describe('BookingService.cancel', () => {
       totalPrice: 100,
     };
 
-    // Mock transaction internals
     const tripUpdate = jest.fn();
     const bookingUpdate = jest.fn();
     const userUpdate = jest.fn();
@@ -393,7 +392,7 @@ describe('BookingService.cancel', () => {
     expect(tripUpdate).toHaveBeenCalledWith({
       where: { id: 'trip1' },
       data: {
-        availableSeats: 3, // 2 current + 1 released
+        availableSeats: 3,
         status: 'open',
       },
     });

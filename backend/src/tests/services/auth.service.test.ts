@@ -28,7 +28,7 @@ jest.mock('../../utils/tokenCookie', () => ({
 }));
 
 afterEach(() => {
-  jest.resetAllMocks(); // réinitialise tous les mocks
+  jest.resetAllMocks();
 });
 
 describe('setSessionToken', () => {
@@ -36,7 +36,6 @@ describe('setSessionToken', () => {
     const mockRes = { cookie: jest.fn() } as Partial<Response> as Response;
     const mockToken = 'mock.jwt.token';
 
-    // Spy sur la vraie méthode signToken pour mocker son retour
     jest.spyOn(AuthService, 'signToken').mockReturnValue(mockToken);
 
     (prismaNewClient.user.update as jest.Mock).mockResolvedValue(undefined);
@@ -64,7 +63,6 @@ describe('AuthService', () => {
       const password = 'super-secret';
       const fakeHash = 'hashedPassword123';
 
-      // mock les fonctions de bcrypt
       (bcrypt.hash as jest.Mock).mockResolvedValue(fakeHash);
       (bcrypt.compare as jest.Mock).mockImplementation((pwd, hash) => {
         return pwd === password && hash === fakeHash;
@@ -227,7 +225,7 @@ describe('AuthService', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('irrelevant-hash');
 
       const data = {
-        role: ['driver', 'admin'], // doublon avec rôle déjà existant
+        role: ['driver', 'admin'],
         credits: 150,
         email: 'updated@example.com',
         username: 'updatedUser',
@@ -235,7 +233,6 @@ describe('AuthService', () => {
 
       const result = await AuthService.buildData(data, user, currentUser);
 
-      // Vérifie que les rôles sont fusionnés sans doublons
       expect(result.role?.sort((a, b) => a.localeCompare(b))).toEqual(
         ['admin', 'driver', 'passenger'].sort((a, b) => a.localeCompare(b))
       );
@@ -256,7 +253,6 @@ describe('AuthService', () => {
 
   describe('AuthService.verifyPassword', () => {
     it('should return false if bcrypt.compare throws an error', async () => {
-      // Simule une erreur dans bcrypt.compare
       (bcrypt.compare as jest.Mock).mockImplementation(() => {
         throw new Error('Something went wrong');
       });

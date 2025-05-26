@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service';
 import prismaNewClient from '../lib/prisma';
-import { sendJsonResponse } from '../utils/response';
+import { errorResponse, unauthorizedResponse } from '../utils/response';
 
 export const authenticate = async (
   req: Request,
@@ -15,13 +15,13 @@ export const authenticate = async (
     req.cookies.jwtToken ??
     (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
   if (!jwtToken) {
-    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'missing token');
+    unauthorizedResponse(res, 'Athenticate', 'missing token');
     return;
   }
 
   const decoded = AuthService.verifyToken(jwtToken);
   if (!decoded?.userId) {
-    sendJsonResponse(res, 'UNAUTHORIZED', 'Athenticate', 'invalid token');
+    unauthorizedResponse(res, 'Athenticate', 'invalid token');
     return;
   }
 
@@ -32,12 +32,7 @@ export const authenticate = async (
       },
     });
     if (!user) {
-      sendJsonResponse(
-        res,
-        'UNAUTHORIZED',
-        'Athenticate',
-        'user not connected'
-      );
+      unauthorizedResponse(res, 'Athenticate', 'user not connected');
       return;
     }
 
@@ -45,15 +40,7 @@ export const authenticate = async (
 
     next();
   } catch (error) {
-    sendJsonResponse(
-      res,
-      'ERROR',
-      'Athenticate',
-      'server error',
-      undefined,
-      undefined,
-      error
-    );
+    errorResponse(res, 'Athenticate', 'server error', error);
     return;
   }
 };

@@ -2,7 +2,14 @@
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
 import { VehicleService } from '../services/vehicle.service';
-import { sendJsonResponse } from '../utils/response';
+import {
+  conflictResponse,
+  errorResponse,
+  forbiddenResponse,
+  notFoundResponse,
+  successCreateResponse,
+  successResponse,
+} from '../utils/response';
 import { User } from '../../generated/prisma';
 
 export class VehicleController {
@@ -22,12 +29,7 @@ export class VehicleController {
       } = req.body;
 
       if (await VehicleService.isVehicleExistsWithLicensePlate(licensePlate)) {
-        sendJsonResponse(
-          res,
-          'CONFLICT',
-          'Vehicle',
-          'already used this licensePlate'
-        );
+        conflictResponse(res, 'Vehicle', 'already used this licensePlate');
         return;
       }
 
@@ -53,24 +55,9 @@ export class VehicleController {
         },
       });
 
-      sendJsonResponse(
-        res,
-        'SUCCESS_CREATE',
-        'Vehicle',
-        'created',
-        'vehicle',
-        vehicle
-      );
+      successCreateResponse(res, 'Vehicle', 'created', vehicle);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Vehicle',
-        'failed to create',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Vehicle', 'failed to create', error);
     }
   };
 
@@ -82,28 +69,13 @@ export class VehicleController {
       const vehicles = await prismaNewClient.vehicle.findMany();
 
       if (vehicles?.length === 0) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        notFoundResponse(res, 'Vehicle', 'vehicle not found');
         return;
       }
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Vehicle',
-        'getAll',
-        'vehicles',
-        vehicles
-      );
+      successResponse(res, 'Vehicles', 'getAll', vehicles);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Vehicle',
-        'failed to getAll',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Vehicles', 'failed to getAll', error);
     }
   };
 
@@ -118,28 +90,13 @@ export class VehicleController {
         where: { id },
       });
       if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        notFoundResponse(res, 'Vehicle', 'vehicle not found');
         return;
       }
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Vehicle',
-        'getById',
-        'vehicle',
-        vehicle
-      );
+      successResponse(res, 'Vehicle', 'getById', vehicle);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Vehicle',
-        'failed to getById',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Vehicle', 'failed to getById', error);
     }
   };
 
@@ -154,14 +111,14 @@ export class VehicleController {
         where: { id },
       });
       if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        notFoundResponse(res, 'Vehicle', 'vehicle not found');
         return;
       }
 
       const user = req.user as User;
 
       if (!(await VehicleService.isAuthorized(user, id))) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not the driver');
+        forbiddenResponse(res, 'Vehicle', 'not the driver');
         return;
       }
 
@@ -170,24 +127,9 @@ export class VehicleController {
         data: req.body,
       });
 
-      sendJsonResponse(
-        res,
-        'SUCCESS',
-        'Vehicle',
-        'updated',
-        'vehicle',
-        updateVehicle
-      );
+      successResponse(res, 'Vehicle', 'updated', updateVehicle);
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Vehicle',
-        'failed to update',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Vehicle', 'failed to update', error);
     }
   };
 
@@ -202,29 +144,21 @@ export class VehicleController {
         where: { id },
       });
       if (!vehicle) {
-        sendJsonResponse(res, 'NOT_FOUND', 'Vehicle', 'vehicle not found');
+        notFoundResponse(res, 'Vehicle', 'vehicle not found');
         return;
       }
 
       const user = req.user as User;
 
       if (!(await VehicleService.isAuthorized(user, id))) {
-        sendJsonResponse(res, 'FORBIDDEN', 'Vehicle', 'not the driver');
+        forbiddenResponse(res, 'Vehicle', 'not the driver');
         return;
       }
 
       await prismaNewClient.vehicle.delete({ where: { id } });
-      sendJsonResponse(res, 'SUCCESS', 'Vehicle', 'deleted');
+      successResponse(res, 'Vehicle', 'deleted');
     } catch (error) {
-      sendJsonResponse(
-        res,
-        'ERROR',
-        'Vehicle',
-        'failed to delete',
-        undefined,
-        undefined,
-        error
-      );
+      errorResponse(res, 'Vehicle', 'failed to delete', error);
     }
   };
 }

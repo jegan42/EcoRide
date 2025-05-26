@@ -2,16 +2,14 @@
 import { authenticate } from '../../middleware/auth.middleware';
 import { AuthService } from '../../services/auth.service';
 import prismaNewClient from '../../lib/prisma';
-import { sendJsonResponse } from '../../utils/response';
+import { errorResponse, unauthorizedResponse } from '../../utils/response';
 
 jest.mock('../../lib/prisma', () => ({
   user: {
     findUnique: jest.fn(),
   },
 }));
-jest.mock('../../utils/response', () => ({
-  sendJsonResponse: jest.fn(),
-}));
+jest.mock('../../utils/response');
 jest.mock('../../services/auth.service', () => ({
   AuthService: {
     verifyToken: jest.fn(),
@@ -34,7 +32,8 @@ describe('authenticate middleware', () => {
     };
     next = jest.fn();
 
-    (sendJsonResponse as jest.Mock).mockClear();
+    (errorResponse as jest.Mock).mockClear();
+    (unauthorizedResponse as jest.Mock).mockClear();
     (prismaNewClient.user.findUnique as jest.Mock).mockClear();
     (AuthService.verifyToken as jest.Mock).mockClear();
     (prismaNewClient.user.findUnique as jest.Mock).mockClear();
@@ -43,9 +42,8 @@ describe('authenticate middleware', () => {
   test('missing token returns UNAUTHORIZED', async () => {
     await authenticate(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(unauthorizedResponse).toHaveBeenCalledWith(
       res,
-      'UNAUTHORIZED',
       'Athenticate',
       'missing token'
     );
@@ -59,9 +57,8 @@ describe('authenticate middleware', () => {
 
     await authenticate(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(unauthorizedResponse).toHaveBeenCalledWith(
       res,
-      'UNAUTHORIZED',
       'Athenticate',
       'invalid token'
     );
@@ -82,9 +79,8 @@ describe('authenticate middleware', () => {
       where: { id: 'user123' },
     });
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(unauthorizedResponse).toHaveBeenCalledWith(
       res,
-      'UNAUTHORIZED',
       'Athenticate',
       'user not connected'
     );
@@ -103,13 +99,10 @@ describe('authenticate middleware', () => {
 
     await authenticate(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(errorResponse).toHaveBeenCalledWith(
       res,
-      'ERROR',
       'Athenticate',
       'server error',
-      undefined,
-      undefined,
       expect.any(Error)
     );
     expect(next).not.toHaveBeenCalled();
@@ -129,7 +122,7 @@ describe('authenticate middleware', () => {
 
     expect(req.user).toBe(fakeUser);
     expect(next).toHaveBeenCalled();
-    expect(sendJsonResponse).not.toHaveBeenCalled();
+    expect(errorResponse).not.toHaveBeenCalled();
   });
 
   it('should extract token from Authorization header and authenticate user', async () => {
@@ -139,13 +132,11 @@ describe('authenticate middleware', () => {
       },
       cookies: {},
     };
-    // Mock verifyToken to simulate valid token
     (AuthService.verifyToken as jest.Mock).mockReturnValue({
       userId: 'user-123',
       email: 'user@test.com',
     });
 
-    // Mock user found in DB
     (prismaNewClient.user.findUnique as jest.Mock).mockResolvedValue({
       id: 'user-123',
       email: 'user@test.com',

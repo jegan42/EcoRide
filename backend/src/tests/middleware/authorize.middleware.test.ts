@@ -1,10 +1,10 @@
 // backend/src/tests/middleware/authorize.middleware.test.ts
 import { Request, Response, NextFunction } from 'express';
 import { authorize } from '../../middleware/authorize.middleware';
-import { sendJsonResponse } from '../../utils/response';
+import { forbiddenResponse } from '../../utils/response';
 
 jest.mock('../../utils/response', () => ({
-  sendJsonResponse: jest.fn(),
+  forbiddenResponse: jest.fn(),
 }));
 
 describe('authorize middleware', () => {
@@ -25,9 +25,8 @@ describe('authorize middleware', () => {
     const middleware = authorize(['ADMIN']);
     middleware(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(forbiddenResponse).toHaveBeenCalledWith(
       res,
-      'FORBIDDEN',
       'Authorize',
       'no roles'
     );
@@ -40,9 +39,8 @@ describe('authorize middleware', () => {
     const middleware = authorize(['ADMIN']);
     middleware(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(forbiddenResponse).toHaveBeenCalledWith(
       res,
-      'FORBIDDEN',
       'Authorize',
       'no roles'
     );
@@ -55,9 +53,8 @@ describe('authorize middleware', () => {
     const middleware = authorize(['ADMIN']);
     middleware(req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(forbiddenResponse).toHaveBeenCalledWith(
       res,
-      'FORBIDDEN',
       'Authorize',
       'insufficient permissions'
     );
@@ -70,7 +67,7 @@ describe('authorize middleware', () => {
     const middleware = authorize(['ADMIN']);
     middleware(req, res, next);
 
-    expect(sendJsonResponse).not.toHaveBeenCalled();
+    expect(forbiddenResponse).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
   });
 });

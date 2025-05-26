@@ -1,10 +1,10 @@
 // backend/src/tests/middleware/error.middleware.test.ts
 import { Request, Response, NextFunction } from 'express';
 import { errorHandler } from '../../middleware/error.middleware';
-import { sendJsonResponse } from '../../utils/response';
+import { errorResponse } from '../../utils/response';
 
 jest.mock('../../utils/response', () => ({
-  sendJsonResponse: jest.fn(),
+  errorResponse: jest.fn(),
 }));
 
 describe('errorHandler middleware', () => {
@@ -19,18 +19,15 @@ describe('errorHandler middleware', () => {
     jest.clearAllMocks();
   });
 
-  it('should call sendJsonResponse with expected parameters', () => {
+  it('should call errorResponse with expected parameters', () => {
     const error = new Error('Test error');
 
     errorHandler(error, req, res, next);
 
-    expect(sendJsonResponse).toHaveBeenCalledWith(
+    expect(errorResponse).toHaveBeenCalledWith(
       res,
-      'ERROR',
       'Middleware',
       'something went wrong',
-      undefined,
-      undefined,
       error
     );
   });
