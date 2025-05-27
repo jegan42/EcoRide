@@ -1,6 +1,6 @@
 // frontend/src/router/AppRouter.tsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import AppLayout from '../layout/AppLayout';
+import AppLayout from '../layouts/AppLayout';
 import LoginPage from '../pages/LoginPage'; // à ajuster selon dispo
 import Dashboard from '../pages/Dashboard';
 
