@@ -1,15 +1,18 @@
 // Ce composant affiche un en-tête simple avec le nom de l'application
-import styled from 'styled-components';
-
-const HeaderWrapper = styled.header`
-  padding: 1rem;
-  background: #282c34;
-  color: white;
-  text-align: center;
-`;
+import { Box, Typography } from '@mui/material';
 
 const Header = () => {
-  return <HeaderWrapper>Mon App Frontend</HeaderWrapper>;
+  return (
+    <Box
+      component="header"
+      sx={{
+        backgroundColor: 'background.default', // ou ta couleur personnalisée
+        padding: '1rem',
+      }}
+    >
+      <Typography variant="h1">Mon App Frontend</Typography>
+    </Box>
+  );
 };
 
 export default Header;
