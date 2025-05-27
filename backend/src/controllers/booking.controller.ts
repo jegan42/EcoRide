@@ -72,7 +72,10 @@ export class BookingController {
     }
   };
 
-  static readonly cancel = async (req: Request, res: Response) => {
+  static readonly cancel = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const user = req.user as User;
@@ -120,7 +123,10 @@ export class BookingController {
     }
   };
 
-  static readonly getAllByUser = async (req: Request, res: Response) => {
+  static readonly getAllByUser = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const user = req.user as User;
 
@@ -137,7 +143,10 @@ export class BookingController {
     }
   };
 
-  static readonly getAllByDriver = async (req: Request, res: Response) => {
+  static readonly getAllByDriver = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const user = req.user as User;
 
@@ -153,7 +162,10 @@ export class BookingController {
     }
   };
 
-  static readonly getAllByTrip = async (req: Request, res: Response) => {
+  static readonly getAllByTrip = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
 
@@ -207,7 +219,10 @@ export class BookingController {
     }
   };
 
-  static readonly getById = async (req: Request, res: Response) => {
+  static readonly getById = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const user = req.user as User;
       const { id } = req.params;
