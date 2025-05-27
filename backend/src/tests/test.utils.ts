@@ -104,27 +104,29 @@ export const createTripAndGetId = async (
   cookies: string,
   departureDate: string = '2125-12-01T08:00:00Z',
   arrivalDate: string = '2125-12-01T10:00:00Z'
-) => {
+): Promise<string | undefined> => {
   const availableSeats = await getAvailableSeats(vehicleId);
   if (!availableSeats) return undefined;
   return (
-    await request(app).post('/api/trips').set('Cookie', cookies).send({
-      vehicleId: vehicleId,
-      departureCity: `Paris`,
-      arrivalCity: `Lyon`,
-      departureDate,
-      arrivalDate,
-      availableSeats,
-      price: 45.5,
-    })
-  ).body.trip.id;
+    (
+      await request(app).post('/api/trips').set('Cookie', cookies).send({
+        vehicleId: vehicleId,
+        departureCity: `Paris`,
+        arrivalCity: `Lyon`,
+        departureDate,
+        arrivalDate,
+        availableSeats,
+        price: 45.5,
+      })
+    ).body.trip.id ?? undefined
+  );
 };
 
 export const createBookingAndGetId = async (
   tripId: string,
   cookies: string,
   seatCount: number
-) => {
+): Promise<string> => {
   const res = await request(app)
     .post('/api/bookings')
     .set('Cookie', cookies)
@@ -132,10 +134,13 @@ export const createBookingAndGetId = async (
       tripId,
       seatCount,
     });
-  return res.body.booking.id;
+  return res.body.booking.id ?? '';
 };
 
-export const createUserPreferences = async (id: string, cookies: string) => {
+export const createUserPreferences = async (
+  id: string,
+  cookies: string
+): Promise<request.Response> => {
   return await request(app)
     .post(`/api/user-preferences/${id}`)
     .set('Cookie', cookies)
