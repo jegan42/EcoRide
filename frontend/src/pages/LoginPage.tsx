@@ -1,4 +1,4 @@
-// Ce composant représente le formulaire de connexion avec React Hook Form
+// frontend/src/pages/LoginPage.tsx
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -14,8 +14,14 @@ const LoginPage = () => {
     <>
       <h1>Login</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input {...register('email')} placeholder="Email" /><br />
-        <input {...register('password')} type="password" placeholder="Password" /><br />
+        <input {...register('email')} placeholder="Email" />
+        <br />
+        <input
+          {...register('password')}
+          type="password"
+          placeholder="Password"
+        />
+        <br />
         <button type="submit">Login</button>
       </form>
     </>

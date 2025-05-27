@@ -1,6 +1,5 @@
-// Ce type représente les données d'utilisateur utilisées dans l'application
+// frontend/src/types/user.ts
 export interface User {
-    name: string;
-    email: string;
-  }
-  
+  name: string;
+  email: string;
+}

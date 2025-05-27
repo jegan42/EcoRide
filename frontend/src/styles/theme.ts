@@ -1,4 +1,19 @@
+// frontend/src/styles/theme/ts
 import { createTheme } from '@mui/material/styles';
+
+const colors = {
+  greenForest: '#2E7D32',
+  greenDark: '#1B5E20',
+  greenLight: '#A5D6A7',
+  blueSoft: '#4FC3F7',
+  grayDark: '#263238',
+  grayLight: '#F5F5F5',
+  white: '#FFFFFF',
+  redLight: '#E53935',
+  yellow: '#FDD835',
+  disabledText: 'rgba(0,0,0,0.4)',
+  borderGray: '#BDBDBD',
+};
 
 // 1rem = 16px
 const pxToRem = (px: number) => `${px / 16}rem`;
@@ -6,33 +21,33 @@ const pxToRem = (px: number) => `${px / 16}rem`;
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2E7D32', // Vert forêt
-      dark: '#1B5E20', // Vert foncé (hover/contrast)
-      light: '#A5D6A7', // Vert clair
-      contrastText: '#FFFFFF',
+      main: colors.greenForest, // Vert forêt
+      dark: colors.greenDark, // Vert foncé (hover/contrast)
+      light: colors.greenLight, // Vert clair
+      contrastText: colors.white,
     },
     secondary: {
-      main: '#4FC3F7', // Bleu doux
-      contrastText: '#263238', // Gris foncé
+      main: colors.blueSoft, // Bleu doux
+      contrastText: colors.grayDark, // Gris foncé
     },
     error: {
-      main: '#E53935', // Rouge léger
+      main: colors.redLight, // Rouge léger
     },
     warning: {
-      main: '#FDD835', // Jaune
+      main: colors.yellow, // Jaune
     },
     background: {
-      default: '#F5F5F5', // Gris clair
-      paper: '#FFFFFF',
+      default: colors.greenLight, // Gris clair
+      paper: colors.grayLight,
     },
     text: {
-      primary: '#263238', // Gris foncé
-      secondary: '#4FC3F7', // Accent secondaire
-      disabled: 'rgba(0,0,0,0.4)',
+      primary: colors.grayDark, // Gris foncé
+      secondary: colors.blueSoft, // Accent secondaire
+      disabled: colors.disabledText,
     },
     grey: {
-      100: '#F5F5F5',
-      800: '#263238',
+      100: colors.grayLight,
+      800: colors.grayDark,
     },
   },
   typography: {
@@ -75,7 +90,7 @@ const theme = createTheme({
           padding: `${pxToRem(8)} ${pxToRem(16)}`,
           boxShadow: 'none',
           '&:hover': {
-            backgroundColor: '#1B5E20', // Vert foncé
+            backgroundColor: colors.greenDark, // Vert foncé
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           },
           '&:disabled': {
@@ -84,15 +99,15 @@ const theme = createTheme({
           },
         },
         containedPrimary: {
-          backgroundColor: '#2E7D32',
-          color: '#FFFFFF',
+          backgroundColor: colors.greenForest,
+          color: colors.white,
         },
         outlinedPrimary: {
-          borderColor: '#2E7D32',
-          color: '#2E7D32',
-          backgroundColor: '#FFFFFF',
+          borderColor: colors.greenForest,
+          color: colors.greenForest,
+          backgroundColor: colors.white,
           '&:hover': {
-            backgroundColor: '#A5D6A7',
+            backgroundColor: colors.greenLight,
           },
         },
       },
@@ -100,7 +115,7 @@ const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.white,
           border: '1px solid #BDBDBD',
           '&:hover': {
             backgroundColor: '#F1F8F1',
@@ -112,7 +127,7 @@ const theme = createTheme({
         },
         input: {
           '::placeholder': {
-            color: '#BDBDBD',
+            color: colors.borderGray,
             opacity: 1,
           },
         },
@@ -122,7 +137,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-focused': {
-            borderColor: '#2E7D32',
+            borderColor: colors.greenForest,
             boxShadow: '0 0 0 2px rgba(46,125,50,0.2)',
           },
         },
