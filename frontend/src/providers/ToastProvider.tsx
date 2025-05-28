@@ -1,8 +1,13 @@
 // src/providers/ToastProvider.tsx
 import { SnackbarProvider } from 'notistack';
 import { Slide } from '@mui/material';
+import type { JSX } from 'react';
 
-const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+const ToastProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
   return (
     <SnackbarProvider
       maxSnack={3}
