@@ -47,20 +47,20 @@ describe('TripController: POST /api/trips', () => {
       'message',
       'Successfully created Trip: created'
     );
-    expect(res.body).toHaveProperty('trip');
-    expect(res.body.trip).toHaveProperty('id');
-    expect(res.body.trip.id).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('driverId');
-    expect(res.body.trip.driverId).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('vehicleId');
-    expect(res.body.trip.vehicleId).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('departureCity', 'Paris');
-    expect(res.body.trip).toHaveProperty('arrivalCity', 'Lyon');
-    expect(res.body.trip).toHaveProperty('departureDate');
-    expect(res.body.trip).toHaveProperty('arrivalDate');
-    expect(res.body.trip).toHaveProperty('availableSeats', 3);
-    expect(res.body.trip).toHaveProperty('price', 45.5);
-    expect(res.body.trip).toHaveProperty('status', 'open');
+    expect(res.body).toHaveProperty('data');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('driverId');
+    expect(res.body.data.driverId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('vehicleId');
+    expect(res.body.data.vehicleId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.data).toHaveProperty('arrivalCity', 'Lyon');
+    expect(res.body.data).toHaveProperty('departureDate');
+    expect(res.body.data).toHaveProperty('arrivalDate');
+    expect(res.body.data).toHaveProperty('availableSeats', 3);
+    expect(res.body.data).toHaveProperty('price', 45.5);
+    expect(res.body.data).toHaveProperty('status', 'open');
   });
 
   it('POST /api/trips: 400<Bad request Validator: vehicle ID is required>', async () => {

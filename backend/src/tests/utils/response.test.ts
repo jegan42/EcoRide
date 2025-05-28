@@ -43,7 +43,7 @@ describe('response utils', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: 'Successfully Auth: logged in',
-      user: { id: 10 },
+      data: { id: 10 },
     });
   });
 
@@ -59,7 +59,7 @@ describe('response utils', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: 'Successfully UserPreferences: UserPreferences fetched',
-      userPreferences: { id: 10 },
+      data: { id: 10 },
     });
   });
 
@@ -69,7 +69,7 @@ describe('response utils', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: 'Successfully Trip: trip fetched',
-      trip: { id: 10 },
+      data: { id: 10 },
     });
   });
 
@@ -99,7 +99,7 @@ describe('response utils', () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: expect.stringContaining('Trip'),
-      trip: { id: 1 },
+      data: { id: 1 },
     });
   });
 
@@ -118,7 +118,7 @@ describe('response utils', () => {
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: expect.stringContaining('Booking'),
-      booking: { id: 10 },
+      data: { id: 10 },
     });
   });
 

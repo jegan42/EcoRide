@@ -34,9 +34,9 @@ describe('TripController: GET /api/trips (search)', () => {
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
-    expect(Array.isArray(res.body.trips)).toBe(true);
-    expect(res.body.trips[0]).toHaveProperty('departureCity', 'Paris');
-    expect(res.body.trips[0]).toHaveProperty('arrivalCity', 'Lyon');
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data[0]).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.data[0]).toHaveProperty('arrivalCity', 'Lyon');
   });
 
   it('GET /api/trips (search): 200<Successfully Trips: trips not found matching your criteria> should return no results for unmatched cities', async () => {
@@ -57,7 +57,7 @@ describe('TripController: GET /api/trips (search)', () => {
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
-    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<Successfully Trips: getAll> should return trips with flexible date', async () => {
@@ -67,7 +67,7 @@ describe('TripController: GET /api/trips (search)', () => {
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll'); ///////////////
-    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<Successfully Trips: alternative trips founded> should return alternative trips with no-match date', async () => {
@@ -79,7 +79,7 @@ describe('TripController: GET /api/trips (search)', () => {
       'message',
       'Successfully Trips: alternative trips founded'
     );
-    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   it('GET /api/trips (search): 200<Successfully Trips: trips not found matching your criteria> no trip and no alternative for a date', async () => {

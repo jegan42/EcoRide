@@ -21,7 +21,7 @@ beforeAll(async () => {
   await resetDB();
 
   const user0 = await createUserAndSignIn(testEmails[0]);
-  userIds[0] = user0.body.user.id;
+  userIds[0] = user0.body.data.id;
   cookies[0] = user0.headers['set-cookie'];
   vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
   tripIds[0] = await createTripAndGetId(vehicleIds[0], cookies[0]);
@@ -32,7 +32,7 @@ beforeAll(async () => {
     '2127-12-01T18:00:00Z'
   );
   const user1 = await createUserAndSignIn(testEmails[1]);
-  userIds[1] = user1.body.user.id;
+  userIds[1] = user1.body.data.id;
   cookies[1] = user1.headers['set-cookie'];
   await prismaNewClient.user.update({
     where: { id: userIds[1] },
@@ -65,9 +65,9 @@ describe('TripController: GET /api/bookings/driver', () => {
       'message',
       'Successfully Bookings: getAllByDriver'
     );
-    expect(Array.isArray(res.body.bookings)).toBe(true);
-    expect(res.body.bookings[0]).toHaveProperty('id', bookingsIds[0]);
-    expect(res.body.bookings[0].trip).toHaveProperty('driverId', userIds[0]);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data[0]).toHaveProperty('id', bookingsIds[0]);
+    expect(res.body.data[0].trip).toHaveProperty('driverId', userIds[0]);
   });
 
   it('GET /api/bookings/driver: 403<Access denied Authorize: insufficient permissions>', async () => {

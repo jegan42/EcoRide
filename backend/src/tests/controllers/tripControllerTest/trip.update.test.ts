@@ -54,10 +54,10 @@ describe('TripController: PUT /api/trips/:id', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trip: updated');
-    expect(res.body.trip).toHaveProperty('id', tripIds[0]);
-    expect(res.body.trip).toHaveProperty('price', 22);
-    expect(res.body.trip).toHaveProperty('availableSeats', 2);
-    expect(res.body.trip).toHaveProperty('arrivalCity', 'Brussels');
+    expect(res.body.data).toHaveProperty('id', tripIds[0]);
+    expect(res.body.data).toHaveProperty('price', 22);
+    expect(res.body.data).toHaveProperty('availableSeats', 2);
+    expect(res.body.data).toHaveProperty('arrivalCity', 'Brussels');
   });
 
   it('PUT /api/trips/:id: 400<Bad request Validator: invalid ID> trip ID is invalid format', async () => {

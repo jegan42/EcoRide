@@ -11,18 +11,8 @@ export const sendNewResponse = <T = object>(
   error?: any
 ): Response => {
   const response: any = {};
-  const lcContext = context?.toLowerCase?.() ?? '';
-
-  let dataKey: string;
-  if (lcContext === 'auth') {
-    dataKey = 'user';
-  } else if (lcContext === 'userpreferences') {
-    dataKey = 'userPreferences';
-  } else {
-    dataKey = lcContext;
-  }
   response.message = messages[statusKey](context, messageDetail);
-  if (!!dataKey && data) response[dataKey] = data;
+  if (data) response.data = data;
   if (error)
     response.error =
       error instanceof Error ? { message: error.message } : error;

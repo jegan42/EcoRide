@@ -19,7 +19,7 @@ beforeAll(async () => {
   await resetDB();
 
   const user = await createUserAndSignIn(testEmails[0]);
-  userIds[0] = user.body.user.id;
+  userIds[0] = user.body.data.id;
   cookies[0] = user.headers['set-cookie'];
   await createUserPreferences(userIds[0], cookies[0]);
 });
@@ -58,15 +58,15 @@ describe('UserPreferencesController: PUT /api/user-preferences/:id', () => {
       'message',
       'Successfully UserPreferences: updated'
     );
-    expect(res.body.userPreferences).toBeDefined();
-    expect(res.body.userPreferences).toHaveProperty('id');
-    expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('userId', userIds[0]);
-    expect(res.body.userPreferences.userId).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('acceptsSmoker', false);
-    expect(res.body.userPreferences).toHaveProperty('acceptsPets', true);
-    expect(res.body.userPreferences).toHaveProperty('acceptsMusic', false);
-    expect(res.body.userPreferences).toHaveProperty('acceptsChatter', true);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId', userIds[0]);
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('acceptsSmoker', false);
+    expect(res.body.data).toHaveProperty('acceptsPets', true);
+    expect(res.body.data).toHaveProperty('acceptsMusic', false);
+    expect(res.body.data).toHaveProperty('acceptsChatter', true);
   });
 
   it('PUT /api/user-preferences/:id: 400<Bad request Validator: must be true or false>', async () => {

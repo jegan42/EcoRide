@@ -86,7 +86,7 @@ export const createVehicleAndGetId = async (
         energy: 'petrol',
         seatCount: 4,
       })
-  ).body.vehicle.id;
+  ).body.data.id;
 };
 
 export const getAvailableSeats = async (
@@ -118,7 +118,7 @@ export const createTripAndGetId = async (
         availableSeats,
         price: 45.5,
       })
-    ).body.trip.id ?? undefined
+    ).body?.data?.id ?? undefined
   );
 };
 
@@ -134,7 +134,7 @@ export const createBookingAndGetId = async (
       tripId,
       seatCount,
     });
-  return res.body.booking.id ?? '';
+  return res?.body?.data?.id ?? '';
 };
 
 export const createUserPreferences = async (

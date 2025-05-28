@@ -18,11 +18,11 @@ beforeAll(async () => {
   await resetDB();
 
   const user = await createUserAndSignIn(testEmails[0]);
-  userIds[0] = user.body.user.id;
+  userIds[0] = user.body.data.id;
   cookies[0] = user.headers['set-cookie'];
   await createUserPreferences(userIds[0], cookies[0]);
   const user1 = await createUserAndSignIn(testEmails[1]);
-  userIds[1] = user1.body.user.id;
+  userIds[1] = user1.body.data.id;
   cookies[1] = user1.headers['set-cookie'];
   await createUserPreferences(userIds[1], cookies[1]);
 });

@@ -35,29 +35,29 @@ describe('TripController: GET /api/trips', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trips: getAll');
-    expect(res.body.trips).toBeDefined();
-    expect(Array.isArray(res.body.trips)).toBe(true);
+    expect(res.body.data).toBeDefined();
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   it('GET /api/trips/:id: 200<Successfully Trip: getById> should return a trip by ID', async () => {
     const res = await request(app).get(`/api/trips/${tripIds[0]}`);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Trip: getById');
-    expect(res.body.trip).toBeDefined();
-    expect(res.body).toHaveProperty('trip');
-    expect(res.body.trip).toHaveProperty('id', tripIds[0]);
-    expect(res.body.trip.id).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('driverId');
-    expect(res.body.trip.driverId).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('vehicleId');
-    expect(res.body.trip.vehicleId).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('departureCity', 'Paris');
-    expect(res.body.trip).toHaveProperty('arrivalCity', 'Lyon');
-    expect(res.body.trip).toHaveProperty('departureDate');
-    expect(res.body.trip).toHaveProperty('arrivalDate');
-    expect(res.body.trip).toHaveProperty('availableSeats', 3);
-    expect(res.body.trip).toHaveProperty('price', 45.5);
-    expect(res.body.trip).toHaveProperty('status', 'open');
+    expect(res.body.data).toBeDefined();
+    expect(res.body).toHaveProperty('data');
+    expect(res.body.data).toHaveProperty('id', tripIds[0]);
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('driverId');
+    expect(res.body.data.driverId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('vehicleId');
+    expect(res.body.data.vehicleId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.data).toHaveProperty('arrivalCity', 'Lyon');
+    expect(res.body.data).toHaveProperty('departureDate');
+    expect(res.body.data).toHaveProperty('arrivalDate');
+    expect(res.body.data).toHaveProperty('availableSeats', 3);
+    expect(res.body.data).toHaveProperty('price', 45.5);
+    expect(res.body.data).toHaveProperty('status', 'open');
   });
 
   it('GET /api/trips/:id: 400<Bad request Validator: invalid ID> if trip not found or ID is not UUID', async () => {

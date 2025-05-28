@@ -38,21 +38,21 @@ describe('VehicleController: PUT /api/vehicles', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Vehicle: updated');
-    expect(res.body.vehicle).toBeDefined();
-    expect(res.body.vehicle).toHaveProperty('id');
-    expect(res.body.vehicle.id).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('userId');
-    expect(res.body.vehicle.userId).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('brand', 'Peugeot');
-    expect(res.body.vehicle).toHaveProperty('model', '308');
-    expect(res.body.vehicle).toHaveProperty('color', 'Blue');
-    expect(res.body.vehicle).toHaveProperty('vehicleYear', 2023);
-    expect(res.body.vehicle).toHaveProperty(
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId');
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('brand', 'Peugeot');
+    expect(res.body.data).toHaveProperty('model', '308');
+    expect(res.body.data).toHaveProperty('color', 'Blue');
+    expect(res.body.data).toHaveProperty('vehicleYear', 2023);
+    expect(res.body.data).toHaveProperty(
       'licensePlate',
       `LP_${testEmails[0].split('@')[0]}`
     );
-    expect(res.body.vehicle).toHaveProperty('energy', 'petrol');
-    expect(res.body.vehicle).toHaveProperty('seatCount', 4);
+    expect(res.body.data).toHaveProperty('energy', 'petrol');
+    expect(res.body.data).toHaveProperty('seatCount', 4);
   });
 
   it('PUT /api/vehicles/:id: 400<Bad request Validator: invalid ID>', async () => {

@@ -23,11 +23,11 @@ beforeAll(async () => {
 
   const userRes = await createUserAndSignIn(testEmails[0], unikUserName);
   cookies[0] = userRes.headers['set-cookie'];
-  userIds[0] = userRes.body.user.id;
+  userIds[0] = userRes.body.data.id;
 
   userIds[1] = (
     await createUserAndSignIn(testEmails[1], 'ecorider')
-  ).body.user.id;
+  ).body.data.id;
 
   const adminRes = await createUserAndSignIn(adminMail);
   await prismaNewClient.user.update({
@@ -35,7 +35,7 @@ beforeAll(async () => {
     data: { role: { push: 'admin' } },
   });
   cookies[99] = adminRes.headers['set-cookie'];
-  userIds[99] = adminRes.body.user.id;
+  userIds[99] = adminRes.body.data.id;
 });
 
 afterAll(async () => {
@@ -58,22 +58,22 @@ describe('AuthController: PUT /api/auth/update', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Auth: update');
-    expect(res.body.user).not.toHaveProperty('googleId');
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).not.toHaveProperty('jwtToken');
-    expect(res.body.user).not.toHaveProperty('googleAccessToken');
-    expect(res.body.user).not.toHaveProperty('googleRefreshToken');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
+    expect(res.body.data).not.toHaveProperty('googleId');
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).not.toHaveProperty('jwtToken');
+    expect(res.body.data).not.toHaveProperty('googleAccessToken');
+    expect(res.body.data).not.toHaveProperty('googleRefreshToken');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
 
-    expect(res.body.user).toHaveProperty('firstName', `Jane`);
-    expect(res.body.user).toHaveProperty('lastName', `Doe`);
-    expect(res.body.user).toHaveProperty('username', unikUserName);
-    expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `987654321`);
-    expect(res.body.user).toHaveProperty('address', `2 Test St`);
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).toHaveProperty('firstName', `Jane`);
+    expect(res.body.data).toHaveProperty('lastName', `Doe`);
+    expect(res.body.data).toHaveProperty('username', unikUserName);
+    expect(res.body.data).toHaveProperty('email', testEmails[0]);
+    expect(res.body.data).toHaveProperty('phone', `987654321`);
+    expect(res.body.data).toHaveProperty('address', `2 Test St`);
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     const cookiesRes = res.headers['set-cookie'];
     expect(cookiesRes).toBeDefined();
@@ -197,13 +197,13 @@ describe('AuthController: PUT /api/auth/update', () => {
       });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Auth: update');
-    expect(res.body.user).toHaveProperty('credits', 20);
-    expect(res.body.user).toHaveProperty('role');
-    expect(Array.isArray(res.body.user.role)).toBe(true);
-    expect(res.body.user.role).toHaveLength(1);
-    expect(res.body.user.role[0]).toBe('passenger');
-    expect(res.body.user.role).toContainEqual('passenger');
-    expect(res.body.user.role).toEqual(['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
+    expect(res.body.data).toHaveProperty('role');
+    expect(Array.isArray(res.body.data.role)).toBe(true);
+    expect(res.body.data.role).toHaveLength(1);
+    expect(res.body.data.role[0]).toBe('passenger');
+    expect(res.body.data.role).toContainEqual('passenger');
+    expect(res.body.data.role).toEqual(['passenger']);
   });
 
   it('PUT /api/auth/update: 400<Bad request Validator: email must be a valid email address>', async () => {

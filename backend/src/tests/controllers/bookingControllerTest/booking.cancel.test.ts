@@ -22,7 +22,7 @@ beforeAll(async () => {
   await resetDB();
 
   const user0 = await createUserAndSignIn(testEmails[0]);
-  userIds[0] = user0.body.user.id;
+  userIds[0] = user0.body.data.id;
   cookies[0] = user0.headers['set-cookie'];
   vehicleIds[0] = await createVehicleAndGetId(testEmails[0], cookies[0]);
   vehicleIds[1] = await createVehicleAndGetId(testEmails[0], cookies[0], '1');
@@ -35,7 +35,7 @@ beforeAll(async () => {
   );
   tripIds[2] = await createTripAndGetId(vehicleIds[1], cookies[0]);
   const user1 = await createUserAndSignIn(testEmails[1]);
-  userIds[1] = user1.body.user.id;
+  userIds[1] = user1.body.data.id;
   cookies[1] = user1.headers['set-cookie'];
   await prismaNewClient.user.update({
     where: { id: userIds[1] },
@@ -45,7 +45,7 @@ beforeAll(async () => {
   bookingsIds[1] = await createBookingAndGetId(tripIds[1] ?? '', cookies[1], 1);
 
   const user2 = await createUserAndSignIn(testEmails[2]);
-  userIds[2] = user2.body.user.id;
+  userIds[2] = user2.body.data.id;
   cookies[2] = user2.headers['set-cookie'];
   await prismaNewClient.user.update({
     where: { id: userIds[2] },

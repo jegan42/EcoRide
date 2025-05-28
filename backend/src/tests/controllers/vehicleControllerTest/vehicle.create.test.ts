@@ -42,18 +42,18 @@ describe('VehicleController: POST /api/vehicles', () => {
       'message',
       'Successfully created Vehicle: created'
     );
-    expect(res.body.vehicle).toBeDefined();
-    expect(res.body.vehicle).toHaveProperty('id');
-    expect(res.body.vehicle.id).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('userId');
-    expect(res.body.vehicle.userId).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('brand', 'Tesla');
-    expect(res.body.vehicle).toHaveProperty('model', 'Model S');
-    expect(res.body.vehicle).toHaveProperty('color', 'Red');
-    expect(res.body.vehicle).toHaveProperty('vehicleYear', 2022);
-    expect(res.body.vehicle).toHaveProperty('licensePlate', 'TESLA123');
-    expect(res.body.vehicle).toHaveProperty('energy', 'electric');
-    expect(res.body.vehicle).toHaveProperty('seatCount', 5);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId');
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('brand', 'Tesla');
+    expect(res.body.data).toHaveProperty('model', 'Model S');
+    expect(res.body.data).toHaveProperty('color', 'Red');
+    expect(res.body.data).toHaveProperty('vehicleYear', 2022);
+    expect(res.body.data).toHaveProperty('licensePlate', 'TESLA123');
+    expect(res.body.data).toHaveProperty('energy', 'electric');
+    expect(res.body.data).toHaveProperty('seatCount', 5);
   });
 
   it('POST /api/vehicles: 401<Unauthorized access Athenticate: missing token> if user not authenticated', async () => {

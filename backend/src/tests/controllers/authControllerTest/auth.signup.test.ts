@@ -38,21 +38,21 @@ describe('AuthController: POST /api/auth/signup', () => {
       'message',
       'Successfully created Auth: signup'
     );
-    expect(res.body.user).not.toHaveProperty('googleId');
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).not.toHaveProperty('jwtToken');
-    expect(res.body.user).not.toHaveProperty('googleAccessToken');
-    expect(res.body.user).not.toHaveProperty('googleRefreshToken');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', 'John');
-    expect(res.body.user).toHaveProperty('lastName', 'Doe');
-    expect(res.body.user).toHaveProperty('username', unikUserName);
-    expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', '123456789');
-    expect(res.body.user).toHaveProperty('address', '1 Test St');
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).not.toHaveProperty('googleId');
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).not.toHaveProperty('jwtToken');
+    expect(res.body.data).not.toHaveProperty('googleAccessToken');
+    expect(res.body.data).not.toHaveProperty('googleRefreshToken');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('firstName', 'John');
+    expect(res.body.data).toHaveProperty('lastName', 'Doe');
+    expect(res.body.data).toHaveProperty('username', unikUserName);
+    expect(res.body.data).toHaveProperty('email', testEmails[0]);
+    expect(res.body.data).toHaveProperty('phone', '123456789');
+    expect(res.body.data).toHaveProperty('address', '1 Test St');
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     const cookies = res.headers['set-cookie'];
     expect(cookies).toBeDefined();

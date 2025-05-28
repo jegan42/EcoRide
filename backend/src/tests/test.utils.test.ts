@@ -48,24 +48,24 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
 
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${names[0]}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${names[0]}`);
-    expect(res.body.user).toHaveProperty('username', unikUserName);
-    expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `1234${names[0]}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${names[0]} St`);
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('firstName', `firstName${names[0]}`);
+    expect(res.body.data).toHaveProperty('lastName', `lastName${names[0]}`);
+    expect(res.body.data).toHaveProperty('username', unikUserName);
+    expect(res.body.data).toHaveProperty('email', testEmails[0]);
+    expect(res.body.data).toHaveProperty('phone', `1234${names[0]}`);
+    expect(res.body.data).toHaveProperty('address', `123 ${names[0]} St`);
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     cookies[0] = res.headers['set-cookie'];
     expect(cookies[0]).toBeDefined();
     expect(cookies[0][0]).toMatch(/jwtToken=/);
     expect(cookies[0][0]).toMatch(/HttpOnly/);
 
-    userIds[0] = res.body.user.id;
+    userIds[0] = res.body.data.id;
     expect(userIds[0]).toBeDefined();
     expect(userIds[0]).toHaveLength(36);
     expect(userIds[0]).toMatch(UUID_REGEX);
@@ -79,24 +79,24 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
 
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${names[0]}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${names[0]}`);
-    expect(res.body.user).toHaveProperty('username', unikUserName);
-    expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `1234${names[0]}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${names[0]} St`);
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('firstName', `firstName${names[0]}`);
+    expect(res.body.data).toHaveProperty('lastName', `lastName${names[0]}`);
+    expect(res.body.data).toHaveProperty('username', unikUserName);
+    expect(res.body.data).toHaveProperty('email', testEmails[0]);
+    expect(res.body.data).toHaveProperty('phone', `1234${names[0]}`);
+    expect(res.body.data).toHaveProperty('address', `123 ${names[0]} St`);
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     cookies[0] = res.headers['set-cookie'];
     expect(cookies[0]).toBeDefined();
     expect(cookies[0][0]).toMatch(/jwtToken=/);
     expect(cookies[0][0]).toMatch(/HttpOnly/);
 
-    userIds[0] = res.body.user.id;
+    userIds[0] = res.body.data.id;
     expect(userIds[0]).toBeDefined();
     expect(userIds[0]).toHaveLength(36);
     expect(userIds[0]).toMatch(UUID_REGEX);
@@ -106,24 +106,24 @@ describe('Test Utils Funtions createUserAndSignIn', () => {
     const res = await createUserAndSignIn(testEmails[1]);
     expect(res).toBeDefined();
     expect(res).toHaveProperty('status', 200);
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
-    expect(res.body.user).toHaveProperty('firstName', `firstName${names[1]}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${names[1]}`);
-    expect(res.body.user).toHaveProperty('username', `username${names[1]}`);
-    expect(res.body.user).toHaveProperty('email', testEmails[1]);
-    expect(res.body.user).toHaveProperty('phone', `1234${names[1]}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${names[1]} St`);
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('firstName', `firstName${names[1]}`);
+    expect(res.body.data).toHaveProperty('lastName', `lastName${names[1]}`);
+    expect(res.body.data).toHaveProperty('username', `username${names[1]}`);
+    expect(res.body.data).toHaveProperty('email', testEmails[1]);
+    expect(res.body.data).toHaveProperty('phone', `1234${names[1]}`);
+    expect(res.body.data).toHaveProperty('address', `123 ${names[1]} St`);
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     cookies[1] = res.headers['set-cookie'];
     expect(cookies[1]).toBeDefined();
     expect(cookies[1][0]).toMatch(/jwtToken=/);
     expect(cookies[1][0]).toMatch(/HttpOnly/);
 
-    userIds[1] = res.body.user.id;
+    userIds[1] = res.body.data.id;
     expect(userIds[1]).toBeDefined();
     expect(userIds[1]).toHaveLength(36);
     expect(userIds[1]).toMatch(UUID_REGEX);
@@ -146,19 +146,19 @@ describe('Test Utils Funtions createVehicleAndGetId', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body.vehicle).toBeDefined();
-    expect(res.body.vehicle).toHaveProperty('id');
-    expect(res.body.vehicle.id).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('userId');
-    expect(res.body.vehicle.userId).toMatch(UUID_REGEX);
-    expect(res.body.vehicle).toHaveProperty('userId', userIds[0]);
-    expect(res.body.vehicle).toHaveProperty('brand', 'Peugeot');
-    expect(res.body.vehicle).toHaveProperty('model', '308');
-    expect(res.body.vehicle).toHaveProperty('color', 'Blue');
-    expect(res.body.vehicle).toHaveProperty('vehicleYear', 2023);
-    expect(res.body.vehicle).toHaveProperty('licensePlate', `LP_${names[0]}`);
-    expect(res.body.vehicle).toHaveProperty('energy', 'petrol');
-    expect(res.body.vehicle).toHaveProperty('seatCount', 4);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId');
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId', userIds[0]);
+    expect(res.body.data).toHaveProperty('brand', 'Peugeot');
+    expect(res.body.data).toHaveProperty('model', '308');
+    expect(res.body.data).toHaveProperty('color', 'Blue');
+    expect(res.body.data).toHaveProperty('vehicleYear', 2023);
+    expect(res.body.data).toHaveProperty('licensePlate', `LP_${names[0]}`);
+    expect(res.body.data).toHaveProperty('energy', 'petrol');
+    expect(res.body.data).toHaveProperty('seatCount', 4);
   });
 
   it('FUNCTION: createVehicleAndGetId: <> return VEHICLE.ID with POST /api/vehicles', async () => {
@@ -210,14 +210,24 @@ describe('Test Utils Funtions createTripAndGetId', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('trip');
-    expect(res.body.trip).toHaveProperty('id');
-    expect(res.body.trip.id).toMatch(UUID_REGEX);
-    expect(res.body.trip).toHaveProperty('departureCity', 'Paris');
-    expect(res.body.trip).toHaveProperty('arrivalCity', 'Lyon');
-    expect(res.body.trip).toHaveProperty('availableSeats', 3);
-    expect(res.body.trip).toHaveProperty('price', 45.5);
-    expect(res.body.trip).toHaveProperty('status', 'open');
+    expect(res.body).toHaveProperty('data');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('departureCity', 'Paris');
+    expect(res.body.data).toHaveProperty('arrivalCity', 'Lyon');
+    expect(res.body.data).toHaveProperty('availableSeats', 3);
+    expect(res.body.data).toHaveProperty('price', 45.5);
+    expect(res.body.data).toHaveProperty('status', 'open');
+  });
+
+  it('FUNCTION: createTripAndGetId: should return undefined if no available date', async () => {
+    const result = await createTripAndGetId(
+      vehicleIds[0],
+      cookies[0],
+      '2125-30-01T08:00:00Z',
+      '2125-30-01T18:00:00Z'
+    );
+    expect(result).toBeUndefined();
   });
 
   it('FUNCTION: createTripAndGetId: <> RETURN trip ID with POST /api/trips', async () => {
@@ -262,13 +272,27 @@ describe('Test Utils Funtions createBookingAndGetId', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body.booking).toHaveProperty('id');
-    expect(res.body.booking.id).toMatch(UUID_REGEX);
-    expect(res.body.booking).toHaveProperty('userId', userIds[1]);
-    expect(res.body.booking).toHaveProperty('tripId', tripIds[0]);
-    expect(res.body.booking).toHaveProperty('status', 'pending');
-    expect(res.body.booking).toHaveProperty('totalPrice', 91);
-    expect(res.body.booking).toHaveProperty('seatCount', 2);
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId', userIds[1]);
+    expect(res.body.data).toHaveProperty('tripId', tripIds[0]);
+    expect(res.body.data).toHaveProperty('status', 'pending');
+    expect(res.body.data).toHaveProperty('totalPrice', 91);
+    expect(res.body.data).toHaveProperty('seatCount', 2);
+  });
+
+  it('FUNCTION: createBookingAndGetId: should return empty string if booking fails', async () => {
+    const res = await request(app)
+      .post('/api/bookings')
+      .set('Cookie', cookies[1])
+      .send({
+        tripId: tripIds[0],
+        seatCount: 0,
+      });
+
+    expect(res.status).toBe(400);
+    const result = await createBookingAndGetId(tripIds[0] ?? '', cookies[1], 0);
+    expect(result).toBe('');
   });
 
   it('FUNCTION: createBookingAndGetId: <> RETURN Booking ID with POST /api/bookings', async () => {
@@ -318,15 +342,15 @@ describe('Test Utils Funtions createUserPreferences', () => {
       });
 
     expect(res.status).toBe(201);
-    expect(res.body.userPreferences).toBeDefined();
-    expect(res.body.userPreferences).toHaveProperty('id');
-    expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('userId', userIds[0]);
-    expect(res.body.userPreferences.userId).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('acceptsSmoker', true);
-    expect(res.body.userPreferences).toHaveProperty('acceptsPets', false);
-    expect(res.body.userPreferences).toHaveProperty('acceptsMusic', true);
-    expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId', userIds[0]);
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('acceptsSmoker', true);
+    expect(res.body.data).toHaveProperty('acceptsPets', false);
+    expect(res.body.data).toHaveProperty('acceptsMusic', true);
+    expect(res.body.data).toHaveProperty('acceptsChatter', false);
   });
 
   describe('getAvailableSeats', () => {
@@ -381,14 +405,14 @@ describe('Test Utils Funtions createUserPreferences', () => {
     const res = await createUserPreferences(userIds[1], cookies[1]);
 
     expect(res.status).toBe(201);
-    expect(res.body.userPreferences).toBeDefined();
-    expect(res.body.userPreferences).toHaveProperty('id');
-    expect(res.body.userPreferences.id).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('userId', userIds[1]);
-    expect(res.body.userPreferences.userId).toMatch(UUID_REGEX);
-    expect(res.body.userPreferences).toHaveProperty('acceptsSmoker', true);
-    expect(res.body.userPreferences).toHaveProperty('acceptsPets', false);
-    expect(res.body.userPreferences).toHaveProperty('acceptsMusic', true);
-    expect(res.body.userPreferences).toHaveProperty('acceptsChatter', false);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('userId', userIds[1]);
+    expect(res.body.data.userId).toMatch(UUID_REGEX);
+    expect(res.body.data).toHaveProperty('acceptsSmoker', true);
+    expect(res.body.data).toHaveProperty('acceptsPets', false);
+    expect(res.body.data).toHaveProperty('acceptsMusic', true);
+    expect(res.body.data).toHaveProperty('acceptsChatter', false);
   });
 });

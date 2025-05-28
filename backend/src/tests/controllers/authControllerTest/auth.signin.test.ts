@@ -31,23 +31,23 @@ describe('AuthController: POST /api/auth/signin', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('message', 'Successfully Auth: signin');
-    expect(res.body.user).not.toHaveProperty('googleId');
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user).not.toHaveProperty('jwtToken');
-    expect(res.body.user).not.toHaveProperty('googleAccessToken');
-    expect(res.body.user).not.toHaveProperty('googleRefreshToken');
-    expect(res.body.user).toHaveProperty('id');
-    expect(res.body.user.id).toMatch(UUID_REGEX);
+    expect(res.body.data).not.toHaveProperty('googleId');
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data).not.toHaveProperty('jwtToken');
+    expect(res.body.data).not.toHaveProperty('googleAccessToken');
+    expect(res.body.data).not.toHaveProperty('googleRefreshToken');
+    expect(res.body.data).toHaveProperty('id');
+    expect(res.body.data.id).toMatch(UUID_REGEX);
 
     const name = testEmails[0].split('@')[0];
-    expect(res.body.user).toHaveProperty('firstName', `firstName${name}`);
-    expect(res.body.user).toHaveProperty('lastName', `lastName${name}`);
-    expect(res.body.user).toHaveProperty('username', unikUserName);
-    expect(res.body.user).toHaveProperty('email', testEmails[0]);
-    expect(res.body.user).toHaveProperty('phone', `1234${name}`);
-    expect(res.body.user).toHaveProperty('address', `123 ${name} St`);
-    expect(res.body.user).toHaveProperty('role', ['passenger']);
-    expect(res.body.user).toHaveProperty('credits', 20);
+    expect(res.body.data).toHaveProperty('firstName', `firstName${name}`);
+    expect(res.body.data).toHaveProperty('lastName', `lastName${name}`);
+    expect(res.body.data).toHaveProperty('username', unikUserName);
+    expect(res.body.data).toHaveProperty('email', testEmails[0]);
+    expect(res.body.data).toHaveProperty('phone', `1234${name}`);
+    expect(res.body.data).toHaveProperty('address', `123 ${name} St`);
+    expect(res.body.data).toHaveProperty('role', ['passenger']);
+    expect(res.body.data).toHaveProperty('credits', 20);
 
     const cookies = res.headers['set-cookie'];
     expect(cookies).toBeDefined();
