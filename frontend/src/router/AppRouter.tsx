@@ -4,14 +4,18 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AppLayout from '../layouts/AppLayout';
 import Dashboard from '../pages/Dashboard';
 import SigninPage from '../pages/SigninPage';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: <Dashboard /> },
       { path: 'signin', element: <SigninPage /> },
+      {
+        element: <ProtectedRoute />, // routes protégées
+        children: [{ index: true, element: <Dashboard /> }],
+      },
     ],
   },
 ]);

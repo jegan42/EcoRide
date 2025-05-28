@@ -1,9 +1,16 @@
 // frontend/src/store/slices/AuthSlices.ts
 import { createSlice } from '@reduxjs/toolkit';
+import type { User } from '../../types/user';
 
-const initialState = {
+export interface AuthState {
+  user: User | null;
+  jwtToken: string | null;
+  isAuthenticated: boolean;
+}
+
+const initialState: AuthState = {
   user: null,
-  token: null,
+  jwtToken: null,
   isAuthenticated: false,
 };
 
@@ -11,18 +18,18 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action) {
+    signin(state: typeof initialState, action: { payload: AuthState }) {
       state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.jwtToken = action.payload.jwtToken;
       state.isAuthenticated = true;
     },
-    logout(state) {
+    signout(state) {
       state.user = null;
-      state.token = null;
+      state.jwtToken = null;
       state.isAuthenticated = false;
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { signin, signout } = authSlice.actions;
 export default authSlice.reducer;
