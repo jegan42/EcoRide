@@ -1,8 +1,18 @@
 // src/providers/ToastProvider.tsx
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { SnackbarProvider } from 'notistack';
+import { Slide } from '@mui/material';
 
-const ToastProvider = () => (
-  <ToastContainer position="top-right" autoClose={5000} />
-);
+const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      autoHideDuration={4000}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      TransitionComponent={Slide}
+    >
+      {children}
+    </SnackbarProvider>
+  );
+};
+
 export default ToastProvider;
