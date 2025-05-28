@@ -16,7 +16,7 @@ const colors = {
 };
 
 // 1rem = 16px
-const pxToRem = (px: number) => `${px / 16}rem`;
+const pxToRem = (px: number): string => `${px / 16}rem`;
 
 const theme = createTheme({
   palette: {

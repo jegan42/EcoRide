@@ -1,5 +1,5 @@
 // frontend/src/components/Header.tsx
-import { useState, useRef } from 'react';
+import { type JSX, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AppBar,
@@ -27,7 +27,7 @@ const navLinks = [
   { label: 'À propos', to: '/about' },
 ];
 
-const Header = () => {
+const Header = (): JSX.Element => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const theme = useTheme();

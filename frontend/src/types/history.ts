@@ -1,5 +1,5 @@
 // frontend/src/types/history.ts
-export type RoleEnum = 'passenger' | 'driver' | 'admin' | 'employee';
+import type { RoleEnum } from './user';
 export type HistoryStatusEnum = 'completed' | 'no_show' | 'canceled';
 
 export interface History {

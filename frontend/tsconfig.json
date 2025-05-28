@@ -1,7 +1,13 @@
 {
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false // ou supprime cette ligne si elle existe
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -15,12 +15,22 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        project: ['./tsconfig.json'], // 👈 Chemin vers ton fichier tsconfig
+        tsconfigRootDir: process.cwd(), // 👈 Important si ESLint ne trouve pas le fichier
+        sourceType: 'module',
+      },
     },
     plugins: {
       prettier,
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+    },
+    settings: {
+      react: {
+        version: '19.1',
+      },
     },
     rules: {
       'prettier/prettier': 'error',
@@ -31,6 +41,27 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       'react/react-in-jsx-scope': 'off',
+      'no-unused-vars': 'off', // désactive la version JS
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn',
+        {
+          allowExpressions: true,
+          allowConciseArrowFunctionExpressionsStartingWithVoid: true,
+        },
+      ],
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['warn', 'interface'],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
     },
   },
   prettierConfig

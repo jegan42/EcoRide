@@ -1,15 +1,17 @@
 // frontend/src/types/user.ts
+export type RoleEnum = 'passenger' | 'driver' | 'admin' | 'employee';
+
 export interface User {
   id: string;
-  googleId?: string;
   firstName: string;
   lastName: string;
   username: string;
   email: string;
+  password?: string;
   phone?: string;
   address?: string;
   avatar?: string;
-  role: Array<'user' | 'admin' | 'employee'>;
+  role: Array<RoleEnum>;
   credits: number;
   lastLogin: string;
   createdAt: string;

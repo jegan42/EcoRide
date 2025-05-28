@@ -1,4 +1,5 @@
 // frontend/src/components/Footer.tsx
+import type { JSX } from 'react';
 import { Box, Typography, Stack, Link } from '@mui/material';
 import ecorideLogo from '../assets/ecoride_logo.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -10,7 +11,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
-const Footer = () => {
+const Footer = (): JSX.Element => {
   return (
     <Box
       component="footer"

@@ -1,18 +1,20 @@
-// frontend/src/pages/LoginPage.tsx
+// frontend/src/pages/SigninPage.tsx
+import type { JSX } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import type { User } from '../types/user';
 
-const LoginPage = () => {
+const SigninPage = (): JSX.Element => {
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: Partial<User>): void => {
     console.log(data);
-    toast.success('Login form submitted!');
+    toast.success('Signin form submitted!');
   };
 
   return (
     <>
-      <h1>Login</h1>
+      <h1>Signin</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input {...register('email')} placeholder="Email" />
         <br />
@@ -22,10 +24,10 @@ const LoginPage = () => {
           placeholder="Password"
         />
         <br />
-        <button type="submit">Login</button>
+        <button type="submit">Signin</button>
       </form>
     </>
   );
 };
 
-export default LoginPage;
+export default SigninPage;
