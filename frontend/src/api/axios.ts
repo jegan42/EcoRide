@@ -1,5 +1,6 @@
 // frontend/src/api/axios.ts
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
@@ -15,6 +16,8 @@ api.interceptors.response.use(
   (error) => {
     // Exemple : afficher une toast si erreur globale
     console.error('API error:', error.response?.data || error.message);
+    toast.error(error?.response?.data?.message || 'Erreur inconnue');
+
     return Promise.reject(error);
   }
 );
