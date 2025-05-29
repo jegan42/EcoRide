@@ -1,6 +1,6 @@
 // frontend/src/components/Footer.tsx
 import type { JSX } from 'react';
-import { Box, Typography, Stack, Link } from '@mui/material';
+import { Box, Typography, Stack, Link, IconButton } from '@mui/material';
 import ecorideLogo from '../assets/ecoride_logo.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
@@ -16,7 +16,7 @@ const Footer = (): JSX.Element => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: 'background.paper', // assuming defined in theme.palette or theme.colors
+        backgroundColor: 'background.paper',
         color: 'primary.main',
         px: { xs: 2, md: 5 },
         py: 2,
@@ -27,7 +27,6 @@ const Footer = (): JSX.Element => {
         gap: { xs: 2, md: 15 },
       }}
     >
-      {/* Logo */}
       <Stack
         direction="column"
         alignItems="center"
@@ -50,11 +49,10 @@ const Footer = (): JSX.Element => {
         </Typography>
       </Stack>
 
-      {/* Company Info */}
       <Stack
+        direction="column"
         spacing={0.5}
         sx={{
-          flexDirection: 'column',
           justifyContent: 'center',
           textAlign: { xs: 'center', md: 'left' },
           color: 'primary.main',
@@ -67,7 +65,10 @@ const Footer = (): JSX.Element => {
       >
         {/* Additional info */}
         <Typography variant="body2">
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+          <Box
+            component="span"
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+          >
             <LocationOnIcon
               aria-label="LocationOn"
               sx={{ fontSize: 20, color: 'secondary.main' }}
@@ -76,7 +77,10 @@ const Footer = (): JSX.Element => {
           </Box>
         </Typography>
         <Typography variant="body2">
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+          <Box
+            component="span"
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+          >
             <LocalPhoneIcon
               aria-label="LocalPhone"
               sx={{ fontSize: 20, color: 'secondary.main' }}
@@ -85,7 +89,10 @@ const Footer = (): JSX.Element => {
           </Box>
         </Typography>
         <Typography variant="body2">
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+          <Box
+            component="span"
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+          >
             <MailIcon
               aria-label="Mail"
               sx={{ fontSize: 20, color: 'secondary.main' }}
@@ -93,29 +100,62 @@ const Footer = (): JSX.Element => {
             contact@ecoride.fr
           </Box>
         </Typography>
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+        <Box
+          component="span"
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}
+        >
           <Typography variant="body2">Suivez-nous</Typography>
           <Stack direction="row" spacing={1}>
-            <FacebookIcon
+            <IconButton
+              component="a"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Facebook"
-              sx={{ fontSize: 20, color: 'secondary.main' }}
-            />
-            <TwitterIcon
+              sx={{ color: 'secondary.main' }}
+            >
+              <FacebookIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Twitter"
-              sx={{ fontSize: 20, color: 'secondary.main' }}
-            />
-            <LinkedInIcon
+              sx={{ color: 'secondary.main' }}
+            >
+              <TwitterIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="LinkedIn"
-              sx={{ fontSize: 20, color: 'secondary.main' }}
-            />
-            <YouTubeIcon
+              sx={{ color: 'secondary.main' }}
+            >
+              <LinkedInIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="YouTube"
-              sx={{ fontSize: 20, color: 'secondary.main' }}
-            />
-            <InstagramIcon
+              sx={{ color: 'secondary.main' }}
+            >
+              <YouTubeIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
-              sx={{ fontSize: 20, color: 'secondary.main' }}
-            />
+              sx={{ color: 'secondary.main' }}
+            >
+              <InstagramIcon sx={{ fontSize: 20 }} />
+            </IconButton>
           </Stack>
         </Box>
       </Stack>
