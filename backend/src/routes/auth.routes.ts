@@ -16,7 +16,6 @@ const router = Router();
 
 router.post(
   '/signup',
-  csrfProtection,
   signupValidator,
   handleValidationErrors,
   AuthController.signup
@@ -24,7 +23,6 @@ router.post(
 
 router.post(
   '/signin',
-  csrfProtection,
   signinValidator,
   handleValidationErrors,
   AuthController.signin

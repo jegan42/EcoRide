@@ -14,6 +14,7 @@ import { csrfErrorHandler } from './middleware/csrf.middleware';
 import { errorHandler } from './middleware/error.middleware';
 import { getRateLimitConfig } from './utils/rateLimitConfig';
 import { getNodeEnv, getSessionSecret } from './utils/env';
+import './passport/google.strategy';
 
 dotenv.config();
 
