@@ -6,6 +6,7 @@ import authService from '../../services/authService';
 import { enqueueSnackbar } from 'notistack';
 import { vi, type MockedFunction } from 'vitest';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { API_URL } from '../../constants/api';
 
 vi.mock('../../services/authService');
 vi.mock('notistack', () => ({
@@ -271,9 +272,7 @@ describe('SigninPage complete coverage test', () => {
 
     await userEvent.click(googleButton);
 
-    expect(window.location.href).toBe(
-      `${import.meta.env.VITE_API_URL}/auth/google`
-    );
+    expect(window.location.href).toBe(`${API_URL}/auth/google`);
 
     window.location = originalLocation as string & Location;
   });

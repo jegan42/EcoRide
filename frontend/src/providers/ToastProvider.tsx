@@ -1,4 +1,4 @@
-// src/providers/ToastProvider.tsx
+// frontend/frontend/src/providers/ToastProvider.tsx
 import { SnackbarProvider } from 'notistack';
 import { Slide } from '@mui/material';
 import type { JSX } from 'react';

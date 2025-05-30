@@ -1,27 +1,26 @@
-// src/services/vehicleService.ts
-import axios from 'axios';
+// frontend/src/services/vehicleService.ts
+import api from '../api/axios';
+import { API_URL } from '../constants/api';
 import type { Vehicle } from '../types/vehicle';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 const createVehicle = async (
   vehicleData: Partial<Vehicle>
 ): Promise<Vehicle> => {
-  const response = await axios.post(`${API_URL}/vehicles`, vehicleData, {
+  const response = await api.post(`${API_URL}/vehicles`, vehicleData, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const fetchVehicles = async (): Promise<Vehicle[]> => {
-  const response = await axios.get(`${API_URL}/vehicles`, {
+  const response = await api.get(`${API_URL}/vehicles`, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const fetchVehicleById = async (id: string): Promise<Vehicle> => {
-  const response = await axios.get(`${API_URL}/vehicles/${id}`, {
+  const response = await api.get(`${API_URL}/vehicles/${id}`, {
     withCredentials: true,
   });
   return response.data;
@@ -31,14 +30,14 @@ const updateVehicle = async (
   id: string,
   vehicleData: Partial<Vehicle>
 ): Promise<Vehicle> => {
-  const response = await axios.put(`${API_URL}/vehicles/${id}`, vehicleData, {
+  const response = await api.put(`${API_URL}/vehicles/${id}`, vehicleData, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const deleteVehicle = async (id: string): Promise<void> => {
-  await axios.delete(`${API_URL}/vehicles/${id}`, {
+  await api.delete(`${API_URL}/vehicles/${id}`, {
     withCredentials: true,
   });
 };

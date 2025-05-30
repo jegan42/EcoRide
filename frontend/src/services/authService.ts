@@ -1,9 +1,7 @@
-// src/services/authService.ts
+// frontend/src/services/authService.ts
 import type { User } from '../types/user';
 import api from '../api/axios';
-import { getApiUrl } from '../constants/api';
-
-const API_URL = getApiUrl();
+import { API_URL } from '../constants/api';
 
 const signup = async (payload: Partial<User>): Promise<Partial<User>> => {
   const response = await api.post(`${API_URL}/auth/signup`, payload, {

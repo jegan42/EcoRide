@@ -11,29 +11,30 @@ describe('authSlice reducer', () => {
     isAuthenticated: false,
   };
 
-  it('must return the initial default state', () => {
-    expect(authReducer(undefined, { type: '' })).toEqual(initialState);
+  it('devrait retourner l’état initial', () => {
+    expect(authReducer(undefined, { type: 'UNKNOWN_ACTION' })).toEqual(
+      initialState
+    );
   });
 
-  it('should manage signin', () => {
-    const user = { id: '123', username: 'Jean Dupont' };
-    const action = signin({ user, isAuthenticated: true });
-    const state = authReducer(initialState, action);
+  it('devrait gérer signin', () => {
+    const fakeUser = { id: '1', name: 'Test User' };
+    const action = signin({ user: fakeUser, isAuthenticated: true });
+    const newState = authReducer(initialState, action);
 
-    expect(state.user).toEqual(user);
-    expect(state.isAuthenticated).toBe(true);
+    expect(newState.user).toEqual(fakeUser);
+    expect(newState.isAuthenticated).toBe(true);
   });
 
-  it('should manage signout', () => {
-    const loggedInState: AuthState = {
-      user: { id: '123', username: 'Jean Dupont' },
+  it('devrait gérer signout', () => {
+    const loggedState: AuthState = {
+      user: { id: '1', username: 'Test User' },
       isAuthenticated: true,
     };
 
-    const action = signout();
-    const state = authReducer(loggedInState, action);
+    const newState = authReducer(loggedState, signout());
 
-    expect(state.user).toBeNull();
-    expect(state.isAuthenticated).toBe(false);
+    expect(newState.user).toBeNull();
+    expect(newState.isAuthenticated).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-// frontend/src/styles/theme/ts
+// frontend/src/styles/theme.ts
 import { createTheme } from '@mui/material/styles';
 
 const colors = {
@@ -15,34 +15,33 @@ const colors = {
   borderGray: '#BDBDBD',
 };
 
-// 1rem = 16px
 const pxToRem = (px: number): string => `${px / 16}rem`;
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: colors.greenForest, // Vert forêt
-      dark: colors.greenDark, // Vert foncé (hover/contrast)
-      light: colors.greenLight, // Vert clair
+      main: colors.greenForest,
+      dark: colors.greenDark,
+      light: colors.greenLight,
       contrastText: colors.white,
     },
     secondary: {
-      main: colors.blueSoft, // Bleu doux
-      contrastText: colors.grayDark, // Gris foncé
+      main: colors.blueSoft,
+      contrastText: colors.grayDark,
     },
     error: {
-      main: colors.redLight, // Rouge léger
+      main: colors.redLight,
     },
     warning: {
-      main: colors.yellow, // Jaune
+      main: colors.yellow,
     },
     background: {
-      default: colors.greenLight, // Gris clair
+      default: colors.greenLight,
       paper: colors.grayLight,
     },
     text: {
-      primary: colors.grayDark, // Gris foncé
-      secondary: colors.blueSoft, // Accent secondaire
+      primary: colors.grayDark,
+      secondary: colors.blueSoft,
       disabled: colors.disabledText,
     },
     grey: {
@@ -90,7 +89,7 @@ const theme = createTheme({
           padding: `${pxToRem(8)} ${pxToRem(16)}`,
           boxShadow: 'none',
           '&:hover': {
-            backgroundColor: colors.greenDark, // Vert foncé
+            backgroundColor: colors.greenDark,
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           },
           '&:disabled': {
@@ -163,7 +162,7 @@ const theme = createTheme({
           boxSizing: 'inherit',
         },
         html: {
-          fontSize: '1rem', // 16px
+          fontSize: '1rem',
         },
         body: {
           margin: 0,
@@ -196,8 +195,6 @@ const theme = createTheme({
           border: 'none',
         },
       }),
-
-      // ... les autres overrides de Button, Input, etc.
     },
   },
 });

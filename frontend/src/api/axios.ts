@@ -1,9 +1,10 @@
 // frontend/src/api/axios.ts
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
+import { API_URL } from '../constants/api';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL: API_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

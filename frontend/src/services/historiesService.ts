@@ -1,3 +1,4 @@
+// frontend/src/services/historiesService.ts
 import { db } from '../firebaseConfig';
 import {
   collection,
@@ -12,12 +13,10 @@ import {
 } from 'firebase/firestore';
 import type { History } from '../types/history';
 
-const historiesCollection = collection(db, 'histories');
-
-// Ajouter une nouvelle history
 export const addHistory = async (
-  history: History
+  history: Partial<History>
 ): Promise<DocumentReference> => {
+  const historiesCollection = collection(db, 'histories');
   return await addDoc(historiesCollection, {
     ...history,
     created_at: new Date(),
@@ -25,8 +24,8 @@ export const addHistory = async (
   });
 };
 
-// Récupérer toutes les histories
 export const getAllHistories = async (): Promise<History[]> => {
+  const historiesCollection = collection(db, 'histories');
   const snapshot = await getDocs(historiesCollection);
   return snapshot.docs.map((doc) => ({
     ...(doc.data() as History),
@@ -34,10 +33,10 @@ export const getAllHistories = async (): Promise<History[]> => {
   }));
 };
 
-// Récupérer histories d’un user spécifique
 export const getHistoriesByUser = async (
   userId: string
 ): Promise<History[]> => {
+  const historiesCollection = collection(db, 'histories');
   const q = query(historiesCollection, where('user_id', '==', userId));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
@@ -46,7 +45,6 @@ export const getHistoriesByUser = async (
   }));
 };
 
-// Mettre à jour une history
 export const updateHistory = async (
   id: string,
   data: Partial<History>
@@ -55,7 +53,6 @@ export const updateHistory = async (
   await updateDoc(historyDoc, { ...data, updated_at: new Date() });
 };
 
-// Supprimer une history
 export const deleteHistory = async (id: string): Promise<void> => {
   const historyDoc = doc(db, 'histories', id);
   await deleteDoc(historyDoc);

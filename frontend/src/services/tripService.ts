@@ -1,8 +1,7 @@
-// src/services/tripService.ts
-import axios from 'axios';
+// frontend/src/services/tripService.ts
+import api from '../api/axios';
+import { API_URL } from '../constants/api';
 import type { Trip } from '../types/trip';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 const fetchTrips = async (
   filters?: Partial<{
@@ -23,7 +22,7 @@ const fetchTrips = async (
   if (filters?.date) params.date = filters.date;
   if (filters?.flexible) params.flexible = filters.flexible;
 
-  const response = await axios.get(`${API_URL}/trips`, {
+  const response = await api.get(`${API_URL}/trips`, {
     withCredentials: true,
     params,
   });
@@ -31,14 +30,14 @@ const fetchTrips = async (
 };
 
 const fetchTripById = async (id: string): Promise<Trip> => {
-  const response = await axios.get(`${API_URL}/trips/${id}`, {
+  const response = await api.get(`${API_URL}/trips/${id}`, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const createTrip = async (tripData: Partial<Trip>): Promise<Trip> => {
-  const response = await axios.post(`${API_URL}/trips`, tripData, {
+  const response = await api.post(`${API_URL}/trips`, tripData, {
     withCredentials: true,
   });
   return response.data;
@@ -48,14 +47,14 @@ const updateTrip = async (
   id: string,
   tripData: Partial<Trip>
 ): Promise<Trip> => {
-  const response = await axios.put(`${API_URL}/trips/${id}`, tripData, {
+  const response = await api.put(`${API_URL}/trips/${id}`, tripData, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const cancelTrip = async (id: string): Promise<Trip> => {
-  const response = await axios.delete(`${API_URL}/trips/${id}`, {
+  const response = await api.delete(`${API_URL}/trips/${id}`, {
     withCredentials: true,
   });
   return response.data;

@@ -1,3 +1,4 @@
+// frontend/src/services/contactsService.ts
 import { db } from '../firebaseConfig';
 import {
   collection,
@@ -10,11 +11,10 @@ import {
 } from 'firebase/firestore';
 import type { Contact } from '../types/contact';
 
-const contactsCollection = collection(db, 'contacts');
-
 export const addContact = async (
   contact: Partial<Contact>
 ): Promise<DocumentReference> => {
+  const contactsCollection = collection(db, 'contacts');
   return await addDoc(contactsCollection, {
     ...contact,
     sent_at: new Date(),
@@ -24,6 +24,7 @@ export const addContact = async (
 };
 
 export const getAllContacts = async (): Promise<Contact[]> => {
+  const contactsCollection = collection(db, 'contacts');
   const snapshot = await getDocs(contactsCollection);
   return snapshot.docs.map((doc) => ({
     ...(doc.data() as Contact),

@@ -11,6 +11,7 @@ import { enqueueSnackbar } from 'notistack';
 import axios from 'axios';
 import { useAppSelector } from '../hooks/useAppSelector';
 import AuthTabs from '../components/auth/AuthTabs';
+import { API_URL } from '../constants/api';
 
 const SigninPage = (): JSX.Element => {
   const [signin, setSignin] = useState(true);
@@ -96,7 +97,7 @@ const SigninPage = (): JSX.Element => {
                 fontSize: 16,
               }}
               onClick={() => {
-                window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+                window.location.href = `${API_URL}/auth/google`;
               }}
             >
               Se connecter avec Google

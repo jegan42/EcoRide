@@ -47,7 +47,7 @@ const Header = (): JSX.Element => {
           px: 4,
         }}
       >
-        {/* Logo + Titre */}
+        \
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
             variant="h6"
@@ -62,11 +62,10 @@ const Header = (): JSX.Element => {
             sx={{ height: { xs: 30, md: 40 } }}
           />
         </Box>
-
         {isMobile ? (
           <>
-            {/* Burger Menu Button */}
             <IconButton
+              aria-label="menu"
               edge="end"
               onClick={() => setDrawerOpen(true)}
               sx={{ color: theme.palette.primary.main }}
@@ -74,7 +73,6 @@ const Header = (): JSX.Element => {
               <MenuIcon />
             </IconButton>
 
-            {/* Drawer */}
             <Drawer
               anchor="right"
               open={drawerOpen}
@@ -108,7 +106,6 @@ const Header = (): JSX.Element => {
             </Drawer>
           </>
         ) : (
-          // Desktop Navigation
           <Stack direction="row" spacing={3} alignItems="center">
             {navLinks.map((link) => (
               <Link
