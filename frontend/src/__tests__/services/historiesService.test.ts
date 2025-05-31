@@ -71,7 +71,8 @@ describe('historiesService', () => {
         updated_at: expect.any(Date),
       })
     );
-    expect(result).toBe(mockDocRef);
+    expect(result.message).toBe('Historique ajouté avec succès');
+    expect(result.data).toBe(mockDocRef);
   });
 
   it('getAllHistories retourne toutes les histories', async () => {
@@ -80,7 +81,10 @@ describe('historiesService', () => {
     const result = await getAllHistories();
 
     expect(getDocs).toHaveBeenCalledWith(mockCollection);
-    expect(result).toEqual([{ id: 'h1', trip_id: 'trip42', user_id: 'user1' }]);
+    expect(result.message).toBe('Historiques récupérés');
+    expect(result.data).toEqual([
+      { id: 'h1', trip_id: 'trip42', user_id: 'user1' },
+    ]);
   });
 
   it('getHistoriesByUser filtre les histories par user_id', async () => {
@@ -93,14 +97,17 @@ describe('historiesService', () => {
     expect(where).toHaveBeenCalledWith('user_id', '==', 'user1');
     expect(query).toHaveBeenCalledWith(mockCollection, expect.anything());
     expect(getDocs).toHaveBeenCalledWith(mockQuery);
-    expect(result).toEqual([{ id: 'h1', trip_id: 'trip42', user_id: 'user1' }]);
+    expect(result.message).toBe('Historiques utilisateur récupérés');
+    expect(result.data).toEqual([
+      { id: 'h1', trip_id: 'trip42', user_id: 'user1' },
+    ]);
   });
 
   it('updateHistory met à jour une history', async () => {
     const mockHistoryDoc = {};
     (doc as jest.Mock).mockReturnValue(mockHistoryDoc);
 
-    await updateHistory('history-id', { status: 'cancelled' });
+    const result = await updateHistory('history-id', { status: 'cancelled' });
 
     expect(doc).toHaveBeenCalledWith(
       expect.anything(),
@@ -114,13 +121,14 @@ describe('historiesService', () => {
         updated_at: expect.any(Date),
       })
     );
+    expect(result.message).toBe('Historique mis à jour');
   });
 
   it('deleteHistory supprime une history', async () => {
     const mockHistoryDoc = {};
     (doc as jest.Mock).mockReturnValue(mockHistoryDoc);
 
-    await deleteHistory('history-id');
+    const result = await deleteHistory('history-id');
 
     expect(doc).toHaveBeenCalledWith(
       expect.anything(),
@@ -128,5 +136,6 @@ describe('historiesService', () => {
       'history-id'
     );
     expect(deleteDoc).toHaveBeenCalledWith(mockHistoryDoc);
+    expect(result.message).toBe('Historique supprimé');
   });
 });

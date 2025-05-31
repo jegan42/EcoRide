@@ -11,7 +11,7 @@ const ToastProvider = ({
   return (
     <SnackbarProvider
       maxSnack={3}
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       TransitionComponent={Slide}
     >

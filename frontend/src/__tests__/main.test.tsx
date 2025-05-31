@@ -1,4 +1,4 @@
-// src/__tests__/main.test.tsx
+// frontend/src/__tests__/main.test.tsx
 import { vi } from 'vitest';
 
 const renderMock = vi.fn();

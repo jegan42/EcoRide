@@ -11,6 +11,11 @@ import {
   where,
   DocumentReference,
 } from 'firebase/firestore';
+import type { ApiResponse } from '../types/api';
+import {
+  handleApiResponseBasic,
+  handleApiResponseSafe,
+} from '../utils/handleApiResponse';
 
 interface Review {
   author_id: string;
@@ -22,57 +27,83 @@ interface Review {
   updated_at?: Date;
 }
 
-export const addReview = async (review: Review): Promise<DocumentReference> => {
+export const addReview = async (
+  review: Review
+): Promise<ApiResponse<DocumentReference>> => {
   const reviewsCollection = collection(db, 'reviews');
-  return await addDoc(reviewsCollection, {
+  const docRef = await addDoc(reviewsCollection, {
     ...review,
     created_at: new Date(),
     updated_at: new Date(),
   });
+  return handleApiResponseSafe<DocumentReference>({
+    message: 'Avis ajouté avec succès',
+    data: docRef,
+  });
 };
 
-export const getAllReviews = async (): Promise<Review[]> => {
+export const getAllReviews = async (): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
   const snapshot = await getDocs(reviewsCollection);
-  return snapshot.docs.map((doc) => ({
+  const reviews = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...(doc.data() as Review),
   }));
+  return handleApiResponseSafe<Review[]>({
+    message: 'Avis récupérés',
+    data: reviews,
+  });
 };
 
 export const getReviewsByAuthor = async (
   authorId: string
-): Promise<Review[]> => {
+): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
   const q = query(reviewsCollection, where('author_id', '==', authorId));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  const reviews = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...(doc.data() as Review),
   }));
+  return handleApiResponseSafe<Review[]>({
+    message: 'Avis par autheur récupérés',
+    data: reviews,
+  });
 };
 
 export const getReviewsByTarget = async (
   targetId: string
-): Promise<Review[]> => {
+): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
   const q = query(reviewsCollection, where('target_id', '==', targetId));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  const reviews = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...(doc.data() as Review),
   }));
+  return handleApiResponseSafe<Review[]>({
+    message: 'Avis par chauffeur récupérés',
+    data: reviews,
+  });
 };
 
 export const updateReview = async (
   id: string,
   data: Partial<Review>
-): Promise<void> => {
+): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
   await updateDoc(reviewDoc, { ...data, updated_at: new Date() });
+  return handleApiResponseBasic<void>({
+    message: 'Avis mis à jour',
+    data: undefined,
+  });
 };
 
-export const deleteReview = async (id: string): Promise<void> => {
+export const deleteReview = async (id: string): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
   await deleteDoc(reviewDoc);
+  return handleApiResponseBasic<void>({
+    message: 'Avis supprimé',
+    data: undefined,
+  });
 };

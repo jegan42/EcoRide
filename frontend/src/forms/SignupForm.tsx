@@ -1,4 +1,4 @@
-// src/forms/SignupForm.tsx
+// frontend/src/forms/SignupForm.tsx
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from '../validations/signupSchema';

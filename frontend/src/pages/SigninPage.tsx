@@ -7,11 +7,13 @@ import authService from '../services/authService';
 import { useDispatch } from 'react-redux';
 import { signin as signinAction } from '../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { enqueueSnackbar } from 'notistack';
-import axios from 'axios';
 import { useAppSelector } from '../hooks/useAppSelector';
 import AuthTabs from '../components/auth/AuthTabs';
 import { API_URL } from '../constants/api';
+import {
+  enqueueSnackbarError,
+  enqueueSnackbarSuccess,
+} from '../utils/enqueueSnackbar';
 
 const SigninPage = (): JSX.Element => {
   const [signin, setSignin] = useState(true);
@@ -28,41 +30,28 @@ const SigninPage = (): JSX.Element => {
 
   const handleSigninSubmit = async (data: SigninFormData): Promise<void> => {
     try {
-      const user = await authService.signin(data);
-      dispatch(
-        signinAction({
-          user: user,
-          isAuthenticated: true,
-        })
-      );
-      enqueueSnackbar('Connexion envoyée !', { variant: 'success' });
+      const { message, data: user } = await authService.signin(data);
+      dispatch(signinAction({ user, isAuthenticated: true }));
+      enqueueSnackbarSuccess(message);
       void navigate('/');
     } catch (error) {
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? error.response.data.message
-          : 'Échec de la connexion, veuillez réessayer';
-      enqueueSnackbar(message, { variant: 'error' });
+      enqueueSnackbarError(error);
     }
   };
 
   const handleSignupSubmit = async (data: SignupFormData): Promise<void> => {
     try {
-      const user = await authService.signup(data);
+      const { message, data: user } = await authService.signup(data);
       dispatch(
         signinAction({
-          user: user,
+          user,
           isAuthenticated: true,
         })
       );
-      enqueueSnackbar('Inscription envoyée !', { variant: 'success' });
+      enqueueSnackbarSuccess(message);
       void navigate('/');
     } catch (error) {
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? error.response.data.message
-          : 'Échec de l’inscription, veuillez réessayer';
-      enqueueSnackbar(message, { variant: 'error' });
+      enqueueSnackbarError(error);
     }
   };
   return (

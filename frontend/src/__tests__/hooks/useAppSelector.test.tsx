@@ -21,6 +21,7 @@ describe('useAppSelector', () => {
         auth: {
           user: null,
           isAuthenticated: true,
+          loading: false,
         },
       },
     });

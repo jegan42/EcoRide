@@ -71,7 +71,8 @@ describe('reviewsService', () => {
         updated_at: expect.any(Date),
       })
     );
-    expect(result).toBe(mockDocRef);
+    expect(result.message).toBe('Avis ajouté avec succès');
+    expect(result.data).toBe(mockDocRef);
   });
 
   it('getAllReviews retourne tous les avis', async () => {
@@ -81,7 +82,8 @@ describe('reviewsService', () => {
 
     const result = await getAllReviews();
     expect(getDocs).toHaveBeenCalledWith(mockCollection);
-    expect(result).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
+    expect(result.message).toBe('Avis récupérés');
+    expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
   it('getReviewsByAuthor filtre par author_id', async () => {
@@ -94,7 +96,8 @@ describe('reviewsService', () => {
     expect(where).toHaveBeenCalledWith('author_id', '==', 'author-42');
     expect(query).toHaveBeenCalledWith(mockCollection, expect.anything());
     expect(getDocs).toHaveBeenCalledWith(mockQuery);
-    expect(result).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
+    expect(result.message).toBe('Avis par autheur récupérés');
+    expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
   it('getReviewsByTarget filtre par target_id', async () => {
@@ -106,14 +109,15 @@ describe('reviewsService', () => {
 
     expect(where).toHaveBeenCalledWith('target_id', '==', 'target-42');
     expect(query).toHaveBeenCalledWith(mockCollection, expect.anything());
-    expect(result).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
+    expect(result.message).toBe('Avis par chauffeur récupérés');
+    expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
   it('updateReview met à jour un avis', async () => {
     const mockReviewDoc = {};
     (doc as jest.Mock).mockReturnValue(mockReviewDoc);
 
-    await updateReview('rev-id', { rating: 3 });
+    const result = await updateReview('rev-id', { rating: 3 });
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'reviews', 'rev-id');
     expect(updateDoc).toHaveBeenCalledWith(
@@ -123,15 +127,17 @@ describe('reviewsService', () => {
         updated_at: expect.any(Date),
       })
     );
+    expect(result.message).toBe('Avis mis à jour');
   });
 
   it('deleteReview supprime un avis', async () => {
     const mockReviewDoc = {};
     (doc as jest.Mock).mockReturnValue(mockReviewDoc);
 
-    await deleteReview('rev-id');
+    const result = await deleteReview('rev-id');
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'reviews', 'rev-id');
     expect(deleteDoc).toHaveBeenCalledWith(mockReviewDoc);
+    expect(result.message).toBe('Avis supprimé');
   });
 });

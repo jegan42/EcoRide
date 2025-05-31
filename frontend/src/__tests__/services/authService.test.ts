@@ -13,7 +13,12 @@ describe('authService', () => {
   });
 
   it('calls the correct endpoint for signup', async () => {
-    (api.post as jest.Mock).mockResolvedValue({ data: { id: 1, ...mockUser } });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'Signup successful',
+        data: { id: 1, ...mockUser },
+      },
+    });
 
     const res = await authService.signup(mockUser);
     expect(api.post).toHaveBeenCalledWith(
@@ -21,11 +26,17 @@ describe('authService', () => {
       mockUser,
       { withCredentials: true }
     );
-    expect(res).toEqual({ id: 1, ...mockUser });
+    expect(res.message).toEqual('Signup successful');
+    expect(res.data).toEqual({ id: 1, ...mockUser });
   });
 
   it('calls the correct endpoint for signin', async () => {
-    (api.post as jest.Mock).mockResolvedValue({ data: { token: 'abc123' } });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'Signin successful',
+        data: { token: 'abc123' },
+      },
+    });
 
     const res = await authService.signin(mockUser);
     expect(api.post).toHaveBeenCalledWith(
@@ -33,18 +44,24 @@ describe('authService', () => {
       mockUser,
       { withCredentials: true }
     );
-    expect(res).toEqual({ token: 'abc123' });
+    expect(res.message).toEqual('Signin successful');
+    expect(res.data).toEqual({ token: 'abc123' });
   });
 
   it('calls the correct endpoint for signout', async () => {
-    (api.post as jest.Mock).mockResolvedValue({});
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'Signout successful',
+      },
+    });
 
-    await authService.signout();
+    const res = await authService.signout();
     expect(api.post).toHaveBeenCalledWith(
       expect.stringMatching(/\/auth\/signout$/),
       {},
       { withCredentials: true }
     );
+    expect(res.message).toBe('Signout successful');
   });
 
   it('propagates errors if the call fails', async () => {

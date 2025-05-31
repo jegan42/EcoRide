@@ -9,6 +9,7 @@ describe('authSlice reducer', () => {
   const initialState: AuthState = {
     user: null,
     isAuthenticated: false,
+    loading: true,
   };
 
   it('devrait retourner l’état initial', () => {
@@ -30,6 +31,7 @@ describe('authSlice reducer', () => {
     const loggedState: AuthState = {
       user: { id: '1', username: 'Test User' },
       isAuthenticated: true,
+      loading: true,
     };
 
     const newState = authReducer(loggedState, signout());

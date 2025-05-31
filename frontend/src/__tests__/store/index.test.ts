@@ -8,6 +8,7 @@ describe('store configuration', () => {
     expect(state.auth).toEqual({
       user: null,
       isAuthenticated: false,
+      loading: true,
     });
   });
 

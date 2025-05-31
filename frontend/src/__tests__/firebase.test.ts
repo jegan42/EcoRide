@@ -1,4 +1,4 @@
-// src/__tests__/firebase.test.ts
+// frontend/src/__tests__/firebase.test.ts
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('firebase/app', () => ({

@@ -13,7 +13,12 @@ describe('bookingService', () => {
   it('createBooking appelle api.post avec les données', async () => {
     const bookingData = { tripId: 't1', userId: 'u1' };
     const mockBooking = { id: 'b1', ...bookingData };
-    (api.post as jest.Mock).mockResolvedValue({ data: mockBooking });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'createBooking successful',
+        data: mockBooking,
+      },
+    });
 
     const result = await bookingService.createBooking(bookingData);
 
@@ -22,13 +27,19 @@ describe('bookingService', () => {
       bookingData,
       { withCredentials: true }
     );
-    expect(result).toEqual(mockBooking);
+    expect(result.message).toBe('createBooking successful');
+    expect(result.data).toEqual(mockBooking);
   });
 
   it('cancelBooking appelle api.delete avec id', async () => {
     const bookingId = 'b2';
     const mockResponse = { id: bookingId, status: 'cancelled' };
-    (api.delete as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.delete as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'cancelBooking successful',
+        data: mockResponse,
+      },
+    });
 
     const result = await bookingService.cancelBooking(bookingId);
 
@@ -37,12 +48,18 @@ describe('bookingService', () => {
       { withCredentials: true }
     );
 
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('cancelBooking successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('fetchBookings appelle api.get pour utilisateur', async () => {
     const mockBookings = [{ id: 'b3' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockBookings });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getBooking successful',
+        data: mockBookings,
+      },
+    });
 
     const result = await bookingService.fetchBookings();
 
@@ -50,12 +67,18 @@ describe('bookingService', () => {
       expect.stringMatching(/\/bookings\/me$/),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockBookings);
+    expect(result.message).toBe('getBooking successful');
+    expect(result.data).toEqual(mockBookings);
   });
 
   it('fetchBookingsByDriver appelle api.get pour conducteur', async () => {
     const mockBookings = [{ id: 'b4' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockBookings });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getBookingsByDriver successful',
+        data: mockBookings,
+      },
+    });
 
     const result = await bookingService.fetchBookingsByDriver();
 
@@ -63,13 +86,19 @@ describe('bookingService', () => {
       expect.stringMatching(/\/bookings\/driver$/),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockBookings);
+    expect(result.message).toBe('getBookingsByDriver successful');
+    expect(result.data).toEqual(mockBookings);
   });
 
   it('fetchBookingsByTrip appelle api.get avec trip id', async () => {
     const tripId = 't2';
     const mockBookings = [{ id: 'b5' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockBookings });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getBookingsByTrip successful',
+        data: mockBookings,
+      },
+    });
 
     const result = await bookingService.fetchBookingsByTrip(tripId);
 
@@ -77,13 +106,19 @@ describe('bookingService', () => {
       expect.stringMatching(new RegExp(`/bookings/trip/${tripId}$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockBookings);
+    expect(result.message).toBe('getBookingsByTrip successful');
+    expect(result.data).toEqual(mockBookings);
   });
 
   it('validateBooking appelle api.post pour valider une réservation', async () => {
     const bookingId = 'b6';
     const mockResponse = [{ id: bookingId, status: 'validated' }];
-    (api.post as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'validateBooking successful',
+        data: mockResponse,
+      },
+    });
 
     const result = await bookingService.validateBooking(bookingId);
 
@@ -91,13 +126,19 @@ describe('bookingService', () => {
       expect.stringMatching(new RegExp(`/bookings/${bookingId}/validate$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('validateBooking successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('fetchBookingById appelle api.get avec id', async () => {
     const bookingId = 'b7';
     const mockBooking = { id: bookingId };
-    (api.get as jest.Mock).mockResolvedValue({ data: mockBooking });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getBookingById successful',
+        data: mockBooking,
+      },
+    });
 
     const result = await bookingService.fetchBookingById(bookingId);
 
@@ -105,6 +146,7 @@ describe('bookingService', () => {
       expect.stringMatching(new RegExp(`/bookings/${bookingId}$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockBooking);
+    expect(result.message).toBe('getBookingById successful');
+    expect(result.data).toEqual(mockBooking);
   });
 });

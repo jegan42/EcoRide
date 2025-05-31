@@ -1,37 +1,44 @@
 // frontend/src/services/userPreferencesService.ts
 import api from '../api/axios';
 import { API_URL } from '../constants/api';
+import type { ApiResponse } from '../types/api';
 import type { UserPreferences } from '../types/preferences';
+import {
+  handleApiResponseBasic,
+  handleApiResponseSafe,
+} from '../utils/handleApiResponse';
 
 const createUserPreferences = async (
   prefsData: Partial<UserPreferences>
-): Promise<UserPreferences> => {
+): Promise<ApiResponse<UserPreferences>> => {
   const response = await api.post(`${API_URL}/preferences`, prefsData, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<UserPreferences>(response.data);
 };
 
-const fetchUserPreferences = async (): Promise<UserPreferences> => {
+const fetchUserPreferences = async (): Promise<
+  ApiResponse<UserPreferences>
+> => {
   const response = await api.get(`${API_URL}/preferences/me`, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<UserPreferences>(response.data);
 };
 
 const fetchUserPreferencesById = async (
   userId: string
-): Promise<UserPreferences> => {
+): Promise<ApiResponse<UserPreferences>> => {
   const response = await api.get(`${API_URL}/preferences/${userId}`, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<UserPreferences>(response.data);
 };
 
 const updateUserPreferences = async (
   userId: string,
   prefsData: Partial<UserPreferences>
-): Promise<UserPreferences> => {
+): Promise<ApiResponse<UserPreferences>> => {
   const response = await api.put(
     `${API_URL}/preferences/${userId}`,
     prefsData,
@@ -39,13 +46,16 @@ const updateUserPreferences = async (
       withCredentials: true,
     }
   );
-  return response.data;
+  return handleApiResponseSafe<UserPreferences>(response.data);
 };
 
-const deleteUserPreferences = async (userId: string): Promise<void> => {
-  await api.delete(`${API_URL}/preferences/${userId}`, {
+const deleteUserPreferences = async (
+  userId: string
+): Promise<ApiResponse<void>> => {
+  const response = await api.delete(`${API_URL}/preferences/${userId}`, {
     withCredentials: true,
   });
+  return handleApiResponseBasic<void>(response.data);
 };
 
 export default {

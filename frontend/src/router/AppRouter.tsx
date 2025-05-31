@@ -5,6 +5,7 @@ import AppLayout from '../layouts/AppLayout';
 import Dashboard from '../pages/Dashboard';
 import SigninPage from '../pages/SigninPage';
 import ProtectedRoute from './ProtectedRoute';
+import ProfilePage from '../pages/ProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -13,8 +14,11 @@ const router = createBrowserRouter([
     children: [
       { path: 'signin', element: <SigninPage /> },
       {
-        element: <ProtectedRoute />, // routes protégées
-        children: [{ index: true, element: <Dashboard /> }],
+        element: <ProtectedRoute />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: 'profile', element: <ProfilePage /> },
+        ],
       },
     ],
   },

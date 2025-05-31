@@ -1,7 +1,9 @@
 // frontend/src/services/userService.ts
 import api from '../api/axios';
 import { API_URL } from '../constants/api';
+import type { ApiResponse } from '../types/api';
 import type { User } from '../types/user';
+import { handleApiResponseSafe } from '../utils/handleApiResponse';
 
 type UpdatePayload = Pick<
   User,
@@ -20,18 +22,18 @@ type UpdatePayload = Pick<
 
 const updateUser = async (
   data: Partial<UpdatePayload>
-): Promise<Partial<User>> => {
+): Promise<ApiResponse<Partial<User>>> => {
   const response = await api.put(`${API_URL}/auth/update`, data, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Partial<User>>(response.data);
 };
 
-const fetchUser = async (): Promise<Partial<User>> => {
+const fetchUser = async (): Promise<ApiResponse<Partial<User>>> => {
   const response = await api.get(`${API_URL}/auth/me`, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Partial<User>>(response.data);
 };
 
 export default {

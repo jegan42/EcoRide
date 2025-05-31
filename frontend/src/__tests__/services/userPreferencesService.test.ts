@@ -14,7 +14,12 @@ describe('userPreferencesService', () => {
   it('createUserPreferences appelle api.post avec les données', async () => {
     const prefsData: Partial<UserPreferences> = { acceptsSmoker: true };
     const mockResponse = { id: 'p1', ...prefsData };
-    (api.post as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'createPreferences successful',
+        data: mockResponse,
+      },
+    });
 
     const result =
       await userPreferencesService.createUserPreferences(prefsData);
@@ -24,12 +29,18 @@ describe('userPreferencesService', () => {
       prefsData,
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('createPreferences successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('fetchUserPreferences appelle api.get sur /preferences/me', async () => {
     const mockResponse = { id: 'p2', acceptsSmoker: true };
-    (api.get as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getPreferences successful',
+        data: mockResponse,
+      },
+    });
 
     const result = await userPreferencesService.fetchUserPreferences();
 
@@ -37,13 +48,19 @@ describe('userPreferencesService', () => {
       expect.stringMatching(/\/preferences\/me$/),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('getPreferences successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('fetchUserPreferencesById appelle api.get avec userId', async () => {
     const userId = 'u1';
     const mockResponse = { id: 'p3', acceptsSmoker: true };
-    (api.get as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getPreferencesById successful',
+        data: mockResponse,
+      },
+    });
 
     const result =
       await userPreferencesService.fetchUserPreferencesById(userId);
@@ -52,14 +69,20 @@ describe('userPreferencesService', () => {
       expect.stringMatching(new RegExp(`/preferences/${userId}$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('getPreferencesById successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('updateUserPreferences appelle api.put avec userId et données', async () => {
     const userId = 'u2';
     const prefsData = { acceptsSmoker: true };
     const mockResponse = { id: 'p4', ...prefsData };
-    (api.put as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.put as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'updatePreferences successful',
+        data: mockResponse,
+      },
+    });
 
     const result = await userPreferencesService.updateUserPreferences(
       userId,
@@ -71,18 +94,24 @@ describe('userPreferencesService', () => {
       prefsData,
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('updatePreferences successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('deleteUserPreferences appelle api.delete avec userId', async () => {
     const userId = 'u3';
-    (api.delete as jest.Mock).mockResolvedValue({});
+    (api.delete as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'deletePreferences successful',
+      },
+    });
 
-    await userPreferencesService.deleteUserPreferences(userId);
+    const result = await userPreferencesService.deleteUserPreferences(userId);
 
     expect(api.delete).toHaveBeenCalledWith(
       expect.stringMatching(new RegExp(`/preferences/${userId}$`)),
       { withCredentials: true }
     );
+    expect(result.message).toBe('deletePreferences successful');
   });
 });

@@ -7,9 +7,8 @@ import Footer from '../components/Footer';
 import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import userService from '../services/userService';
-import { signin as signinAction } from '../store/slices/authSlice';
 import { useAppSelector } from '../hooks/useAppSelector';
-import { enqueueSnackbar } from 'notistack';
+import { setAuthLoading, signin, signout } from '../store/slices/authSlice';
 
 const AppLayout = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -17,17 +16,18 @@ const AppLayout = (): JSX.Element => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      const checkUser = async (): Promise<void> => {
+      const initAuth = async (): Promise<void> => {
+        dispatch(setAuthLoading(true));
         try {
-          const user = await userService.fetchUser();
-          dispatch(signinAction({ user, isAuthenticated: true }));
+          const { message: _, data: user } = await userService.fetchUser();
+          dispatch(signin({ user, isAuthenticated: true }));
         } catch {
-          enqueueSnackbar('Utilisateur non connecté ou session expirée', {
-            variant: 'error',
-          });
+          dispatch(signout());
+        } finally {
+          dispatch(setAuthLoading(false));
         }
       };
-      void checkUser();
+      void initAuth();
     }
   }, [dispatch, isAuthenticated]);
 

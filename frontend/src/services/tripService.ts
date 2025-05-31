@@ -1,7 +1,9 @@
 // frontend/src/services/tripService.ts
 import api from '../api/axios';
 import { API_URL } from '../constants/api';
+import type { ApiResponse } from '../types/api';
 import type { Trip } from '../types/trip';
+import { handleApiResponseSafe } from '../utils/handleApiResponse';
 
 const fetchTrips = async (
   filters?: Partial<{
@@ -10,7 +12,7 @@ const fetchTrips = async (
     date: string;
     flexible: boolean;
   }>
-): Promise<Trip[]> => {
+): Promise<ApiResponse<Trip[]>> => {
   const params: Partial<{
     departureCity: string;
     arrivalCity: string;
@@ -26,38 +28,40 @@ const fetchTrips = async (
     withCredentials: true,
     params,
   });
-  return response.data;
+  return handleApiResponseSafe<Trip[]>(response.data);
 };
 
-const fetchTripById = async (id: string): Promise<Trip> => {
+const fetchTripById = async (id: string): Promise<ApiResponse<Trip>> => {
   const response = await api.get(`${API_URL}/trips/${id}`, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Trip>(response.data);
 };
 
-const createTrip = async (tripData: Partial<Trip>): Promise<Trip> => {
+const createTrip = async (
+  tripData: Partial<Trip>
+): Promise<ApiResponse<Trip>> => {
   const response = await api.post(`${API_URL}/trips`, tripData, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Trip>(response.data);
 };
 
 const updateTrip = async (
   id: string,
   tripData: Partial<Trip>
-): Promise<Trip> => {
+): Promise<ApiResponse<Trip>> => {
   const response = await api.put(`${API_URL}/trips/${id}`, tripData, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Trip>(response.data);
 };
 
-const cancelTrip = async (id: string): Promise<Trip> => {
+const cancelTrip = async (id: string): Promise<ApiResponse<Trip>> => {
   const response = await api.delete(`${API_URL}/trips/${id}`, {
     withCredentials: true,
   });
-  return response.data;
+  return handleApiResponseSafe<Trip>(response.data);
 };
 
 export default {

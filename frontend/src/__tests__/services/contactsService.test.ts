@@ -52,7 +52,8 @@ describe('contactsService', () => {
         updated_at: expect.any(Date),
       })
     );
-    expect(result).toBe(mockDocRef);
+    expect(result.message).toBe('Contact ajouté avec succès');
+    expect(result.data).toBe(mockDocRef);
   });
 
   it('getAllContacts récupère tous les contacts', async () => {
@@ -79,7 +80,8 @@ describe('contactsService', () => {
     const result = await getAllContacts();
 
     expect(getDocs).toHaveBeenCalledWith(mockCollection);
-    expect(result).toEqual([
+    expect(result.message).toBe('Contacts récupérés');
+    expect(result.data).toEqual([
       { id: '1', email: 'user1@example.com', message: 'Hello' },
       { id: '2', email: 'user2@example.com', message: 'Hi there' },
     ]);
@@ -88,8 +90,9 @@ describe('contactsService', () => {
   it('updateContact met à jour le contact avec ID donné', async () => {
     const mockDoc = { id: '1' };
     (doc as jest.Mock).mockReturnValue(mockDoc);
+    (updateDoc as jest.Mock).mockResolvedValue(undefined);
 
-    await updateContact('1', { email: 'updated@example.com' });
+    const response = await updateContact('1', { email: 'updated@example.com' });
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'contacts', '1');
     expect(updateDoc).toHaveBeenCalledWith(
@@ -99,15 +102,25 @@ describe('contactsService', () => {
         updated_at: expect.any(Date),
       })
     );
+
+    expect(response).toEqual({
+      message: 'Contact mis à jour',
+      data: undefined,
+    });
   });
 
   it('deleteContact supprime le contact avec ID donné', async () => {
     const mockDoc = { id: '1' };
     (doc as jest.Mock).mockReturnValue(mockDoc);
+    (deleteDoc as jest.Mock).mockResolvedValue(undefined);
 
-    await deleteContact('1');
+    const response = await deleteContact('1');
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'contacts', '1');
     expect(deleteDoc).toHaveBeenCalledWith(mockDoc);
+    expect(response).toEqual({
+      message: 'Contact supprimé',
+      data: undefined,
+    });
   });
 });

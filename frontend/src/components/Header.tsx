@@ -25,6 +25,7 @@ const navLinks = [
   { label: 'Trouver trajet', to: '/findtrip' },
   { label: 'Historique', to: '/history' },
   { label: 'À propos', to: '/about' },
+  { label: 'Profil', to: '/profile' },
 ];
 
 const Header = (): JSX.Element => {

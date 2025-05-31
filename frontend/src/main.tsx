@@ -1,4 +1,4 @@
-// Point d'entrée de l'application, rend le composant App dans la DOM
+// frontend/srd/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';

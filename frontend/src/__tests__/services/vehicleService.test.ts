@@ -12,7 +12,12 @@ describe('vehicleService', () => {
 
   it('createVehicle appelle api.post avec les bons paramètres', async () => {
     const mockVehicle = { id: 'v1', brand: 'Tesla' };
-    (api.post as jest.Mock).mockResolvedValue({ data: mockVehicle });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'createVehicle successful',
+        data: mockVehicle,
+      },
+    });
 
     const result = await vehicleService.createVehicle({ brand: 'Tesla' });
 
@@ -21,25 +26,37 @@ describe('vehicleService', () => {
       { brand: 'Tesla' },
       { withCredentials: true }
     );
-    expect(result).toEqual(mockVehicle);
+    expect(result.message).toBe('createVehicle successful');
+    expect(result.data).toEqual(mockVehicle);
   });
 
   it('fetchVehicles appelle api.get et retourne la liste des véhicules', async () => {
     const mockData = [{ id: 'v1' }, { id: 'v2' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockData });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getAllVehicles successful',
+        data: mockData,
+      },
+    });
 
     const result = await vehicleService.fetchVehicles();
 
     expect(api.get).toHaveBeenCalledWith(expect.stringMatching(/\/vehicles$/), {
       withCredentials: true,
     });
-    expect(result).toEqual(mockData);
+    expect(result.message).toBe('getAllVehicles successful');
+    expect(result.data).toEqual(mockData);
   });
 
   it("fetchVehicleById appelle api.get avec l'id", async () => {
     const vehicleId = 'v123';
     const mockVehicle = { id: vehicleId, brand: 'Renault' };
-    (api.get as jest.Mock).mockResolvedValue({ data: mockVehicle });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getVehicleById successful',
+        data: mockVehicle,
+      },
+    });
 
     const result = await vehicleService.fetchVehicleById(vehicleId);
 
@@ -47,14 +64,20 @@ describe('vehicleService', () => {
       expect.stringMatching(new RegExp(`/vehicles/${vehicleId}$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockVehicle);
+    expect(result.message).toBe('getVehicleById successful');
+    expect(result.data).toEqual(mockVehicle);
   });
 
   it('updateVehicle appelle api.put avec id et les données', async () => {
     const vehicleId = 'v123';
     const updates = { brand: 'Peugeot' };
     const mockResponse = { id: vehicleId, ...updates };
-    (api.put as jest.Mock).mockResolvedValue({ data: mockResponse });
+    (api.put as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'updateVehicle successful',
+        data: mockResponse,
+      },
+    });
 
     const result = await vehicleService.updateVehicle(vehicleId, updates);
 
@@ -63,15 +86,19 @@ describe('vehicleService', () => {
       updates,
       { withCredentials: true }
     );
-    expect(result).toEqual(mockResponse);
+    expect(result.message).toBe('updateVehicle successful');
+    expect(result.data).toEqual(mockResponse);
   });
 
   it('deleteVehicle appelle api.delete avec id', async () => {
     const vehicleId = 'v999';
-    (api.delete as jest.Mock).mockResolvedValue({});
+    (api.delete as jest.Mock).mockResolvedValue({
+      data: { message: 'deletedVehicle successful' },
+    });
 
-    await vehicleService.deleteVehicle(vehicleId);
+    const result = await vehicleService.deleteVehicle(vehicleId);
 
+    expect(result.message).toBe('deletedVehicle successful');
     expect(api.delete).toHaveBeenCalledWith(
       expect.stringMatching(new RegExp(`/vehicles/${vehicleId}$`)),
       { withCredentials: true }

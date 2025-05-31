@@ -129,7 +129,10 @@ describe('SigninPage E2E', () => {
       ) => cb({ auth: { isAuthenticated: false } })
     );
 
-    const fakeUser = { id: '1', name: 'Test User' };
+    const fakeUser = {
+      message: 'Connexion envoyée !',
+      data: { id: '1', name: 'Test User' },
+    };
     (
       authService.signin as MockedFunction<typeof authService.signin>
     ).mockResolvedValue(fakeUser);
@@ -144,7 +147,7 @@ describe('SigninPage E2E', () => {
         password: '1234',
       });
       expect(mockDispatch).toHaveBeenCalledWith({
-        payload: { user: fakeUser, isAuthenticated: true },
+        payload: { user: fakeUser.data, isAuthenticated: true },
         type: 'auth/signin',
       });
       expect(enqueueSnackbar).toHaveBeenCalledWith('Connexion envoyée !', {
@@ -190,7 +193,10 @@ describe('SigninPage E2E', () => {
       ) => cb({ auth: { isAuthenticated: false } })
     );
 
-    const fakeUser = { id: '2', name: 'New User' };
+    const fakeUser = {
+      message: 'Inscription envoyée !',
+      data: { id: '2', name: 'New User' },
+    };
     (
       authService.signup as MockedFunction<typeof authService.signup>
     ).mockResolvedValue(fakeUser);
@@ -207,7 +213,7 @@ describe('SigninPage E2E', () => {
         password: 'abcd',
       });
       expect(mockDispatch).toHaveBeenCalledWith({
-        payload: { user: fakeUser, isAuthenticated: true },
+        payload: { user: fakeUser.data, isAuthenticated: true },
         type: 'auth/signin',
       });
       expect(enqueueSnackbar).toHaveBeenCalledWith('Inscription envoyée !', {
@@ -295,12 +301,12 @@ describe('SigninPage complete coverage test', () => {
     await userEvent.click(screen.getByTestId('signin-submit'));
 
     await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Échec de la connexion, veuillez réessayer',
-        { variant: 'error' }
-      );
+      expect(enqueueSnackbar).toHaveBeenCalledWith('Erreur inscription', {
+        variant: 'error',
+      });
     });
   });
+
   it('display default message if axios error without message', async () => {
     mockAppSelector.mockImplementation(
       (
@@ -322,10 +328,9 @@ describe('SigninPage complete coverage test', () => {
     await userEvent.click(screen.getByTestId('signin-submit'));
 
     await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Échec de la connexion, veuillez réessayer',
-        { variant: 'error' }
-      );
+      expect(enqueueSnackbar).toHaveBeenCalledWith('Erreur inscription', {
+        variant: 'error',
+      });
     });
   });
 
@@ -379,10 +384,9 @@ describe('SigninPage complete coverage test', () => {
     await userEvent.click(screen.getByTestId('signup-submit'));
 
     await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Échec de l’inscription, veuillez réessayer',
-        { variant: 'error' }
-      );
+      expect(enqueueSnackbar).toHaveBeenCalledWith('Erreur inscription', {
+        variant: 'error',
+      });
     });
   });
 
@@ -405,10 +409,9 @@ describe('SigninPage complete coverage test', () => {
     await userEvent.click(screen.getByTestId('signup-submit'));
 
     await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Échec de l’inscription, veuillez réessayer',
-        { variant: 'error' }
-      );
+      expect(enqueueSnackbar).toHaveBeenCalledWith('Erreur inscription', {
+        variant: 'error',
+      });
     });
   });
 });

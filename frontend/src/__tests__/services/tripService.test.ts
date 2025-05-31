@@ -12,7 +12,12 @@ describe('tripService', () => {
 
   it('fetchTrips appelle api.get sans filtre', async () => {
     const mockTrips = [{ id: '1' }, { id: '2' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockTrips });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getAllTrips successful',
+        data: mockTrips,
+      },
+    });
 
     const result = await tripService.fetchTrips();
 
@@ -20,7 +25,8 @@ describe('tripService', () => {
       withCredentials: true,
       params: {},
     });
-    expect(result).toEqual(mockTrips);
+    expect(result.message).toBe('getAllTrips successful');
+    expect(result.data).toEqual(mockTrips);
   });
 
   it('fetchTrips appelle api.get avec filtres', async () => {
@@ -31,7 +37,12 @@ describe('tripService', () => {
       flexible: true,
     };
     const mockTrips = [{ id: 'filtered-trip' }];
-    (api.get as jest.Mock).mockResolvedValue({ data: mockTrips });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getTripWithFilters successful',
+        data: mockTrips,
+      },
+    });
 
     const result = await tripService.fetchTrips(filters);
 
@@ -39,12 +50,18 @@ describe('tripService', () => {
       withCredentials: true,
       params: filters,
     });
-    expect(result).toEqual(mockTrips);
+    expect(result.message).toBe('getTripWithFilters successful');
+    expect(result.data).toEqual(mockTrips);
   });
 
   it('fetchTripById appelle api.get avec un id', async () => {
     const mockTrip = { id: 't1' };
-    (api.get as jest.Mock).mockResolvedValue({ data: mockTrip });
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getTripById successful',
+        data: mockTrip,
+      },
+    });
 
     const result = await tripService.fetchTripById('t1');
 
@@ -52,13 +69,19 @@ describe('tripService', () => {
       expect.stringMatching(/\/trips\/t1$/),
       { withCredentials: true }
     );
-    expect(result).toEqual(mockTrip);
+    expect(result.message).toBe('getTripById successful');
+    expect(result.data).toEqual(mockTrip);
   });
 
   it('createTrip appelle api.post avec les données du trajet', async () => {
     const tripData = { departureCity: 'Paris' };
     const mockCreatedTrip = { id: 'new-trip', ...tripData };
-    (api.post as jest.Mock).mockResolvedValue({ data: mockCreatedTrip });
+    (api.post as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'createTrip successful',
+        data: mockCreatedTrip,
+      },
+    });
 
     const result = await tripService.createTrip(tripData);
 
@@ -67,14 +90,20 @@ describe('tripService', () => {
       tripData,
       { withCredentials: true }
     );
-    expect(result).toEqual(mockCreatedTrip);
+    expect(result.message).toBe('createTrip successful');
+    expect(result.data).toEqual(mockCreatedTrip);
   });
 
   it('updateTrip appelle api.put avec id et données du trajet', async () => {
     const tripId = 't2';
     const updateData = { arrivalCity: 'Nice' };
     const updatedTrip = { id: tripId, ...updateData };
-    (api.put as jest.Mock).mockResolvedValue({ data: updatedTrip });
+    (api.put as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'updateTrip successful',
+        data: updatedTrip,
+      },
+    });
 
     const result = await tripService.updateTrip(tripId, updateData);
 
@@ -83,13 +112,19 @@ describe('tripService', () => {
       updateData,
       { withCredentials: true }
     );
-    expect(result).toEqual(updatedTrip);
+    expect(result.message).toBe('updateTrip successful');
+    expect(result.data).toEqual(updatedTrip);
   });
 
   it("cancelTrip appelle api.delete avec l'id du trajet", async () => {
     const tripId = 'cancel-me';
     const cancelledTrip = { id: tripId, status: 'cancelled' };
-    (api.delete as jest.Mock).mockResolvedValue({ data: cancelledTrip });
+    (api.delete as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'cancelTrip successful',
+        data: cancelledTrip,
+      },
+    });
 
     const result = await tripService.cancelTrip(tripId);
 
@@ -97,6 +132,7 @@ describe('tripService', () => {
       expect.stringMatching(new RegExp(`/trips/${tripId}$`)),
       { withCredentials: true }
     );
-    expect(result).toEqual(cancelledTrip);
+    expect(result.message).toBe('cancelTrip successful');
+    expect(result.data).toEqual(cancelledTrip);
   });
 });
