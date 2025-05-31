@@ -113,9 +113,9 @@ export class BookingService {
     booking: Booking,
     bookingId: string,
     userId: string
-  ): Promise<string> => {
+  ): Promise<Booking> => {
     return await prismaNewClient.$transaction(async (tx) => {
-      await tx.booking.update({
+      const booking = await tx.booking.update({
         where: { id: bookingId },
         data: { status: BookingStatus.cancelled, cancellerId: userId },
       });
@@ -147,7 +147,7 @@ export class BookingService {
         },
       });
 
-      return 'cancelled';
+      return booking;
     });
   };
 }

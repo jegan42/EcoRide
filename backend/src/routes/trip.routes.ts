@@ -48,7 +48,7 @@ router.delete(
   authorize(['driver']),
   uuidParamValidator,
   handleValidationErrors,
-  TripController.delete
+  TripController.cancel
 );
 
 export default router;
