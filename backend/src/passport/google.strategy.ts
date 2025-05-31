@@ -12,7 +12,7 @@ export const googleVerifyCallback = async (
   refreshToken: string,
   profile: passport.Profile,
   done: (_error: Error | null, _user?: User) => void
-) => {
+): Promise<void> => {
   if (!profile.emails || profile.emails.length === 0) {
     return done(new Error('No email found'), undefined);
   }
@@ -56,7 +56,7 @@ export const googleVerifyCallback = async (
   }
 };
 
-export function setupGoogleStrategy() {
+export const setupGoogleStrategy = (): void => {
   passport.use(
     new GoogleStrategy(
       {
@@ -77,4 +77,4 @@ export function setupGoogleStrategy() {
     const user = await prismaNewClient.user.findUnique({ where: { id } });
     done(null, user);
   });
-}
+};

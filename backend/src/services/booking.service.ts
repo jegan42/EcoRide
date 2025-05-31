@@ -150,7 +150,10 @@ export class BookingService {
     });
   };
 
-  static readonly getPenalty = (isDriver: boolean, isPending: boolean) => {
+  static readonly getPenalty = (
+    isDriver: boolean,
+    isPending: boolean
+  ): number => {
     if (isDriver || isPending) return 0;
     return 0.01;
   };

@@ -116,12 +116,7 @@ export class BookingController {
         id,
         user.id
       );
-      successResponse(
-        res,
-        'Booking',
-        'cancelled',
-        cancelledBooking
-      );
+      successResponse(res, 'Booking', 'cancelled', cancelledBooking);
     } catch (error) {
       errorResponse(res, 'Booking', 'failed to cancel', error);
     }
