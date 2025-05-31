@@ -191,7 +191,7 @@ export class TripController {
     }
   };
 
-  static readonly delete = async (
+  static readonly cancel = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -214,13 +214,16 @@ export class TripController {
         return;
       }
 
-      await prismaNewClient.trip.delete({
+      const cancelledTrip = await prismaNewClient.trip.update({
         where: { id },
+        data: {
+          status: 'cancelled',
+        }
       });
 
-      successResponse(res, 'Trip', 'deleted');
+      successResponse(res, 'Trip', 'cancelled', cancelledTrip);
     } catch (error) {
-      errorResponse(res, 'Trip', 'failed to delete', error);
+      errorResponse(res, 'Trip', 'failed to cancel', error);
     }
   };
 }
