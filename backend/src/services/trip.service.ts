@@ -1,6 +1,6 @@
 // backend/src/services/trip.service.ts
 import prismaNewClient from '../lib/prisma';
-import { Trip, Prisma } from '../../generated/prisma';
+import { Trip, Prisma, BookingStatus } from '../../generated/prisma';
 import { ParsedQs } from 'qs';
 
 type QueryValue =
@@ -139,4 +139,44 @@ export class TripService {
 
     return { gte: minDate, lte: maxDate };
   }
+
+  static readonly cancel = async (tripId: string): Promise<Trip> => {
+    return await prismaNewClient.$transaction(async (tx) => {
+      const trip = await tx.trip.update({
+        where: { id: tripId },
+        data: {
+          status: 'cancelled',
+        },
+      });
+
+      const bookings = await tx.booking.findMany({
+        where: {
+          tripId: tripId,
+          status: { in: ['pending', 'confirmed'] },
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      for (const booking of bookings) {
+        await tx.booking.update({
+          where: { id: booking.id },
+          data: {
+            status: BookingStatus.cancelled,
+            cancellerId: trip.driverId,
+          },
+        });
+
+        await tx.user.update({
+          where: { id: booking.userId },
+          data: {
+            credits: { increment: booking.totalPrice },
+          },
+        });
+      }
+
+      return trip;
+    });
+  };
 }

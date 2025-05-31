@@ -41,18 +41,14 @@ afterAll(async () => {
 });
 
 describe('TripController: DELETE /api/trips/:id', () => {
-  it('DELETE /api/trips/:id: 200<Successfully Trip: deleted>', async () => {
+  it('DELETE /api/trips/:id: 200<Successfully Trip: cancelled>', async () => {
     const res = await request(app)
       .delete(`/api/trips/${tripIds[0]}`)
       .set('Cookie', cookies[0]);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Successfully Trip: deleted');
-
-    const check = await prismaNewClient.trip.findUnique({
-      where: { id: tripIds[0] },
-    });
-    expect(check).toBeNull();
+    expect(res.body).toHaveProperty('message', 'Successfully Trip: cancelled');
+    expect(res.body.data).toHaveProperty('status', 'cancelled');
   });
 
   it('DELETE /api/trips/:id: 400<Bad request Validator: invalid ID> with invalid format Id', async () => {
@@ -79,18 +75,6 @@ describe('TripController: DELETE /api/trips/:id', () => {
     );
   });
 
-  it('DELETE /api/trips/:id: 404<Not found Trip: trip not found> if trip does not exist', async () => {
-    const res = await request(app)
-      .delete(`/api/trips/${tripIds[0]}`)
-      .set('Cookie', cookies[0]);
-
-    expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty(
-      'message',
-      'Not found Trip: trip not found'
-    );
-  });
-
   it('DELETE /api/trips/:id: 403<Access denied Trip: not a driver> user is not the owner (unauthorized delete)', async () => {
     const res = await request(app)
       .delete(`/api/trips/${tripIds[1]}`)
@@ -103,9 +87,9 @@ describe('TripController: DELETE /api/trips/:id', () => {
     );
   });
 
-  it('DELETE /api/trips/:id: 500<Internal error Trip: failed to delete>', async () => {
+  it('DELETE /api/trips/:id: 500<Internal error Trip: failed to cancel>', async () => {
     jest
-      .spyOn(prismaNewClient.trip, 'delete')
+      .spyOn(prismaNewClient.trip, 'findUnique')
       .mockRejectedValue(new Error('DB exploded'));
     const res = await request(app)
       .delete(`/api/trips/${tripIds[1]}`)
@@ -114,7 +98,7 @@ describe('TripController: DELETE /api/trips/:id', () => {
     expect(res.status).toBe(500);
     expect(res.body).toHaveProperty(
       'message',
-      'Internal error Trip: failed to delete'
+      'Internal error Trip: failed to cancel'
     );
   });
 });

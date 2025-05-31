@@ -112,8 +112,7 @@ export class BookingController {
       }
 
       const cancelledBooking = await BookingService.cancel(
-        existingTrip,
-        booking,
+        existingTrip.availableSeats,
         id,
         user.id
       );

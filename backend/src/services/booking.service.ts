@@ -109,8 +109,7 @@ export class BookingService {
   };
 
   static readonly cancel = async (
-    trip: Trip,
-    booking: Booking,
+    tripAvailableSeats: number,
     bookingId: string,
     userId: string
   ): Promise<Booking> => {
@@ -120,9 +119,9 @@ export class BookingService {
         data: { status: BookingStatus.cancelled, cancellerId: userId },
       });
 
-      const updatedSeats = trip.availableSeats + booking.seatCount;
+      const updatedSeats = tripAvailableSeats + booking.seatCount;
 
-      await tx.trip.update({
+      const trip = await tx.trip.update({
         where: { id: booking.tripId },
         data: {
           availableSeats: updatedSeats,
@@ -132,7 +131,7 @@ export class BookingService {
 
       const isDriver = userId === trip.driverId;
       const isPending = booking.status === BookingStatus.pending;
-      const penalty = isDriver || isPending ? 0 : booking.totalPrice * 0.2;
+      const penalty = booking.totalPrice * this.getPenalty(isDriver, isPending);
       const refund = booking.totalPrice - penalty;
 
       await tx.user.update({
@@ -149,5 +148,10 @@ export class BookingService {
 
       return booking;
     });
+  };
+
+  static readonly getPenalty = (isDriver: boolean, isPending: boolean) => {
+    if (isDriver || isPending) return 0;
+    return 0.01;
   };
 }

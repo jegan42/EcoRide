@@ -161,9 +161,21 @@ describe('BookingService.validate', () => {
 });
 
 describe('BookingService.cancel', () => {
-  const txUpdateTrip = jest.fn();
+  const txUpdateTrip = jest.fn().mockResolvedValue({
+    id: 'trip-1',
+    availableSeats: 2,
+    driverId: 'driver-1',
+  });
   const txUpdateUser = jest.fn();
-  const txUpdateBooking = jest.fn();
+  const txUpdateBooking = jest.fn().mockResolvedValue({
+    id: 'booking-1',
+    userId: 'user-1',
+    tripId: 'trip-1',
+    seatCount: 1,
+    totalPrice: 20,
+    status: BookingStatus.cancelled,
+    cancellerId: 'user-1',
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -195,8 +207,7 @@ describe('BookingService.cancel', () => {
     );
 
     const result = await BookingService.cancel(
-      trip as any,
-      booking as any,
+      trip.availableSeats,
       booking.id,
       booking.userId
     );
@@ -209,7 +220,7 @@ describe('BookingService.cancel', () => {
       },
     });
 
-    expect(result).toBe('cancelled');
+    expect(result).toHaveProperty('status', 'cancelled');
   });
 });
 
@@ -302,9 +313,21 @@ describe('BookingService.validate', () => {
 });
 
 describe('BookingService.cancel', () => {
-  const txUpdateTrip = jest.fn();
+  const txUpdateTrip = jest.fn().mockResolvedValue({
+    id: 'trip-1',
+    availableSeats: 2,
+    driverId: 'driver-1',
+  });
   const txUpdateUser = jest.fn();
-  const txUpdateBooking = jest.fn();
+  const txUpdateBooking = jest.fn().mockResolvedValue({
+    id: 'booking-1',
+    userId: 'user-1',
+    tripId: 'trip-1',
+    seatCount: 1,
+    totalPrice: 30,
+    status: BookingStatus.cancelled,
+    cancellerId: 'user-1',
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -336,8 +359,7 @@ describe('BookingService.cancel', () => {
     );
 
     const result = await BookingService.cancel(
-      trip as any,
-      booking as any,
+      trip.availableSeats,
       booking.id,
       booking.userId
     );
@@ -350,7 +372,7 @@ describe('BookingService.cancel', () => {
       },
     });
 
-    expect(result).toBe('cancelled');
+    expect(result).toHaveProperty('status', 'cancelled');
   });
 });
 
@@ -370,8 +392,20 @@ describe('BookingService.cancel', () => {
       totalPrice: 100,
     };
 
-    const tripUpdate = jest.fn();
-    const bookingUpdate = jest.fn();
+    const tripUpdate = jest.fn().mockResolvedValue({
+      id: 'trip1',
+      driverId: 'driver1',
+      availableSeats: 3,
+    });
+    const bookingUpdate = jest.fn().mockResolvedValue({
+      id: 'booking1',
+      userId: 'user1',
+      tripId: 'trip1',
+      seatCount: 1,
+      status: 'cancelled',
+      totalPrice: 100,
+      cancellerId: 'user1',
+    });
     const userUpdate = jest.fn();
 
     (prismaNewClient.$transaction as jest.Mock).mockImplementation(async (cb) =>
@@ -382,12 +416,7 @@ describe('BookingService.cancel', () => {
       })
     );
 
-    await BookingService.cancel(
-      trip as any,
-      booking as any,
-      booking.id,
-      'user1'
-    );
+    await BookingService.cancel(trip.availableSeats, booking.id, 'user1');
 
     expect(tripUpdate).toHaveBeenCalledWith({
       where: { id: 'trip1' },
@@ -409,8 +438,21 @@ describe('BookingService.cancel', () => {
       totalPrice: 100,
     };
 
-    const tripUpdate = jest.fn();
-    const bookingUpdate = jest.fn();
+    const tripUpdate = jest.fn().mockResolvedValue({
+      id: 'trip1',
+      driverId: 'driver1',
+      availableSeats: 0,
+      status: 'full',
+    });
+    const bookingUpdate = jest.fn().mockResolvedValue({
+      id: 'booking1',
+      userId: 'user1',
+      tripId: 'trip1',
+      seatCount: 0,
+      status: 'cancelled',
+      totalPrice: 100,
+      cancellerId: 'user1',
+    });
     const userUpdate = jest.fn();
 
     (prismaNewClient.$transaction as jest.Mock).mockImplementation(async (cb) =>
@@ -421,12 +463,7 @@ describe('BookingService.cancel', () => {
       })
     );
 
-    await BookingService.cancel(
-      trip as any,
-      booking as any,
-      booking.id,
-      'user1'
-    );
+    await BookingService.cancel(trip.availableSeats, booking.id, 'user1');
 
     expect(tripUpdate).toHaveBeenCalledWith({
       where: { id: 'trip1' },
@@ -435,5 +472,57 @@ describe('BookingService.cancel', () => {
         status: 'full',
       },
     });
+  });
+
+  it('should apply a 1% penalty when a confirmed booking is cancelled by the user (not driver)', async () => {
+    const trip = {
+      id: 'trip-1',
+      availableSeats: 2,
+      driverId: 'driver-1',
+    };
+
+    const booking = {
+      id: 'booking-1',
+      userId: 'user-1',
+      tripId: 'trip-1',
+      seatCount: 1,
+      totalPrice: 100,
+      status: BookingStatus.confirmed,
+    };
+
+    const bookingUpdateMock = jest.fn().mockResolvedValue(booking);
+    const tripUpdateMock = jest.fn().mockResolvedValue(trip);
+    const userUpdateMock = jest.fn();
+
+    (prismaNewClient.$transaction as jest.Mock).mockImplementation(async (cb) =>
+      cb({
+        booking: { update: bookingUpdateMock },
+        trip: { update: tripUpdateMock },
+        user: { update: userUpdateMock },
+      })
+    );
+
+    await BookingService.cancel(
+      trip.availableSeats,
+      booking.id,
+      booking.userId
+    );
+
+    expect(userUpdateMock).toHaveBeenCalledWith({
+      where: { id: trip.driverId },
+      data: { credits: { increment: 1 } },
+    });
+
+    expect(userUpdateMock).toHaveBeenCalledWith({
+      where: { id: booking.userId },
+      data: { credits: { increment: 99 } },
+    });
+  });
+
+  it('should return 0 or 0.2 for getPenalty', () => {
+    const penalty = BookingService.getPenalty(true, true);
+    expect(penalty).toBe(0);
+    const penalty2 = BookingService.getPenalty(false, false);
+    expect(penalty2).toBe(0.01);
   });
 });

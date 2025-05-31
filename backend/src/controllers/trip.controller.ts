@@ -214,12 +214,7 @@ export class TripController {
         return;
       }
 
-      const cancelledTrip = await prismaNewClient.trip.update({
-        where: { id },
-        data: {
-          status: 'cancelled',
-        }
-      });
+      const cancelledTrip = await TripService.cancel(trip.id);
 
       successResponse(res, 'Trip', 'cancelled', cancelledTrip);
     } catch (error) {

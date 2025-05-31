@@ -1,19 +1,39 @@
 // backend/tests/services/trip.service.test.ts
 import { TripService } from '../../services/trip.service';
 import prismaNewClient from '../../lib/prisma';
+import { BookingStatus } from '../../../generated/prisma';
 
-jest.mock('../../lib/prisma', () => ({
-  __esModule: true,
-  default: {
-    vehicle: {
-      findUnique: jest.fn(),
+jest.mock('../../lib/prisma', () => {
+  const mockUpdate = jest.fn();
+  const mockFindMany = jest.fn();
+
+  return {
+    __esModule: true,
+    default: {
+      vehicle: {
+        findUnique: jest.fn(),
+      },
+      trip: {
+        findFirst: jest.fn(),
+        findMany: jest.fn(),
+      },
+      $transaction: jest.fn((fn) =>
+        fn({
+          trip: {
+            update: mockUpdate,
+          },
+          booking: {
+            findMany: mockFindMany,
+            update: jest.fn(),
+          },
+          user: {
+            update: jest.fn(),
+          },
+        })
+      ),
     },
-    trip: {
-      findFirst: jest.fn(),
-      findMany: jest.fn(),
-    },
-  },
-}));
+  };
+});
 
 describe('TripService', () => {
   afterEach(() => {
@@ -101,6 +121,20 @@ describe('TripService', () => {
 
       expect(result).toBeNull();
     });
+
+    it('returns null if prisma throws an error', async () => {
+      (prismaNewClient.trip.findFirst as jest.Mock).mockImplementation(() => {
+        throw new Error('Database error');
+      });
+
+      const result = await TripService.isExistTrip(
+        'user-id',
+        'vehicle-id',
+        '2125-12-01T08:00:00Z'
+      );
+
+      expect(result).toBeNull();
+    });
   });
 
   describe('buildWhereClause', () => {
@@ -153,6 +187,90 @@ describe('TripService', () => {
       );
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('TripService.cancel', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('cancels a trip and refunds users', async () => {
+      const mockTrip = {
+        id: 'trip123',
+        driverId: 'driver123',
+        status: 'open',
+      };
+
+      const mockBookings = [
+        {
+          id: 'booking1',
+          tripId: 'trip123',
+          userId: 'user1',
+          totalPrice: 15,
+          status: 'confirmed',
+          user: { id: 'user1' },
+        },
+        {
+          id: 'booking2',
+          tripId: 'trip123',
+          userId: 'user2',
+          totalPrice: 10,
+          status: 'pending',
+          user: { id: 'user2' },
+        },
+      ];
+
+      const txMock = {
+        trip: {
+          update: jest.fn().mockResolvedValue(mockTrip),
+        },
+        booking: {
+          findMany: jest.fn().mockResolvedValue(mockBookings),
+          update: jest.fn().mockResolvedValue({}),
+        },
+        user: {
+          update: jest.fn().mockResolvedValue({}),
+        },
+      };
+
+      (prismaNewClient.$transaction as jest.Mock).mockImplementation((fn) =>
+        fn(txMock)
+      );
+
+      const result = await TripService.cancel('trip123');
+
+      expect(txMock.trip.update).toHaveBeenCalledWith({
+        where: { id: 'trip123' },
+        data: { status: 'cancelled' },
+      });
+
+      expect(txMock.booking.findMany).toHaveBeenCalledWith({
+        where: {
+          tripId: 'trip123',
+          status: { in: ['pending', 'confirmed'] },
+        },
+        include: { user: true },
+      });
+
+      for (const booking of mockBookings) {
+        expect(txMock.booking.update).toHaveBeenCalledWith({
+          where: { id: booking.id },
+          data: {
+            status: BookingStatus.cancelled,
+            cancellerId: mockTrip.driverId,
+          },
+        });
+
+        expect(txMock.user.update).toHaveBeenCalledWith({
+          where: { id: booking.userId },
+          data: {
+            credits: { increment: booking.totalPrice },
+          },
+        });
+      }
+
+      expect(result).toEqual(mockTrip);
     });
   });
 });
