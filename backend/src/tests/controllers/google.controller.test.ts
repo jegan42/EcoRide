@@ -52,7 +52,7 @@ describe('GoogleAuthController.callback', () => {
       user.email
     );
 
-    expect(res.redirect).toHaveBeenCalledWith('http://localhost:4000/');
+    expect(res.redirect).toHaveBeenCalledWith('http://localhost:5173/');
   });
 
   it('should return unauthorized response if no user', async () => {

@@ -63,18 +63,6 @@ describe('App integration tests', () => {
     });
   });
 
-  describe('Session cookie', () => {
-    it('should set a session cookie', async () => {
-      const res = await request(app).get('/');
-      const cookies = res.headers['set-cookie'] || [];
-      expect(cookies).toBeDefined();
-      expect(
-        Array.isArray(cookies) &&
-          cookies.some((cookie: string) => cookie.includes('connect.sid'))
-      ).toBe(true);
-    });
-  });
-
   describe('API routes mounting', () => {
     it('should respond with 404 or any status on /api', async () => {
       const res = await request(app).get('/api');

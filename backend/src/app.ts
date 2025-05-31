@@ -1,22 +1,24 @@
 // backend/src/app.ts
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
+import { setupGoogleStrategy } from './passport/google.strategy';
 import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 
 import apiRoutes from './routes/api.routes';
 import { csrfErrorHandler } from './middleware/csrf.middleware';
 import { errorHandler } from './middleware/error.middleware';
 import { getRateLimitConfig } from './utils/rateLimitConfig';
 import { getNodeEnv, getSessionSecret } from './utils/env';
-import './passport/google.strategy';
 
-dotenv.config();
+setupGoogleStrategy();
 
 const app = express();
 
@@ -40,18 +42,26 @@ app.use(
 app.use(morgan('dev'));
 
 const mode = getNodeEnv();
+
 app.use(rateLimit(getRateLimitConfig(mode)));
 
 const secret = getSessionSecret();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   session({
     secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: mode === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
+    },
   })
 );
+
 app.use(express.json());
 
 app.use(passport.initialize());
