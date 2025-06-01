@@ -1,56 +1,14 @@
 //frontend/src/layouts/AppLayout.tsx
-import { useEffect, type JSX } from 'react';
+import { type JSX } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
 import Container from '@mui/material/Container';
 import Footer from '../components/Footer';
 import { Box } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import userService from '../services/userService';
-import { useAppSelector } from '../hooks/useAppSelector';
-import {
-  setAuthLoading,
-  setCsrfToken,
-  signin,
-  signout,
-} from '../store/slices/authSlice';
-import { getCsrfToken } from '../services/csrfService';
-import {
-  enqueueSnackbarError,
-  enqueueSnackbarSuccess,
-} from '../utils/enqueueSnackbar';
+import { useInitApp } from '../hooks/useInitApp';
 
 const AppLayout = (): JSX.Element => {
-  const dispatch = useDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    const fetchCsrfToken = async (): Promise<void> => {
-      try {
-        const { message, data } = await getCsrfToken();
-        dispatch(setCsrfToken(data));
-        enqueueSnackbarSuccess(message);
-      } catch (error) {
-        enqueueSnackbarError(error);
-      }
-    };
-
-    void fetchCsrfToken();
-    if (!isAuthenticated) {
-      const initAuth = async (): Promise<void> => {
-        dispatch(setAuthLoading(true));
-        try {
-          const { message: _, data: user } = await userService.fetchUser();
-          dispatch(signin({ user, isAuthenticated: true }));
-        } catch {
-          dispatch(signout());
-        } finally {
-          dispatch(setAuthLoading(false));
-        }
-      };
-      void initAuth();
-    }
-  }, [dispatch, isAuthenticated]);
+  useInitApp();
 
   return (
     <Box

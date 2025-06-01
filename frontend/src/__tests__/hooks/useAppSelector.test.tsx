@@ -22,6 +22,7 @@ describe('useAppSelector', () => {
           user: null,
           isAuthenticated: true,
           loading: false,
+          csrfToken: null,
         },
       },
     });
