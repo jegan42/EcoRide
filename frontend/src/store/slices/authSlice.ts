@@ -6,12 +6,14 @@ export interface AuthState {
   user: Partial<User> | null;
   isAuthenticated: boolean;
   loading: boolean;
+  csrfToken: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
   loading: true,
+  csrfToken: null,
 };
 
 const authSlice = createSlice({
@@ -34,8 +36,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
     },
+    setCsrfToken(state, action: PayloadAction<string>) {
+      state.csrfToken = action.payload;
+    },
   },
 });
 
-export const { setAuthLoading, signin, signout } = authSlice.actions;
+export const { setAuthLoading, signin, signout, setCsrfToken } =
+  authSlice.actions;
 export default authSlice.reducer;

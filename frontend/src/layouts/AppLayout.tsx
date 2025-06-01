@@ -8,13 +8,34 @@ import { Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import userService from '../services/userService';
 import { useAppSelector } from '../hooks/useAppSelector';
-import { setAuthLoading, signin, signout } from '../store/slices/authSlice';
+import {
+  setAuthLoading,
+  setCsrfToken,
+  signin,
+  signout,
+} from '../store/slices/authSlice';
+import { getCsrfToken } from '../services/csrfService';
+import {
+  enqueueSnackbarError,
+  enqueueSnackbarSuccess,
+} from '../utils/enqueueSnackbar';
 
 const AppLayout = (): JSX.Element => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
+    const fetchCsrfToken = async (): Promise<void> => {
+      try {
+        const { message, data } = await getCsrfToken();
+        dispatch(setCsrfToken(data));
+        enqueueSnackbarSuccess(message);
+      } catch (error) {
+        enqueueSnackbarError(error);
+      }
+    };
+
+    void fetchCsrfToken();
     if (!isAuthenticated) {
       const initAuth = async (): Promise<void> => {
         dispatch(setAuthLoading(true));

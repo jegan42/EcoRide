@@ -1,5 +1,6 @@
 // frontend/src/components/Header.tsx
 import { type JSX, useState, useRef } from 'react';
+import { signout as signoutAction } from '../store/slices/authSlice';
 import { Link } from 'react-router-dom';
 import {
   AppBar,
@@ -18,6 +19,9 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ecorideLogo from '../assets/ecoride_logo.png';
+import { useDispatch } from 'react-redux';
+import authService from '../services/authService';
+import { enqueueSnackbarSuccess } from '../utils/enqueueSnackbar';
 
 const navLinks = [
   { label: 'Accueil', to: '/' },
@@ -29,10 +33,17 @@ const navLinks = [
 ];
 
 const Header = (): JSX.Element => {
+  const dispatch = useDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const signoutSubmit = async (): Promise<void> => {
+    const { message, data: _ } = await authService.signout();
+    dispatch(signoutAction());
+    enqueueSnackbarSuccess(message);
+  };
 
   return (
     <AppBar
@@ -135,6 +146,7 @@ const Header = (): JSX.Element => {
               variant="contained"
               color="primary"
               sx={{ borderRadius: 2, textTransform: 'none' }}
+              onClick={signoutSubmit}
             >
               Déconnexion
             </Button>

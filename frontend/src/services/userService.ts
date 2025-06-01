@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { API_URL } from '../constants/api';
 import type { ApiResponse } from '../types/api';
 import type { User } from '../types/user';
+import { cleanPayload } from '../utils/cleanPayload';
 import { handleApiResponseSafe } from '../utils/handleApiResponse';
 
 type UpdatePayload = Pick<
@@ -23,7 +24,7 @@ type UpdatePayload = Pick<
 const updateUser = async (
   data: Partial<UpdatePayload>
 ): Promise<ApiResponse<Partial<User>>> => {
-  const response = await api.put(`${API_URL}/auth/update`, data, {
+  const response = await api.put(`${API_URL}/auth/update`, cleanPayload(data), {
     withCredentials: true,
   });
   return handleApiResponseSafe<Partial<User>>(response.data);

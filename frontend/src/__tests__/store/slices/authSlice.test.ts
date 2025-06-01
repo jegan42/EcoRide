@@ -1,5 +1,6 @@
 // frontend/src/__tests__/store/slices/authSlice.test.tsx
 import authReducer, {
+  setCsrfToken,
   signin,
   signout,
   type AuthState,
@@ -7,6 +8,7 @@ import authReducer, {
 
 describe('authSlice reducer', () => {
   const initialState: AuthState = {
+    csrfToken: null,
     user: null,
     isAuthenticated: false,
     loading: true,
@@ -32,11 +34,19 @@ describe('authSlice reducer', () => {
       user: { id: '1', username: 'Test User' },
       isAuthenticated: true,
       loading: true,
+      csrfToken: null,
     };
 
     const newState = authReducer(loggedState, signout());
 
     expect(newState.user).toBeNull();
     expect(newState.isAuthenticated).toBe(false);
+  });
+
+  it('devrait gérer setCsrfToken', () => {
+    const token = 'fake-csrf-token';
+    const newState = authReducer(initialState, setCsrfToken(token));
+
+    expect(newState.csrfToken).toBe(token);
   });
 });

@@ -414,4 +414,43 @@ describe('SigninPage complete coverage test', () => {
       });
     });
   });
+
+  it('affiche temporairement le mot de passe lorsque l’icône œil est cliquée', async () => {
+    vi.resetModules();
+    vi.doMock('../../forms/SignupForm', async () => {
+      const actual = await vi.importActual('../../forms/SignupForm');
+      return actual;
+    });
+    const { default: SigninPageWithRealForm } = await import(
+      '../../pages/SigninPage'
+    );
+    mockAppSelector.mockImplementation(
+      (
+        cb: (state: { auth: { isAuthenticated: boolean } }) => {
+          auth: { isAuthenticated: boolean };
+        }
+      ) => cb({ auth: { isAuthenticated: false } })
+    );
+
+    render(<SigninPageWithRealForm />);
+
+    await userEvent.click(screen.getByRole('button', { name: /S’inscrire/i }));
+
+    const passwordInput = screen.getByLabelText(
+      'Mot de passe'
+    ) as HTMLInputElement;
+    expect(passwordInput.type).toBe('password');
+
+    const eyeButton = screen.getByLabelText(/Afficher le secret/i);
+    await userEvent.click(eyeButton);
+
+    expect(passwordInput.type).toBe('text');
+
+    await waitFor(
+      () => {
+        expect(passwordInput.type).toBe('password');
+      },
+      { timeout: 1500 }
+    );
+  });
 });

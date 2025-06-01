@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../hooks/useAppSelector';
 import AuthTabs from '../components/auth/AuthTabs';
 import { API_URL } from '../constants/api';
+import GoogleIcon from '@mui/icons-material/Google';
 import {
   enqueueSnackbarError,
   enqueueSnackbarSuccess,
@@ -82,6 +83,8 @@ const SigninPage = (): JSX.Element => {
               variant="contained"
               color="primary"
               sx={{
+                display: 'flex',
+                gap: 1,
                 fontWeight: 'bold',
                 fontSize: 16,
               }}
@@ -89,7 +92,8 @@ const SigninPage = (): JSX.Element => {
                 window.location.href = `${API_URL}/auth/google`;
               }}
             >
-              Se connecter avec Google
+              <GoogleIcon />
+              <span>Se connecter avec Google</span>
             </Button>
             <Typography
               sx={{

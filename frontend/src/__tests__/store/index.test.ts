@@ -6,6 +6,7 @@ describe('store configuration', () => {
   it('devrait avoir un state initial correct', () => {
     const state = store.getState();
     expect(state.auth).toEqual({
+      csrfToken: null,
       user: null,
       isAuthenticated: false,
       loading: true,

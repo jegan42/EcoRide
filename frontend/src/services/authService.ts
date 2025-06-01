@@ -7,13 +7,18 @@ import {
   handleApiResponseBasic,
   handleApiResponseSafe,
 } from '../utils/handleApiResponse';
+import { cleanPayload } from '../utils/cleanPayload';
 
 const signup = async (
   payload: Partial<User>
 ): Promise<ApiResponse<Partial<User>>> => {
-  const response = await api.post(`${API_URL}/auth/signup`, payload, {
-    withCredentials: true,
-  });
+  const response = await api.post(
+    `${API_URL}/auth/signup`,
+    cleanPayload(payload),
+    {
+      withCredentials: true,
+    }
+  );
   return handleApiResponseSafe<Partial<User>>(response.data);
 };
 

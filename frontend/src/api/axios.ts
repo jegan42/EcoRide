@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { API_URL } from '../constants/api';
+import { store } from '../store';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -14,7 +15,6 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API error:', error.response?.data || error.message);
     const message =
       error?.response?.data?.message || 'Erreur serveur inconnue.';
     enqueueSnackbar(message, { variant: 'error' });
@@ -23,4 +23,13 @@ api.interceptors.response.use(
   }
 );
 
+api.interceptors.request.use((config) => {
+  const state = store.getState();
+  const csrfToken = state.auth.csrfToken;
+  if (csrfToken) {
+    config.headers['X-CSRF-Token'] = csrfToken;
+  }
+  config.withCredentials = true;
+  return config;
+});
 export default api;

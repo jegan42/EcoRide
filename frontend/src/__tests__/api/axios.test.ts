@@ -59,4 +59,33 @@ describe('axios instance', () => {
     expect(response.data).toEqual(responseData);
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
+
+  it('ajoute le header X-CSRF-Token si présent dans le store', async () => {
+    const csrfToken = 'test-csrf-token';
+
+    vi.mock('../../store', async () => {
+      const actual = await vi.importActual('../../store');
+      return {
+        ...actual,
+        store: {
+          getState: () => ({
+            auth: {
+              csrfToken: 'test-csrf-token',
+            },
+          }),
+        },
+      };
+    });
+
+    const axiosInstance = (await import('../../api/axios')).default;
+    const mock = new MockAdapter(axiosInstance);
+
+    mock.onGet('/csrf-test').reply((config) => {
+      expect(config.headers?.['X-CSRF-Token']).toBe(csrfToken);
+      return [200, { ok: true }];
+    });
+
+    const response = await axiosInstance.get('/csrf-test');
+    expect(response.status).toBe(200);
+  });
 });
