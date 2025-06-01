@@ -7,7 +7,6 @@ import {
   updateVehicleValidator,
 } from '../validators/vehicle.validator';
 import { VehicleController } from '../controllers/vehicle.controller';
-import { csrfProtection } from '../middleware/csrf.middleware';
 import { authorize } from '../middleware/authorize.middleware';
 import { uuidParamValidator } from '../validators/uuid.validator';
 
@@ -16,7 +15,6 @@ const router = express.Router();
 router.post(
   '/',
   authenticate,
-  csrfProtection,
   createVehicleValidator,
   handleValidationErrors,
   VehicleController.create
@@ -35,7 +33,6 @@ router.put(
   '/:id',
   authenticate,
   authorize(['driver']),
-  csrfProtection,
   updateVehicleValidator,
   handleValidationErrors,
   VehicleController.update
@@ -45,7 +42,6 @@ router.delete(
   '/:id',
   authenticate,
   authorize(['driver']),
-  csrfProtection,
   uuidParamValidator,
   handleValidationErrors,
   VehicleController.delete

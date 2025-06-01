@@ -30,7 +30,7 @@ describe('csrf.middleware', () => {
       const {
         csrfProtection: testCsrfProtection,
       } = require('../../middleware/csrf.middleware');
-      expect(testCsrfProtection).toEqual([]);
+      expect(typeof testCsrfProtection).toBe('function');
     });
 
     it('should return csrf middleware when NODE_ENV is "production"', () => {

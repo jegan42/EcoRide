@@ -13,7 +13,10 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import apiRoutes from './routes/api.routes';
-import { csrfErrorHandler } from './middleware/csrf.middleware';
+import {
+  conditionalCsrfProtection,
+  csrfErrorHandler,
+} from './middleware/csrf.middleware';
 import { errorHandler } from './middleware/error.middleware';
 import { getRateLimitConfig } from './utils/rateLimitConfig';
 import { getNodeEnv, getSessionSecret } from './utils/env';
@@ -66,6 +69,8 @@ app.use(express.json());
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(conditionalCsrfProtection);
 
 app.use('/api', apiRoutes);
 

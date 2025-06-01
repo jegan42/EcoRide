@@ -3,6 +3,8 @@ import csrf from 'csurf';
 import { Request, Response, NextFunction } from 'express';
 import { forbiddenResponse } from '../utils/response';
 
+const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+
 export const csrfProtection =
   process.env.NODE_ENV !== 'test'
     ? csrf({
@@ -12,7 +14,18 @@ export const csrfProtection =
           sameSite: 'lax', // Important when using cross-origin (front/back separated)
         },
       })
-    : [];
+    : (_req: Request, _res: Response, next: NextFunction): void => next();
+
+export const conditionalCsrfProtection = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (safeMethods.includes(req.method)) {
+    return next();
+  }
+  return csrfProtection(req, res, next);
+};
 
 export const csrfErrorHandler = (
   err: any,

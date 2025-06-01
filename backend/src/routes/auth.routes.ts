@@ -8,7 +8,6 @@ import {
   updateValidator,
 } from '../validators/auth.validator';
 import { GoogleAuthController } from '../controllers/google.controller';
-import { csrfProtection } from '../middleware/csrf.middleware';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
 
@@ -28,12 +27,11 @@ router.post(
   AuthController.signin
 );
 
-router.post('/signout', authenticate, csrfProtection, AuthController.signout);
+router.post('/signout', authenticate, AuthController.signout);
 
 router.put(
   '/update',
   authenticate,
-  csrfProtection,
   updateValidator,
   handleValidationErrors,
   AuthController.update

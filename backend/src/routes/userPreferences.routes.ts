@@ -2,7 +2,6 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
-import { csrfProtection } from '../middleware/csrf.middleware';
 import { uuidParamValidator } from '../validators/uuid.validator';
 import {
   createPreferencesValidator,
@@ -15,7 +14,6 @@ const router = express.Router();
 router.post(
   '/:id',
   authenticate,
-  csrfProtection,
   createPreferencesValidator,
   handleValidationErrors,
   PreferencesController.create
@@ -34,7 +32,6 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  csrfProtection,
   updatePreferencesValidator,
   handleValidationErrors,
   PreferencesController.update
@@ -43,7 +40,6 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
-  csrfProtection,
   uuidParamValidator,
   handleValidationErrors,
   PreferencesController.delete

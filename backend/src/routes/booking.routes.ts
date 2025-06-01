@@ -1,7 +1,6 @@
 // backend/src/routes/booking.routes.ts
 import express from 'express';
 import { authenticate } from '../middleware/auth.middleware';
-import { csrfProtection } from '../middleware/csrf.middleware';
 import { uuidParamValidator } from '../validators/uuid.validator';
 import {
   actionValidator,
@@ -16,7 +15,6 @@ const router = express.Router();
 router.post(
   '/',
   authenticate,
-  csrfProtection,
   createBookingValidator,
   handleValidationErrors,
   BookingController.create
@@ -25,7 +23,6 @@ router.post(
 router.delete(
   '/:id',
   authenticate,
-  csrfProtection,
   uuidParamValidator,
   handleValidationErrors,
   BookingController.cancel
@@ -52,7 +49,6 @@ router.post(
   '/:id/validate',
   authenticate,
   authorize(['driver']),
-  csrfProtection,
   actionValidator,
   handleValidationErrors,
   BookingController.validate
