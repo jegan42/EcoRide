@@ -5,7 +5,7 @@ import AppLayout from '../layouts/AppLayout';
 import Dashboard from '../pages/Dashboard';
 import SigninPage from '../pages/SigninPage';
 import ProtectedRoute from './ProtectedRoute';
-import ProfilePage from '../pages/ProfilePage';
+import ProfilePage from '../pages/profile/ProfilePage';
 
 const router = createBrowserRouter([
   {
