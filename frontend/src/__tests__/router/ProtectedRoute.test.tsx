@@ -29,12 +29,12 @@ describe('ProtectedRoute', () => {
     );
   };
 
-  it('redirige vers /signin si non authentifié', () => {
+  it('redirect to /signin if not authenticated', () => {
     const { getByText } = renderWithStore(false);
     expect(getByText(/login page/i)).toBeInTheDocument();
   });
 
-  it('rend les enfants si authentifié', () => {
+  it('makes children so authenticated', () => {
     const { getByText } = renderWithStore(true);
     expect(getByText(/dashboard/i)).toBeInTheDocument();
   });

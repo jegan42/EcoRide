@@ -41,7 +41,7 @@ describe('useInitApp', () => {
     store: ReturnType<typeof getTestStore>
   ): React.FC<{ children: React.ReactNode }> => {
     const ReduxProviderWrapper: React.FC<{ children: React.ReactNode }> = ({
-      children, // eslint-disable-line react/prop-types
+      children,
     }) => <Provider store={store}>{children}</Provider>;
 
     ReduxProviderWrapper.displayName = 'ReduxProviderWrapper';
@@ -49,7 +49,7 @@ describe('useInitApp', () => {
     return ReduxProviderWrapper;
   };
 
-  it('récupère le token CSRF et le stocke', async () => {
+  it('retrieves the CSRF token and stores it', async () => {
     const mockToken = 'mock-token';
     const mockMessage = 'CSRF token ok';
     (csrfService.getCsrfToken as jest.Mock).mockResolvedValue({
@@ -70,7 +70,7 @@ describe('useInitApp', () => {
     expect(successSpy).toHaveBeenCalledWith(mockMessage);
   });
 
-  it('récupère l’utilisateur si non authentifié', async () => {
+  it('retrieves user if unauthenticated', async () => {
     const user = { firstName: 'Jean', lastName: 'Dupont' };
     (csrfService.getCsrfToken as jest.Mock).mockResolvedValue({
       data: 'csrf-token',
@@ -78,7 +78,7 @@ describe('useInitApp', () => {
     });
     (userService.fetchUser as jest.Mock).mockResolvedValue({
       data: user,
-      message: 'Bienvenue',
+      message: 'Welcom',
     });
 
     const store = getTestStore();
@@ -93,10 +93,10 @@ describe('useInitApp', () => {
     const state = store.getState().auth;
     expect(state.user).toEqual(user);
     expect(state.isAuthenticated).toBe(true);
-    expect(successSpy).toHaveBeenCalledWith('Bienvenue');
+    expect(successSpy).toHaveBeenCalledWith('Welcom');
   });
 
-  it('dispatch signout si fetchUser échoue', async () => {
+  it('dispatch signout if fetchUser failed', async () => {
     (csrfService.getCsrfToken as jest.Mock).mockResolvedValue({
       data: 'csrf-token',
       message: 'CSRF ok',
@@ -114,7 +114,7 @@ describe('useInitApp', () => {
     await new Promise((r) => setTimeout(r, 10));
 
     const state = store.getState().auth;
-    expect(state.user).toBe(null);
+    expect(state.user).toBeNull();
     expect(state.isAuthenticated).toBe(false);
   });
 });

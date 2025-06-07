@@ -10,7 +10,7 @@ describe('vehicleService', () => {
     vi.clearAllMocks();
   });
 
-  it('createVehicle appelle api.post avec les bons paramètres', async () => {
+  it('createVehicle calls api.post with the correct parameters', async () => {
     const mockVehicle = { id: 'v1', brand: 'Tesla' };
     (api.post as jest.Mock).mockResolvedValue({
       data: {
@@ -30,7 +30,7 @@ describe('vehicleService', () => {
     expect(result.data).toEqual(mockVehicle);
   });
 
-  it('fetchVehicles appelle api.get et retourne la liste des véhicules', async () => {
+  it('fetchVehicles calls api.get and returns the list of vehicles', async () => {
     const mockData = [{ id: 'v1' }, { id: 'v2' }];
     (api.get as jest.Mock).mockResolvedValue({
       data: {
@@ -48,7 +48,7 @@ describe('vehicleService', () => {
     expect(result.data).toEqual(mockData);
   });
 
-  it("fetchVehicleById appelle api.get avec l'id", async () => {
+  it('fetchVehicleById calls api.get with the id', async () => {
     const vehicleId = 'v123';
     const mockVehicle = { id: vehicleId, brand: 'Renault' };
     (api.get as jest.Mock).mockResolvedValue({

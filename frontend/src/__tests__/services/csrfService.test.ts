@@ -15,7 +15,7 @@ vi.mock('../../utils/handleApiResponse', () => ({
 }));
 
 describe('getCsrfToken', () => {
-  it('fait une requête GET au bon endpoint et retourne le token', async () => {
+  it('makes a GET request to the correct endpoint and returns the token', async () => {
     const mockData = { message: 'OK', data: 'test-csrf-token' };
     (api.get as unknown as jest.Mock).mockResolvedValue({ data: mockData });
 

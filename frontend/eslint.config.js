@@ -40,6 +40,7 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'no-unused-vars': 'off', // désactive la version JS
       '@typescript-eslint/no-unused-vars': [

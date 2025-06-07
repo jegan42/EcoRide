@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import AppRouter from '../../router/AppRouter';
+import { AppRouter } from '../../router/AppRouter';
 import authReducer, { type AuthState } from '../../store/slices/authSlice';
 import * as useAppSelectorHook from '../../hooks/useAppSelector';
 import ToastProvider from '../../providers/ToastProvider';
@@ -36,7 +36,7 @@ describe('AppRouter', () => {
     );
   };
 
-  it('redirige vers SigninPage si non authentifié', async () => {
+  it('redirects to SigninPage if not authenticated', async () => {
     window.history.pushState({}, 'Test page', '/');
     renderWithAuthState(false);
 
@@ -45,9 +45,9 @@ describe('AppRouter', () => {
     ).toBeInTheDocument();
   });
 
-  it('affiche Dashboard si authentifié', async () => {
+  it('displays Dashboard if authenticated', async () => {
     window.history.pushState({}, 'Test page', '/');
     renderWithAuthState(true);
-    expect(await screen.findByText(/dashboard/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Mon Tableau de Bord/i)).toBeInTheDocument();
   });
 });

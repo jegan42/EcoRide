@@ -10,6 +10,7 @@ const colors = {
   grayLight: '#F5F5F5',
   white: '#FFFFFF',
   redLight: '#E53935',
+  redDark: '#E00000',
   yellow: '#FDD835',
   disabledText: 'rgba(0,0,0,0.4)',
   borderGray: '#BDBDBD',
@@ -31,6 +32,7 @@ const theme = createTheme({
     },
     error: {
       main: colors.redLight,
+      dark: colors.redDark,
     },
     warning: {
       main: colors.yellow,
@@ -107,6 +109,13 @@ const theme = createTheme({
           backgroundColor: colors.white,
           '&:hover': {
             backgroundColor: colors.greenLight,
+          },
+        },
+        containedError: {
+          backgroundColor: colors.redLight,
+          color: colors.white,
+          '&:hover': {
+            backgroundColor: colors.redDark,
           },
         },
       },

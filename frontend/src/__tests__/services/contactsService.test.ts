@@ -37,7 +37,7 @@ describe('contactsService', () => {
     vi.clearAllMocks();
   });
 
-  it('addContact ajoute un contact et renvoie le document', async () => {
+  it('addContact adds a contact and returns the document', async () => {
     (addDoc as jest.Mock).mockResolvedValue(mockDocRef);
 
     const result = await addContact({ email: 'test@example.com' });
@@ -56,7 +56,7 @@ describe('contactsService', () => {
     expect(result.data).toBe(mockDocRef);
   });
 
-  it('getAllContacts récupère tous les contacts', async () => {
+  it('getAllContacts retrieves all contacts', async () => {
     const fakeSnapshot = {
       docs: [
         {
@@ -87,7 +87,7 @@ describe('contactsService', () => {
     ]);
   });
 
-  it('updateContact met à jour le contact avec ID donné', async () => {
+  it('updateContact updates the contact with the given ID', async () => {
     const mockDoc = { id: '1' };
     (doc as jest.Mock).mockReturnValue(mockDoc);
     (updateDoc as jest.Mock).mockResolvedValue(undefined);
@@ -109,7 +109,7 @@ describe('contactsService', () => {
     });
   });
 
-  it('deleteContact supprime le contact avec ID donné', async () => {
+  it('deleteContact deletes the contact with the given ID', async () => {
     const mockDoc = { id: '1' };
     (doc as jest.Mock).mockReturnValue(mockDoc);
     (deleteDoc as jest.Mock).mockResolvedValue(undefined);

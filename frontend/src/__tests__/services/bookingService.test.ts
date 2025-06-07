@@ -10,7 +10,7 @@ describe('bookingService', () => {
     vi.clearAllMocks();
   });
 
-  it('createBooking appelle api.post avec les données', async () => {
+  it('createBooking calls api.post with the data', async () => {
     const bookingData = { tripId: 't1', userId: 'u1' };
     const mockBooking = { id: 'b1', ...bookingData };
     (api.post as jest.Mock).mockResolvedValue({
@@ -31,7 +31,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockBooking);
   });
 
-  it('cancelBooking appelle api.delete avec id', async () => {
+  it('cancelBooking call api.delete with id', async () => {
     const bookingId = 'b2';
     const mockResponse = { id: bookingId, status: 'cancelled' };
     (api.delete as jest.Mock).mockResolvedValue({
@@ -52,7 +52,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockResponse);
   });
 
-  it('fetchBookings appelle api.get pour utilisateur', async () => {
+  it('fetchBookings call api.get for user', async () => {
     const mockBookings = [{ id: 'b3' }];
     (api.get as jest.Mock).mockResolvedValue({
       data: {
@@ -71,7 +71,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockBookings);
   });
 
-  it('fetchBookingsByDriver appelle api.get pour conducteur', async () => {
+  it('fetchBookingsByDriver call api.get for driver', async () => {
     const mockBookings = [{ id: 'b4' }];
     (api.get as jest.Mock).mockResolvedValue({
       data: {
@@ -90,7 +90,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockBookings);
   });
 
-  it('fetchBookingsByTrip appelle api.get avec trip id', async () => {
+  it('fetchBookingsByTrip call api.get with trip id', async () => {
     const tripId = 't2';
     const mockBookings = [{ id: 'b5' }];
     (api.get as jest.Mock).mockResolvedValue({
@@ -110,7 +110,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockBookings);
   });
 
-  it('validateBooking appelle api.post pour valider une réservation', async () => {
+  it('validateBooking call api.post for validate booking', async () => {
     const bookingId = 'b6';
     const mockResponse = [{ id: bookingId, status: 'validated' }];
     (api.post as jest.Mock).mockResolvedValue({
@@ -130,7 +130,7 @@ describe('bookingService', () => {
     expect(result.data).toEqual(mockResponse);
   });
 
-  it('fetchBookingById appelle api.get avec id', async () => {
+  it('fetchBookingById call api.get with id', async () => {
     const bookingId = 'b7';
     const mockBooking = { id: bookingId };
     (api.get as jest.Mock).mockResolvedValue({

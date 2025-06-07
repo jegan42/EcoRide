@@ -15,7 +15,7 @@ vi.mock('react-dom/client', async (importOriginal) => {
   };
 });
 
-it('doit monter le composant App', async () => {
+it('must mount the App component', async () => {
   const rootElement = document.createElement('div');
   rootElement.id = 'root';
   document.body.appendChild(rootElement);

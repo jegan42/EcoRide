@@ -28,7 +28,7 @@ describe('userService', () => {
     expect(result.data).toEqual(mockUser);
   });
 
-  it('updateUser devrait appeler api.put avec les bons paramètres', async () => {
+  it('updateUser should call api.put with the correct parameters', async () => {
     const payload = { id: '123', firstName: 'John' };
     const mockResponse = { ...payload, email: 'john@example.com' };
 

@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import 'react-toastify/dist/ReactToastify.css';
-import AppRouter from './router/AppRouter';
+import { AppRouter } from './router/AppRouter';
 
 const App = (): JSX.Element => (
   <Provider store={store}>

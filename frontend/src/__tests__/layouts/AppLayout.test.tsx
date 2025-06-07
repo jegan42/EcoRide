@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import AppLayout from '../../layouts/AppLayout';
+import { AppLayout } from '../../layouts/AppLayout';
 import authReducer from '../../store/slices/authSlice';
 import userService from '../../services/userService';
 import { vi } from 'vitest';
@@ -43,7 +43,7 @@ describe('AppLayout', () => {
     },
   });
 
-  it('rend le layout avec Header, Footer et Outlet', () => {
+  it('renders the layout with Header, Footer and Outlet', () => {
     render(
       <Provider store={store}>
         <MemoryRouter initialEntries={['/']}>
@@ -61,7 +61,7 @@ describe('AppLayout', () => {
     expect(screen.getByText('Suivez-nous')).toBeInTheDocument();
   });
 
-  it('met à jour le store si fetchUser réussit', async () => {
+  it('updates the store if fetchUser succeeds', async () => {
     const mockUser = {
       message: 'testhere',
       data: { name: 'Jean', email: 'jean@example.com' },
@@ -99,7 +99,7 @@ describe('AppLayout', () => {
     expect(state.auth.isAuthenticated).toBe(true);
   });
 
-  it('récupère le token CSRF et dispatch setCsrfToken, puis affiche notification succès', async () => {
+  it('retrieves the CSRF token and dispatches setCsrfToken, then displays success notification', async () => {
     const fakeToken = 'fake-csrf-token';
     const fakeMessage = 'CSRF token fetched';
 
@@ -140,7 +140,7 @@ describe('AppLayout', () => {
     expect(enqueueSnackbarSuccess).toHaveBeenCalledWith(fakeMessage);
   });
 
-  it('affiche notification erreur si getCsrfToken échoue', async () => {
+  it('display error notification if getCsrfToken fails', async () => {
     const error = new Error('Erreur CSRF');
 
     (csrfModule.getCsrfToken as ReturnType<typeof vi.fn>).mockRejectedValue(
@@ -164,14 +164,14 @@ describe('AppLayout', () => {
         <MemoryRouter initialEntries={['/']}>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<div>Page test erreur CSRF</div>} />
+              <Route index element={<div>Page test error CSRF</div>} />
             </Route>
           </Routes>
         </MemoryRouter>
       </Provider>
     );
 
-    await screen.findByText('Page test erreur CSRF');
+    await screen.findByText('Page test error CSRF');
 
     expect(enqueueSnackbarError).toHaveBeenCalledWith(error);
   });

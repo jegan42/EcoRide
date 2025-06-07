@@ -6,10 +6,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/setupTests.ts', // à créer
+    setupFiles: './src/setupTests.ts',
     coverage: {
-      provider: 'istanbul', // ou 'v8' si tu préfères
-      reporter: ['text', 'html', 'lcov'], // Tu peux personnaliser
+      provider: 'istanbul',
+      reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
       exclude: ['**/__tests__/**', '**/*.test.tsx'],
     },

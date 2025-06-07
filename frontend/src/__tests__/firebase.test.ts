@@ -21,7 +21,7 @@ describe('Firebase initialisation', () => {
     process.env.FIREBASE_MEASUREMENTID = 'test-measurement-id';
   });
 
-  it('initialise Firebase avec la bonne configuration', async () => {
+  it('initialize Firebase with the correct configuration', async () => {
     const { initializeApp } = await import('firebase/app');
     const { getFirestore } = await import('firebase/firestore');
     const { db } = await import('../firebaseConfig');

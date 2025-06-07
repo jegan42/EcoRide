@@ -6,7 +6,7 @@ import {
 } from '../../utils/handleApiResponse';
 
 describe('handleApiResponseSafe', () => {
-  it('retourne la réponse quand tout est correct', () => {
+  it('returns the answer when everything is correct', () => {
     const response = {
       message: 'OK',
       data: { id: 1, name: 'Test' },
@@ -14,7 +14,7 @@ describe('handleApiResponseSafe', () => {
     expect(handleApiResponseSafe(response)).toEqual(response);
   });
 
-  it('lance une erreur si la réponse est null ou non objet', () => {
+  it('throws an error if the response is null or not an object', () => {
     expect(() => handleApiResponseSafe(null)).toThrow(
       'Réponse invalide du serveur'
     );
@@ -29,7 +29,7 @@ describe('handleApiResponseSafe', () => {
     );
   });
 
-  it('lance une erreur si data est manquant ou falsy', () => {
+  it('throws an error if data is missing or falsy', () => {
     expect(() => handleApiResponseSafe({ message: 'ok' })).toThrow(
       'Aucune donnée reçue du serveur'
     );
@@ -43,7 +43,7 @@ describe('handleApiResponseSafe', () => {
 });
 
 describe('handleApiResponseBasic', () => {
-  it('retourne la réponse avec message et data', () => {
+  it('returns the response with message and data', () => {
     const response = {
       message: 'Succès',
       data: { value: 42 },
@@ -54,7 +54,7 @@ describe('handleApiResponseBasic', () => {
     });
   });
 
-  it('retourne la réponse avec message et data undefined par défaut', () => {
+  it('returns the response with message and data undefined by default', () => {
     const response = { message: 'Ok' };
     expect(handleApiResponseBasic(response)).toEqual({
       message: 'Ok',
@@ -62,7 +62,7 @@ describe('handleApiResponseBasic', () => {
     });
   });
 
-  it('lance une erreur si réponse n’est pas objet ou message manquant', () => {
+  it('throws an error if response is not subject or message is missing', () => {
     expect(() => handleApiResponseBasic(null)).toThrow(
       'Réponse invalide ou message manquant'
     );

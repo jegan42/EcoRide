@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { extractApiError } from '../../utils/handleApiError';
 
 describe('extractApiError', () => {
-  it('retourne message depuis AxiosError avec data.message', () => {
+  it('returns message from AxiosError with data.message', () => {
     const error = {
       isAxiosError: true,
       response: { data: { message: 'Erreur API message' } },
@@ -13,7 +13,7 @@ describe('extractApiError', () => {
     expect(extractApiError(error)).toBe('Erreur API message');
   });
 
-  it('retourne error depuis AxiosError avec data.error', () => {
+  it('returns error from AxiosError with data.error', () => {
     const error = {
       isAxiosError: true,
       response: { data: { error: 'Erreur API error' } },
@@ -23,7 +23,7 @@ describe('extractApiError', () => {
     expect(extractApiError(error)).toBe('Erreur API error');
   });
 
-  it('retourne error.message si AxiosError sans data.message ni data.error', () => {
+  it('returns error.message if AxiosError without data.message or data.error', () => {
     const error = {
       isAxiosError: true,
       response: { data: {} },
@@ -33,7 +33,7 @@ describe('extractApiError', () => {
     expect(extractApiError(error)).toBe('Erreur réseau fallback');
   });
 
-  it('retourne message depuis une instance normale de Error', () => {
+  it('returns message from a normal Error instance', () => {
     const error = new Error('Erreur JS normale');
 
     expect(extractApiError(error)).toBe('Erreur JS normale');

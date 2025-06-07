@@ -10,7 +10,7 @@ describe('tripService', () => {
     vi.clearAllMocks();
   });
 
-  it('fetchTrips appelle api.get sans filtre', async () => {
+  it('fetchTrips calls api.get without filter', async () => {
     const mockTrips = [{ id: '1' }, { id: '2' }];
     (api.get as jest.Mock).mockResolvedValue({
       data: {
@@ -29,7 +29,7 @@ describe('tripService', () => {
     expect(result.data).toEqual(mockTrips);
   });
 
-  it('fetchTrips appelle api.get avec filtres', async () => {
+  it('fetchTrips calls api.get with filters', async () => {
     const filters = {
       departureCity: 'Paris',
       arrivalCity: 'Lyon',
@@ -54,7 +54,7 @@ describe('tripService', () => {
     expect(result.data).toEqual(mockTrips);
   });
 
-  it('fetchTripById appelle api.get avec un id', async () => {
+  it('fetchTripById calls api.get with an id', async () => {
     const mockTrip = { id: 't1' };
     (api.get as jest.Mock).mockResolvedValue({
       data: {
@@ -73,7 +73,7 @@ describe('tripService', () => {
     expect(result.data).toEqual(mockTrip);
   });
 
-  it('createTrip appelle api.post avec les données du trajet', async () => {
+  it('createTrip calls api.post with the trip data', async () => {
     const tripData = { departureCity: 'Paris' };
     const mockCreatedTrip = { id: 'new-trip', ...tripData };
     (api.post as jest.Mock).mockResolvedValue({
@@ -94,7 +94,7 @@ describe('tripService', () => {
     expect(result.data).toEqual(mockCreatedTrip);
   });
 
-  it('updateTrip appelle api.put avec id et données du trajet', async () => {
+  it('updateTrip calls api.put with trip id and data', async () => {
     const tripId = 't2';
     const updateData = { arrivalCity: 'Nice' };
     const updatedTrip = { id: tripId, ...updateData };
@@ -116,7 +116,7 @@ describe('tripService', () => {
     expect(result.data).toEqual(updatedTrip);
   });
 
-  it("cancelTrip appelle api.delete avec l'id du trajet", async () => {
+  it('cancelTrip calls api.delete with the trip id', async () => {
     const tripId = 'cancel-me';
     const cancelledTrip = { id: tripId, status: 'cancelled' };
     (api.delete as jest.Mock).mockResolvedValue({

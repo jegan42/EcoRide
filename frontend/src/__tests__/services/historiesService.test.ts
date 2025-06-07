@@ -50,7 +50,7 @@ describe('historiesService', () => {
     vi.clearAllMocks();
   });
 
-  it('addHistory ajoute une history', async () => {
+  it('addHistory adds a history', async () => {
     (addDoc as jest.Mock).mockResolvedValue(mockDocRef);
 
     const history = {
@@ -75,7 +75,7 @@ describe('historiesService', () => {
     expect(result.data).toBe(mockDocRef);
   });
 
-  it('getAllHistories retourne toutes les histories', async () => {
+  it('getAllHistories returns all histories', async () => {
     (getDocs as jest.Mock).mockResolvedValue({ docs: [mockDoc] });
 
     const result = await getAllHistories();
@@ -87,7 +87,7 @@ describe('historiesService', () => {
     ]);
   });
 
-  it('getHistoriesByUser filtre les histories par user_id', async () => {
+  it('getHistoriesByUser filters histories by user_id', async () => {
     const mockQuery = {};
     (query as jest.Mock).mockReturnValue(mockQuery);
     (getDocs as jest.Mock).mockResolvedValue({ docs: [mockDoc] });
@@ -103,7 +103,7 @@ describe('historiesService', () => {
     ]);
   });
 
-  it('updateHistory met à jour une history', async () => {
+  it('updateHistory updates a history', async () => {
     const mockHistoryDoc = {};
     (doc as jest.Mock).mockReturnValue(mockHistoryDoc);
 
@@ -124,7 +124,7 @@ describe('historiesService', () => {
     expect(result.message).toBe('Historique mis à jour');
   });
 
-  it('deleteHistory supprime une history', async () => {
+  it('deleteHistory deletes a history', async () => {
     const mockHistoryDoc = {};
     (doc as jest.Mock).mockReturnValue(mockHistoryDoc);
 

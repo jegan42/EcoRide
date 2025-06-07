@@ -20,14 +20,14 @@ describe('snackbarUtils', () => {
     vi.clearAllMocks();
   });
 
-  it('enqueueSnackbarSuccess appelle enqueueSnackbar avec message et variant success', () => {
+  it('enqueueSnackbarSuccess calls enqueueSnackbar with message and variant success', () => {
     enqueueSnackbarSuccess('Succès !');
     expect(enqueueSnackbar).toHaveBeenCalledWith('Succès !', {
       variant: 'success',
     });
   });
 
-  it('enqueueSnackbarError appelle extractApiError et enqueueSnackbar avec variant error', () => {
+  it('enqueueSnackbarError calls extractApiError and enqueueSnackbar with variant error', () => {
     (extractApiError as jest.Mock).mockReturnValue('Erreur personnalisée');
     const fakeError = new Error('Test error');
 

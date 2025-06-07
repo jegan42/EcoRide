@@ -1,8 +1,8 @@
-// frontend/src/pages/profile/ProfileLoading.tsx
+// frontend/src/component/profile/ProfileLoading.tsx
 import React from 'react';
 import { Typography, Box, Stack, Skeleton } from '@mui/material';
 
-const ProfileLoading: React.FC = () => {
+export const ProfileLoading: React.FC = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Skeleton
@@ -30,5 +30,3 @@ const ProfileLoading: React.FC = () => {
     </Box>
   );
 };
-
-export default ProfileLoading;

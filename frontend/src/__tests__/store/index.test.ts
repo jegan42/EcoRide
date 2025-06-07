@@ -13,7 +13,7 @@ describe('store configuration', () => {
     });
   });
 
-  it('devrait permettre le dispatch d’une action', () => {
+  it('should allow the dispatch of an action', () => {
     store.dispatch(
       signin({ user: { id: '1', username: 'Jean' }, isAuthenticated: true })
     );
@@ -22,7 +22,7 @@ describe('store configuration', () => {
     expect(state.auth.isAuthenticated).toBe(true);
   });
 
-  it('devrait respecter les types RootState et AppDispatch', () => {
+  it('should respect RootState and AppDispatch types', () => {
     const state: RootState = store.getState();
     const dispatch: AppDispatch = store.dispatch;
 

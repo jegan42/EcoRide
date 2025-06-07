@@ -1,13 +1,13 @@
 //frontend/src/layouts/AppLayout.tsx
 import { type JSX } from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '../components/Header';
 import Container from '@mui/material/Container';
-import Footer from '../components/Footer';
 import { Box } from '@mui/material';
 import { useInitApp } from '../hooks/useInitApp';
+import { Header } from '../components/header/Header';
+import { Footer } from '../components/footer/Footer';
 
-const AppLayout = (): JSX.Element => {
+export const AppLayout = (): JSX.Element => {
   useInitApp();
 
   return (
@@ -33,5 +33,3 @@ const AppLayout = (): JSX.Element => {
     </Box>
   );
 };
-
-export default AppLayout;

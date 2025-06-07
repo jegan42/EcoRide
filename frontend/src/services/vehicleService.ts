@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { API_URL } from '../constants/api';
 import type { ApiResponse } from '../types/api';
 import type { Vehicle } from '../types/vehicle';
+import { cleanPayload } from '../utils/cleanPayload';
 import {
   handleApiResponseBasic,
   handleApiResponseSafe,
@@ -11,9 +12,13 @@ import {
 const createVehicle = async (
   vehicleData: Partial<Vehicle>
 ): Promise<ApiResponse<Vehicle>> => {
-  const response = await api.post(`${API_URL}/vehicles`, vehicleData, {
-    withCredentials: true,
-  });
+  const response = await api.post(
+    `${API_URL}/vehicles`,
+    cleanPayload(vehicleData),
+    {
+      withCredentials: true,
+    }
+  );
   return handleApiResponseSafe<Vehicle>(response.data);
 };
 
@@ -35,9 +40,13 @@ const updateVehicle = async (
   id: string,
   vehicleData: Partial<Vehicle>
 ): Promise<ApiResponse<Vehicle>> => {
-  const response = await api.put(`${API_URL}/vehicles/${id}`, vehicleData, {
-    withCredentials: true,
-  });
+  const response = await api.put(
+    `${API_URL}/vehicles/${id}`,
+    cleanPayload(vehicleData),
+    {
+      withCredentials: true,
+    }
+  );
   return handleApiResponseSafe<Vehicle>(response.data);
 };
 

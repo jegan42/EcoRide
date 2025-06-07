@@ -9,3 +9,5 @@ export const profileSchema = z.object({
   address: z.string().nonempty('Adresse requise').optional().or(z.literal('')),
   avatar: z.string().url('URL invalide').optional().or(z.literal('')),
 });
+
+export type ProfileFormData = z.infer<typeof profileSchema>;

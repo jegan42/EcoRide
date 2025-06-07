@@ -1,6 +1,6 @@
 // frontend/src/__tests__/auth/AuthTabs.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import AuthTabs from '../../../components/auth/AuthTabs';
+import { AuthTabs } from '../../../components/auth/AuthTabs';
 import { describe, it, expect, vi } from 'vitest';
 
 describe('AuthTabs', () => {
@@ -29,7 +29,7 @@ describe('AuthTabs', () => {
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('appelle onChange avec false quand on clique sur "S’inscrire"', () => {
+  it('calls onChange with false when clicking "Register"', () => {
     const onChange = vi.fn();
     render(<AuthTabs active={true} onChange={onChange} />);
 

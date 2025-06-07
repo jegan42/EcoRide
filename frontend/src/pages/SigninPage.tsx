@@ -1,60 +1,17 @@
 // frontend/src/pages/SigninPage.tsx
-import { useEffect, useState, type JSX } from 'react';
+import { type JSX } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import SignupForm, { type SignupFormData } from '../forms/SignupForm';
-import SigninForm, { type SigninFormData } from '../forms/SigninForm';
-import authService from '../services/authService';
-import { useDispatch } from 'react-redux';
-import { signin as signinAction } from '../store/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../hooks/useAppSelector';
-import AuthTabs from '../components/auth/AuthTabs';
+import SignupForm from '../forms/SignupForm';
+import SigninForm from '../forms/SigninForm';
 import { API_URL } from '../constants/api';
 import GoogleIcon from '@mui/icons-material/Google';
-import {
-  enqueueSnackbarError,
-  enqueueSnackbarSuccess,
-} from '../utils/enqueueSnackbar';
+import { AuthTabs } from '../components/auth/AuthTabs';
+import { useSign } from '../hooks/useSign';
 
 const SigninPage = (): JSX.Element => {
-  const [signin, setSignin] = useState(true);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { signin, setSignin, handleSignupSubmit, handleSigninSubmit } =
+    useSign();
 
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      void navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleSigninSubmit = async (data: SigninFormData): Promise<void> => {
-    try {
-      const { message, data: user } = await authService.signin(data);
-      dispatch(signinAction({ user, isAuthenticated: true }));
-      enqueueSnackbarSuccess(message);
-      void navigate('/');
-    } catch (error) {
-      enqueueSnackbarError(error);
-    }
-  };
-
-  const handleSignupSubmit = async (data: SignupFormData): Promise<void> => {
-    try {
-      const { message, data: user } = await authService.signup(data);
-      dispatch(
-        signinAction({
-          user,
-          isAuthenticated: true,
-        })
-      );
-      enqueueSnackbarSuccess(message);
-      void navigate('/');
-    } catch (error) {
-      enqueueSnackbarError(error);
-    }
-  };
   return (
     <Box
       sx={{

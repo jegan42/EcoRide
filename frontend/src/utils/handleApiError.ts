@@ -18,6 +18,6 @@ export const extractApiError = (error: unknown): string => {
   }
 
   if (error instanceof Error) return error.message;
-
+  console.log('extractApiError', error);
   return 'Une erreur inconnue est survenue';
 };

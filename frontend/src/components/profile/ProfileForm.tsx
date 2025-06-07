@@ -1,16 +1,15 @@
-// frontend/src/pages/profile/ProfileForm.tsx
+// frontend/src/component/profile/ProfileForm.tsx
 import React, { type JSX } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, TextField, Button } from '@mui/material';
-import type { User } from '../../types/user';
-import type z from 'zod';
-import { profileSchema } from '../../validations/profileSchema';
-
-export type ProfileFormData = z.infer<typeof profileSchema>;
+import {
+  profileSchema,
+  type ProfileFormData,
+} from '../../validations/profileSchema';
+import { useProfile } from '../../hooks/useProfile';
 
 interface Props {
-  user: Partial<User> | null;
   isSubmitting: boolean;
   onSubmit: (data: ProfileFormData) => void;
   onCancel: () => void;
@@ -24,12 +23,12 @@ const profileFields = {
   avatar: 'Avatar (URL)',
 };
 
-const ProfileForm: React.FC<Props> = ({
-  user,
+export const ProfileForm: React.FC<Props> = ({
   isSubmitting,
   onSubmit,
   onCancel,
 }): JSX.Element => {
+  const { user } = useProfile();
   const {
     register,
     handleSubmit,
@@ -74,5 +73,3 @@ const ProfileForm: React.FC<Props> = ({
     </Box>
   );
 };
-
-export default ProfileForm;

@@ -47,7 +47,7 @@ describe('reviewsService', () => {
     vi.clearAllMocks();
   });
 
-  it('addReview ajoute un avis', async () => {
+  it('addReview adds a review', async () => {
     (addDoc as jest.Mock).mockResolvedValue(mockDocRef);
 
     const result = await addReview({
@@ -75,7 +75,7 @@ describe('reviewsService', () => {
     expect(result.data).toBe(mockDocRef);
   });
 
-  it('getAllReviews retourne tous les avis', async () => {
+  it('getAllReviews returns all reviews', async () => {
     (getDocs as jest.Mock).mockResolvedValue({
       docs: [mockDoc],
     });
@@ -86,7 +86,7 @@ describe('reviewsService', () => {
     expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
-  it('getReviewsByAuthor filtre par author_id', async () => {
+  it('getReviewsByAuthor filter by author_id', async () => {
     const mockQuery = {};
     (query as jest.Mock).mockReturnValue(mockQuery);
     (getDocs as jest.Mock).mockResolvedValue({ docs: [mockDoc] });
@@ -100,7 +100,7 @@ describe('reviewsService', () => {
     expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
-  it('getReviewsByTarget filtre par target_id', async () => {
+  it('getReviewsByTarget filter by target_id', async () => {
     const mockQuery = {};
     (query as jest.Mock).mockReturnValue(mockQuery);
     (getDocs as jest.Mock).mockResolvedValue({ docs: [mockDoc] });
@@ -113,7 +113,7 @@ describe('reviewsService', () => {
     expect(result.data).toEqual([{ id: '123', rating: 5, comment: 'Top!' }]);
   });
 
-  it('updateReview met à jour un avis', async () => {
+  it('updateReview updates a review', async () => {
     const mockReviewDoc = {};
     (doc as jest.Mock).mockReturnValue(mockReviewDoc);
 
@@ -130,7 +130,7 @@ describe('reviewsService', () => {
     expect(result.message).toBe('Avis mis à jour');
   });
 
-  it('deleteReview supprime un avis', async () => {
+  it('deleteReview deletes a review', async () => {
     const mockReviewDoc = {};
     (doc as jest.Mock).mockReturnValue(mockReviewDoc);
 

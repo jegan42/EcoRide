@@ -415,7 +415,7 @@ describe('SigninPage complete coverage test', () => {
     });
   });
 
-  it('affiche temporairement le mot de passe lorsque l’icône œil est cliquée', async () => {
+  it('temporarily displays the password when the eye icon is clicked', async () => {
     vi.resetModules();
     vi.doMock('../../forms/SignupForm', async () => {
       const actual = await vi.importActual('../../forms/SignupForm');

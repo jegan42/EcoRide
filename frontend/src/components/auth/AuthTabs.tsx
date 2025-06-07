@@ -29,7 +29,7 @@ const tabButtonStyle = (
   },
 });
 
-const AuthTabs = ({ active, onChange }: AuthTabsProps): JSX.Element => {
+export const AuthTabs = ({ active, onChange }: AuthTabsProps): JSX.Element => {
   return (
     <Box
       sx={(theme) => ({
@@ -57,5 +57,3 @@ const AuthTabs = ({ active, onChange }: AuthTabsProps): JSX.Element => {
     </Box>
   );
 };
-
-export default AuthTabs;

@@ -14,13 +14,13 @@ describe('authSlice reducer', () => {
     loading: true,
   };
 
-  it('devrait retourner l’état initial', () => {
+  it('should return the initial state', () => {
     expect(authReducer(undefined, { type: 'UNKNOWN_ACTION' })).toEqual(
       initialState
     );
   });
 
-  it('devrait gérer signin', () => {
+  it('should handle signin', () => {
     const fakeUser = { id: '1', name: 'Test User' };
     const action = signin({ user: fakeUser, isAuthenticated: true });
     const newState = authReducer(initialState, action);
@@ -29,7 +29,7 @@ describe('authSlice reducer', () => {
     expect(newState.isAuthenticated).toBe(true);
   });
 
-  it('devrait gérer signout', () => {
+  it('should handle signout', () => {
     const loggedState: AuthState = {
       user: { id: '1', username: 'Test User' },
       isAuthenticated: true,
@@ -43,7 +43,7 @@ describe('authSlice reducer', () => {
     expect(newState.isAuthenticated).toBe(false);
   });
 
-  it('devrait gérer setCsrfToken', () => {
+  it('should handle setCsrfToken', () => {
     const token = 'fake-csrf-token';
     const newState = authReducer(initialState, setCsrfToken(token));
 

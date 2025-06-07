@@ -12,7 +12,7 @@ const TestComponent = (): JSX.Element => {
 };
 
 describe('useAppSelector', () => {
-  it('renvoie la valeur du state redux', () => {
+  it('returns the value of the redux state', () => {
     const testStore = configureStore({
       reducer: {
         auth: authReducer,
