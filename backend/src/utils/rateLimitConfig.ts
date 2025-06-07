@@ -7,6 +7,6 @@ export const getRateLimitConfig = (
 } => {
   return {
     windowMs: env !== 'test' ? 15 * 60 * 1000 : 60 * 60 * 1000,
-    max: env !== 'test' ? 25 : 500,
+    max: env !== 'test' ? 250 : 500,
   };
 };

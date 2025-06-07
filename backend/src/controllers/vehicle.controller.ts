@@ -26,6 +26,7 @@ export class VehicleController {
         licensePlate,
         energy,
         seatCount,
+        photo,
       } = req.body;
 
       if (await VehicleService.isVehicleExistsWithLicensePlate(licensePlate)) {
@@ -45,6 +46,7 @@ export class VehicleController {
           energy,
           seatCount,
           userId: user.id,
+          photo: photo ?? null,
         },
       });
 
@@ -76,6 +78,29 @@ export class VehicleController {
       successResponse(res, 'Vehicles', 'getAll', vehicles);
     } catch (error) {
       errorResponse(res, 'Vehicles', 'failed to getAll', error);
+    }
+  };
+
+  static readonly getByUser = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const user = req.user as User;
+    try {
+      const vehicles = await prismaNewClient.vehicle.findMany({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (vehicles?.length === 0) {
+        notFoundResponse(res, 'Vehicle', 'vehicle not found');
+        return;
+      }
+
+      successResponse(res, 'Vehicles', 'getByUser', vehicles);
+    } catch (error) {
+      errorResponse(res, 'Vehicles', 'failed to getByUser', error);
     }
   };
 
@@ -124,7 +149,7 @@ export class VehicleController {
 
       const updateVehicle = await prismaNewClient.vehicle.update({
         where: { id },
-        data: req.body,
+        data: { ...req.body, updatedAt: new Date() },
       });
 
       successResponse(res, 'Vehicle', 'updated', updateVehicle);

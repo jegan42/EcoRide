@@ -39,6 +39,12 @@ export const createVehicleValidator = [
     .withMessage('seatCount is required')
     .isInt({ min: 1, max: 10 })
     .withMessage('seatCount must be between 1 and 10'),
+  body('photo')
+    .optional()
+    .isURL()
+    .withMessage('photo must be an URL')
+    .notEmpty()
+    .withMessage('photo is required'),
 ];
 
 export const updateVehicleValidator = [

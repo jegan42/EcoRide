@@ -20,7 +20,7 @@ router.post(
   VehicleController.create
 );
 
-router.get('/', VehicleController.getAll);
+router.get('/', authenticate, VehicleController.getByUser);
 
 router.get(
   '/:id',

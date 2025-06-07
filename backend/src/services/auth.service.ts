@@ -145,6 +145,7 @@ export class AuthService {
       updateData.username = username ?? user.username;
     }
 
+    updateData.updatedAt = new Date();
     return updateData;
   }
 }

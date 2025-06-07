@@ -87,7 +87,17 @@ export class AuthController {
 
       await AuthService.setSessionToken(res, user.id, email);
 
-      successResponse(res, 'Auth', 'signin', AuthService.sanitizedUser(user));
+      const updatedUser = await prismaNewClient.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() },
+      });
+
+      successResponse(
+        res,
+        'Auth',
+        'signin',
+        AuthService.sanitizedUser(updatedUser)
+      );
     } catch (error) {
       errorResponse(res, 'Auth', 'failed to signin', error);
     }
