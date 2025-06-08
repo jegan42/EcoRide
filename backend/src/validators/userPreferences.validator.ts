@@ -2,7 +2,6 @@
 import { body, param } from 'express-validator';
 
 export const createPreferencesValidator = [
-  param('id').isUUID().withMessage('invalid ID'),
   body('acceptsSmoker')
     .exists()
     .withMessage('acceptsSmoker is required')
@@ -30,7 +29,6 @@ export const createPreferencesValidator = [
 ];
 
 export const updatePreferencesValidator = [
-  param('id').isUUID().withMessage('invalid ID'),
   body('acceptsSmoker')
     .optional()
     .isBoolean()

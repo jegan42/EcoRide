@@ -15,6 +15,6 @@ router.use('/auth', authRoutes);
 router.use('/vehicles', vehicleRoutes);
 router.use('/trips', tripRoutes);
 router.use('/bookings', bookingRoutes);
-router.use('/user-preferences', UserPreferencesRoutes);
+router.use('/preferences', UserPreferencesRoutes);
 
 export default router;

@@ -17,13 +17,12 @@ export class PreferencesController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-    if (!assertOwnership(req, res, id)) return;
+    const user = req.user as User;
 
     try {
       const existUserPreferences =
         await prismaNewClient.userPreferences.findUnique({
-          where: { userId: id },
+          where: { userId: user.id },
         });
       if (existUserPreferences) {
         conflictResponse(
@@ -39,7 +38,7 @@ export class PreferencesController {
 
       const userPreferences = await prismaNewClient.userPreferences.create({
         data: {
-          userId: id,
+          userId: user.id,
           acceptsSmoker,
           acceptsPets,
           acceptsMusic,
@@ -89,8 +88,7 @@ export class PreferencesController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-    if (!assertOwnership(req, res, id)) return;
+    const user = req.user as User;
 
     if (Object.keys(req.body).length < 1) {
       badRequestResponse(res, 'UserPreferences', 'missing fields');
@@ -99,7 +97,7 @@ export class PreferencesController {
 
     try {
       const userPreferences = await prismaNewClient.userPreferences.update({
-        where: { userId: id },
+        where: { userId: user.id },
         data: req.body,
       });
 
@@ -113,11 +111,10 @@ export class PreferencesController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const { id } = req.params;
-    if (!assertOwnership(req, res, id)) return;
+    const user = req.user as User;
 
     try {
-      await prismaNewClient.userPreferences.delete({ where: { userId: id } });
+      await prismaNewClient.userPreferences.delete({ where: { userId: user.id } });
       successResponse(res, 'UserPreferences', 'deleted');
     } catch (error) {
       errorResponse(res, 'UserPreferences', 'failed to delete', error);

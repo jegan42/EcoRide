@@ -12,7 +12,7 @@ import { PreferencesController } from '../controllers/userPreferences.controller
 const router = express.Router();
 
 router.post(
-  '/:id',
+  '/',
   authenticate,
   createPreferencesValidator,
   handleValidationErrors,
@@ -30,7 +30,7 @@ router.get(
 );
 
 router.put(
-  '/:id',
+  '/',
   authenticate,
   updatePreferencesValidator,
   handleValidationErrors,
@@ -38,7 +38,7 @@ router.put(
 );
 
 router.delete(
-  '/:id',
+  '/',
   authenticate,
   uuidParamValidator,
   handleValidationErrors,
