@@ -4,15 +4,18 @@ import type { Vehicle } from '../../types/vehicle';
 import type { ProfileTabsMode } from '../profile/ProfileTabs';
 import { VehicleList } from '../vehicle/VehicleList';
 import type { FormMode } from '../../hooks/useModes';
+import { PreferencesView } from '../preferences/PreferencesView';
 
 interface Props {
   profileTabs: ProfileTabsMode;
+  onSetPreferencesMode: (mode: FormMode) => void;
   onSetVehicleMode: (mode: FormMode) => void;
   onSetSelectedVehicle: (vehicle: Vehicle) => void;
 }
 
 export const DashboardListSwitch: React.FC<Props> = ({
   profileTabs,
+  onSetPreferencesMode,
   onSetVehicleMode,
   onSetSelectedVehicle,
 }) => {
@@ -23,6 +26,9 @@ export const DashboardListSwitch: React.FC<Props> = ({
         onSetSelectedVehicle={onSetSelectedVehicle}
       />
     );
+  }
+  if (profileTabs === 'preference') {
+    return <PreferencesView onSetPreferencesMode={onSetPreferencesMode} />;
   }
 
   return (

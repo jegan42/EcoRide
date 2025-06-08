@@ -36,23 +36,16 @@ const fetchUserPreferencesById = async (
 };
 
 const updateUserPreferences = async (
-  userId: string,
   prefsData: Partial<UserPreferences>
 ): Promise<ApiResponse<UserPreferences>> => {
-  const response = await api.put(
-    `${API_URL}/preferences/${userId}`,
-    prefsData,
-    {
-      withCredentials: true,
-    }
-  );
+  const response = await api.put(`${API_URL}/preferences`, prefsData, {
+    withCredentials: true,
+  });
   return handleApiResponseSafe<UserPreferences>(response.data);
 };
 
-const deleteUserPreferences = async (
-  userId: string
-): Promise<ApiResponse<void>> => {
-  const response = await api.delete(`${API_URL}/preferences/${userId}`, {
+const deleteUserPreferences = async (): Promise<ApiResponse<void>> => {
+  const response = await api.delete(`${API_URL}/preferences`, {
     withCredentials: true,
   });
   return handleApiResponseBasic<void>(response.data);

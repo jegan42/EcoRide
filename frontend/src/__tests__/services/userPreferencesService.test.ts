@@ -74,7 +74,6 @@ describe('userPreferencesService', () => {
   });
 
   it('updateUserPreferences calls api.put with userId and data', async () => {
-    const userId = 'u2';
     const prefsData = { acceptsSmoker: true };
     const mockResponse = { id: 'p4', ...prefsData };
     (api.put as jest.Mock).mockResolvedValue({
@@ -84,13 +83,11 @@ describe('userPreferencesService', () => {
       },
     });
 
-    const result = await userPreferencesService.updateUserPreferences(
-      userId,
-      prefsData
-    );
+    const result =
+      await userPreferencesService.updateUserPreferences(prefsData);
 
     expect(api.put).toHaveBeenCalledWith(
-      expect.stringMatching(new RegExp(`/preferences/${userId}$`)),
+      expect.stringMatching(new RegExp(`/preferences`)),
       prefsData,
       { withCredentials: true }
     );
@@ -99,17 +96,16 @@ describe('userPreferencesService', () => {
   });
 
   it('deleteUserPreferences calls api.delete with userId', async () => {
-    const userId = 'u3';
     (api.delete as jest.Mock).mockResolvedValue({
       data: {
         message: 'deletePreferences successful',
       },
     });
 
-    const result = await userPreferencesService.deleteUserPreferences(userId);
+    const result = await userPreferencesService.deleteUserPreferences();
 
     expect(api.delete).toHaveBeenCalledWith(
-      expect.stringMatching(new RegExp(`/preferences/${userId}$`)),
+      expect.stringMatching(new RegExp(`/preferences`)),
       { withCredentials: true }
     );
     expect(result.message).toBe('deletePreferences successful');

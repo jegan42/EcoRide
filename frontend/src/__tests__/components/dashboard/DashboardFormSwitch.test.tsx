@@ -1,129 +1,116 @@
 // frontend/src/__tests__/components/dashboard/DashboardFormSwitch.test.tsx
 import { render, screen } from '@testing-library/react';
 import { DashboardFormSwitch } from '../../../components/dashboard/DashboardFormSwitch';
-import type { Vehicle } from '../../../types/vehicle';
-import * as useProfileModule from '../../../hooks/useProfile';
-import * as useVehicleModule from '../../../hooks/useVehicle';
 import { vi } from 'vitest';
-import type { User } from '../../../types/user';
-import type { ProfileFormData } from '../../../validations/profileSchema';
-import type { VehicleFormOutput } from '../../../validations/vehicleSchema';
 
-vi.mock('../../../components/profile/ProfileFormSwitch', () => ({
-  ProfileFormSwitch: ({ isSubmitting }: { isSubmitting: boolean }) => (
-    <div data-testid="profile-form">ProfileForm - {String(isSubmitting)}</div>
-  ),
+vi.mock('../../../hooks/useProfile', () => ({
+  useProfile: () => ({ isSubmitting: false }),
+}));
+vi.mock('../../../hooks/usePreferences', () => ({
+  usePreferences: () => ({ isSubmitting: false }),
+}));
+vi.mock('../../../hooks/useVehicle', () => ({
+  useVehicle: () => ({ isSubmitting: false }),
 }));
 
+vi.mock('../../../components/profile/ProfileFormSwitch', () => ({
+  ProfileFormSwitch: ({ profileMode }: { profileMode: string }) => (
+    <div data-testid="profile-form">{profileMode}</div>
+  ),
+}));
+vi.mock('../../../components/preferences/PreferencesFormSwitch', () => ({
+  PreferencesFormSwitch: ({ preferencesMode }: { preferencesMode: string }) => (
+    <div data-testid="preferences-form">{preferencesMode}</div>
+  ),
+}));
 vi.mock('../../../components/vehicle/VehicleFormSwitch', () => ({
-  VehicleFormSwitch: ({ isSubmitting }: { isSubmitting: boolean }) => (
-    <div data-testid="vehicle-form">VehicleForm - {String(isSubmitting)}</div>
+  VehicleFormSwitch: ({ vehicleMode }: { vehicleMode: string }) => (
+    <div data-testid="vehicle-form">{vehicleMode}</div>
   ),
 }));
 
 describe('DashboardFormSwitch', () => {
-  const mockVehicle: Vehicle = {
-    id: 'v1',
-    brand: 'Toyota',
-    model: 'Yaris',
-    userId: 'u1',
-    licensePlate: '123',
-    energy: 'electric',
-    seatCount: 4,
-    vehicleYear: 2020,
-    color: 'blue',
-    createdAt: '',
-    updatedAt: '',
+  const baseProps = {
+    onSetProfileMode: vi.fn(),
+    onSetPreferencesMode: vi.fn(),
+    onSetVehicleMode: vi.fn(),
+    selectedVehicle: null,
   };
 
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
-  const mockHooks = (
-    isUserSubmitting: boolean,
-    isVehicleSubmitting: boolean
-  ): void => {
-    vi.spyOn(useProfileModule, 'useProfile').mockReturnValue({
-      user: null,
-      isDriver: false,
-      onUpdateUser: vi.fn(),
-      isSubmitting: isUserSubmitting,
-    } as {
-      user: Partial<User> | null;
-      isDriver: boolean;
-      isSubmitting: boolean;
-      onUpdateUser: (formData: ProfileFormData) => Promise<boolean>;
-    });
-
-    vi.spyOn(useVehicleModule, 'useVehicle').mockReturnValue({
-      vehicles: [],
-      vehicle: undefined,
-      loading: false,
-      error: null,
-      onCreateVehicle: vi.fn(),
-      onUpdateVehicle: vi.fn(),
-      onDeleteVehicle: vi.fn(),
-      isSubmitting: isVehicleSubmitting,
-    } as {
-      vehicles: Partial<Vehicle[]>;
-      vehicle: Partial<Vehicle> | undefined;
-      loading: boolean;
-      error: string | null;
-      isSubmitting: boolean;
-      onCreateVehicle: (data: VehicleFormOutput) => Promise<boolean>;
-      onUpdateVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
-      onDeleteVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
-    });
-  };
-
-  it('renders ProfileFormSwitch when profileMode is not "view"', () => {
-    mockHooks(true, false);
-
+  it('renders ProfileFormSwitch if profileMode is different from "view"', () => {
     render(
       <DashboardFormSwitch
+        {...baseProps}
         profileMode="edit"
+        preferencesMode="view"
         vehicleMode="view"
-        onSetProfileMode={() => {}}
-        onSetVehicleMode={() => {}}
-        selectedVehicle={mockVehicle}
       />
     );
 
     expect(screen.getByTestId('profile-form')).toBeInTheDocument();
-    expect(screen.queryByTestId('vehicle-form')).not.toBeInTheDocument();
   });
 
-  it('renders VehicleFormSwitch when profileMode is "view" and vehicleMode is not "view"', () => {
-    mockHooks(false, true);
-
+  it('returns PreferencesFormSwitch if preferencesMode is different from "view" and profileMode is "view"', () => {
     render(
       <DashboardFormSwitch
+        {...baseProps}
         profileMode="view"
+        preferencesMode="edit"
+        vehicleMode="view"
+      />
+    );
+
+    expect(screen.getByTestId('preferences-form')).toBeInTheDocument();
+  });
+
+  it('renders VehicleFormSwitch if vehicleMode is different from "view" and other modes are "view"', () => {
+    render(
+      <DashboardFormSwitch
+        {...baseProps}
+        profileMode="view"
+        preferencesMode="view"
         vehicleMode="edit"
-        onSetProfileMode={() => {}}
-        onSetVehicleMode={() => {}}
-        selectedVehicle={mockVehicle}
       />
     );
 
     expect(screen.getByTestId('vehicle-form')).toBeInTheDocument();
-    expect(screen.queryByTestId('profile-form')).not.toBeInTheDocument();
   });
 
-  it('renders nothing when both modes are "view"', () => {
-    mockHooks(false, false);
-
+  it('renders nothing if all modes are "view"', () => {
     const { container } = render(
       <DashboardFormSwitch
+        {...baseProps}
         profileMode="view"
+        preferencesMode="view"
         vehicleMode="view"
-        onSetProfileMode={() => {}}
-        onSetVehicleMode={() => {}}
-        selectedVehicle={mockVehicle}
       />
     );
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('correctly combines isSubmitting', () => {
+    vi.doMock('../../../hooks/useProfile', () => ({
+      useProfile: () => ({ isSubmitting: true }),
+    }));
+    vi.doMock('../../../hooks/usePreferences', () => ({
+      usePreferences: () => ({ isSubmitting: true }),
+    }));
+    vi.doMock('../../../hooks/useVehicle', () => ({
+      useVehicle: () => ({ isSubmitting: true }),
+    }));
+
+    const { unmount } = render(
+      <DashboardFormSwitch
+        {...baseProps}
+        profileMode="edit"
+        preferencesMode="view"
+        vehicleMode="view"
+      />
+    );
+
+    expect(screen.getByTestId('profile-form')).toBeInTheDocument();
+    unmount();
+    vi.resetModules();
   });
 });

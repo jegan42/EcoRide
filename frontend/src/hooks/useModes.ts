@@ -8,6 +8,8 @@ export type FormMode = 'view' | 'edit' | 'add';
 export const useModes = (): {
   profileMode: FormMode;
   setProfileMode: React.Dispatch<React.SetStateAction<FormMode>>;
+  preferencesMode: FormMode;
+  setPreferencesMode: React.Dispatch<React.SetStateAction<FormMode>>;
   vehicleMode: FormMode;
   setVehicleMode: React.Dispatch<React.SetStateAction<FormMode>>;
   selectedVehicle: Vehicle | null;
@@ -18,6 +20,7 @@ export const useModes = (): {
   isViewMode: boolean;
 } => {
   const [profileMode, setProfileMode] = useState<FormMode>('view');
+  const [preferencesMode, setPreferencesMode] = useState<FormMode>('view');
   const [vehicleMode, setVehicleMode] = useState<FormMode>('view');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [profileTabs, setProfileTabs] = useState<ProfileTabsMode>('preference');
@@ -32,6 +35,8 @@ export const useModes = (): {
   return {
     profileMode,
     setProfileMode,
+    preferencesMode,
+    setPreferencesMode,
     vehicleMode,
     setVehicleMode,
     selectedVehicle,
@@ -39,6 +44,9 @@ export const useModes = (): {
     profileTabs,
     setProfileTabs,
     resetModes,
-    isViewMode: profileMode === 'view' && vehicleMode === 'view',
+    isViewMode:
+      profileMode === 'view' &&
+      preferencesMode === 'view' &&
+      vehicleMode === 'view',
   };
 };

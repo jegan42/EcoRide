@@ -12,7 +12,11 @@ interface MockProfileViewProps {
   onSetProfileMode: () => void;
   onSetVehicleMode: () => void;
 }
-
+vi.mock('notistack', () => {
+  return {
+    enqueueSnackbar: vi.fn(),
+  };
+});
 vi.mock('../../hooks/useProfile');
 vi.mock('../../hooks/useVehicle');
 vi.mock('../../hooks/useModes');

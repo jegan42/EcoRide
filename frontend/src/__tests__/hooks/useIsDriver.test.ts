@@ -1,4 +1,4 @@
-// tests/__tests__/hooks/currentUserIsDriver.test
+// tests/__tests__/hooks/useIsDriver.test
 import * as roleUtils from '../../utils/hasRole';
 import { vi } from 'vitest';
 import { useIsDriver } from '../../hooks/useIsDriver';

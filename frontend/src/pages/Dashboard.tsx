@@ -17,6 +17,8 @@ const DashboardPage: React.FC = () => {
   const {
     profileMode,
     setProfileMode,
+    preferencesMode,
+    setPreferencesMode,
     vehicleMode,
     setVehicleMode,
     selectedVehicle,
@@ -72,6 +74,8 @@ const DashboardPage: React.FC = () => {
               <DashboardFormSwitch
                 profileMode={profileMode}
                 onSetProfileMode={setProfileMode}
+                preferencesMode={preferencesMode}
+                onSetPreferencesMode={setPreferencesMode}
                 vehicleMode={vehicleMode}
                 onSetVehicleMode={setVehicleMode}
                 selectedVehicle={selectedVehicle}
@@ -86,6 +90,7 @@ const DashboardPage: React.FC = () => {
                   />
                   <DashboardListSwitch
                     profileTabs={profileTabs}
+                    onSetPreferencesMode={setPreferencesMode}
                     onSetVehicleMode={setVehicleMode}
                     onSetSelectedVehicle={setSelectedVehicle}
                   />
