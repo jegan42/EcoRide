@@ -147,6 +147,10 @@ export class TripService {
         data: {
           status: 'cancelled',
         },
+        include: {
+          driver: true,
+          vehicle: true,
+        },
       });
 
       const bookings = await tx.booking.findMany({

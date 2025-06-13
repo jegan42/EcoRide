@@ -79,6 +79,32 @@ export class TripController {
     }
   };
 
+  static readonly getByDriver = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const user = req.user as User;
+
+    try {
+      const trips = await prismaNewClient.trip.findMany({
+        where: { driverId: user.id },
+        include: {
+          driver: true,
+          vehicle: true,
+        },
+      });
+
+      if (trips.length === 0) {
+        notFoundResponse(res, 'Trip', 'trips not found');
+        return;
+      }
+
+      successResponse(res, 'Trip', 'getByDriver', trips);
+    } catch (error) {
+      errorResponse(res, 'Trip', 'failed to getByDriver', error);
+    }
+  };
+
   static readonly getAll = async (
     req: Request,
     res: Response

@@ -13,6 +13,14 @@ import { authorize } from '../middleware/authorize.middleware';
 
 const router = express.Router();
 
+router.get(
+  '/driver',
+  authenticate,
+  authorize(['driver']),
+  searchTripValidator,
+  TripController.getByDriver
+);
+
 router.get('/', searchTripValidator, TripController.getAll);
 
 router.get(
