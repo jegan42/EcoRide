@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { API_URL } from '../constants/api';
 import type { ApiResponse } from '../types/api';
 import type { Trip } from '../types/trip';
+import { cleanPayload } from '../utils/cleanPayload';
 import { handleApiResponseSafe } from '../utils/handleApiResponse';
 
 const fetchTrips = async (
@@ -38,10 +39,17 @@ const fetchTripById = async (id: string): Promise<ApiResponse<Trip>> => {
   return handleApiResponseSafe<Trip>(response.data);
 };
 
+const fetchTripsByDriver = async (): Promise<ApiResponse<Trip[]>> => {
+  const response = await api.get(`${API_URL}/trips/driver`, {
+    withCredentials: true,
+  });
+  return handleApiResponseSafe<Trip[]>(response.data);
+};
+
 const createTrip = async (
   tripData: Partial<Trip>
 ): Promise<ApiResponse<Trip>> => {
-  const response = await api.post(`${API_URL}/trips`, tripData, {
+  const response = await api.post(`${API_URL}/trips`, cleanPayload(tripData), {
     withCredentials: true,
   });
   return handleApiResponseSafe<Trip>(response.data);
@@ -51,9 +59,13 @@ const updateTrip = async (
   id: string,
   tripData: Partial<Trip>
 ): Promise<ApiResponse<Trip>> => {
-  const response = await api.put(`${API_URL}/trips/${id}`, tripData, {
-    withCredentials: true,
-  });
+  const response = await api.put(
+    `${API_URL}/trips/${id}`,
+    cleanPayload(tripData),
+    {
+      withCredentials: true,
+    }
+  );
   return handleApiResponseSafe<Trip>(response.data);
 };
 
@@ -67,6 +79,7 @@ const cancelTrip = async (id: string): Promise<ApiResponse<Trip>> => {
 export default {
   fetchTrips,
   fetchTripById,
+  fetchTripsByDriver,
   createTrip,
   updateTrip,
   cancelTrip,

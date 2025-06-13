@@ -8,6 +8,6 @@
 /frontend/coverage/
 /frontend/.vite/
 /frontend/.env
-
+/frontend/**/__snapshots__
 # Os system files
 .DS_Store

@@ -1,7 +1,7 @@
 // frontend/src/component/profile/ProfileFormSwitch.tsx
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
 import { useProfile } from '../../hooks/useProfile';
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import { ProfileForm } from './ProfileForm';
 
 interface Props {

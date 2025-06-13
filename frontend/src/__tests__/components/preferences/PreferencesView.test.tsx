@@ -64,9 +64,6 @@ describe('PreferencesView', () => {
     renderWithProvider(<PreferencesView onSetPreferencesMode={mockFn} />);
 
     expect(
-      screen.getByText(/Vous n’avez encore enregistré aucune préférence./i)
-    ).toBeInTheDocument();
-    expect(
       screen.getByRole('button', { name: /Ajouter des préférences/i })
     ).toBeInTheDocument();
   });

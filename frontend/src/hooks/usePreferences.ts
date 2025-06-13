@@ -23,7 +23,6 @@ export const usePreferences = (): {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Chargement initial : récupère les préférences du user connecté ("/preferences/me")
   useEffect(() => {
     const fetchPreferences = async (): Promise<void> => {
       setLoading(true);
@@ -33,8 +32,8 @@ export const usePreferences = (): {
         setPreferences(data);
         enqueueSnackbarSuccess(message);
       } catch (err) {
+        setError('Vous n’avez encore enregistré aucune préférence.');
         enqueueSnackbarError(err);
-        setError('Erreur lors du chargement des préférences');
       } finally {
         setLoading(false);
       }

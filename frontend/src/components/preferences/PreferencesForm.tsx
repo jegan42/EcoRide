@@ -33,7 +33,14 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({
   });
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      sx={{
+        width: '100%',
+      }}
+    >
       <Box
         sx={{
           display: 'grid',

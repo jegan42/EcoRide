@@ -12,7 +12,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { usePreferences } from '../../hooks/usePreferences';
 import { preferencesLabel } from '../../types/preferences';
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import type { JSX } from 'react';
 
 interface Props {
@@ -21,9 +21,9 @@ interface Props {
 
 export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
   const theme = useTheme();
-  const { preferences } = usePreferences();
+  const { preferences, error } = usePreferences();
 
-  if (!preferences) {
+  if (!preferences || error) {
     return (
       <Box
         sx={{
@@ -35,7 +35,7 @@ export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
         }}
       >
         <Typography variant="body1" color="text.secondary">
-          Vous n’avez encore enregistré aucune préférence.
+          {error}
         </Typography>
 
         <Button
@@ -63,9 +63,8 @@ export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
 
       <Stack spacing={1}>
         {preferencesLabel.map(({ value, label }) => (
-          <Typography
+          <Box
             key={value}
-            variant="body2"
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -74,7 +73,7 @@ export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
           >
             <strong>{label} :</strong>
             {renderPreferenceChoice(Boolean(preferences[value]))}
-          </Typography>
+          </Box>
         ))}
       </Stack>
     </Box>

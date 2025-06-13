@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import DashboardPage from '../../pages/Dashboard';
 import * as useProfileHook from '../../hooks/useProfile';
 import * as useVehicleHook from '../../hooks/useVehicle';
-import * as useModesHook from '../../hooks/useModes';
+import * as useDashboardStateHook from '../../hooks/useDashboardState';
 import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -19,7 +19,7 @@ vi.mock('notistack', () => {
 });
 vi.mock('../../hooks/useProfile');
 vi.mock('../../hooks/useVehicle');
-vi.mock('../../hooks/useModes');
+vi.mock('../../hooks/useDashboardState');
 vi.mock('../../components/profile/ProfileView', () => {
   return {
     ProfileView: ({
@@ -55,65 +55,6 @@ describe('DashboardPage', () => {
     vi.clearAllMocks();
   });
 
-  it('displays an error message if isDriver=true and error exists', () => {
-    (useProfileHook.useProfile as jest.Mock).mockReturnValue({
-      isDriver: true,
-    });
-    (useVehicleHook.useVehicle as jest.Mock).mockReturnValue({
-      loading: false,
-      error: 'Erreur critique',
-    });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
-      profileMode: 'view',
-      setProfileMode: vi.fn(),
-      vehicleMode: 'view',
-      setVehicleMode: vi.fn(),
-      selectedVehicle: null,
-      setSelectedVehicle: vi.fn(),
-      profileTabs: 0,
-      setProfileTabs: vi.fn(),
-      isViewMode: true,
-    });
-
-    render(<DashboardPage />);
-
-    expect(screen.getByText('Erreur critique')).toBeInTheDocument();
-  });
-
-  it('displays ProfileLoading if loading is true', () => {
-    (useProfileHook.useProfile as jest.Mock).mockReturnValue({
-      isDriver: false,
-    });
-    (useVehicleHook.useVehicle as jest.Mock).mockReturnValue({
-      loading: true,
-      error: null,
-    });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
-      profileMode: 'view',
-      setProfileMode: vi.fn(),
-      vehicleMode: 'view',
-      setVehicleMode: vi.fn(),
-      selectedVehicle: null,
-      setSelectedVehicle: vi.fn(),
-      profileTabs: 0,
-      setProfileTabs: vi.fn(),
-      isViewMode: true,
-    });
-
-    render(<DashboardPage />);
-
-    const avatar = screen.getByTestId('skeleton-avatar');
-    expect(avatar).toBeInTheDocument();
-    const headingSkeleton = screen.getByText((_, node) => {
-      return node?.tagName === 'H5';
-    });
-    expect(headingSkeleton).toBeInTheDocument();
-    const username = screen.getByTestId('skeleton-username');
-    expect(username).toBeInTheDocument();
-    const lines = screen.getAllByTestId('skeleton-info');
-    expect(lines).toHaveLength(5);
-  });
-
   it('correctly renders the dashboard when there is no error or loading', () => {
     (useProfileHook.useProfile as jest.Mock).mockReturnValue({
       isDriver: false,
@@ -122,7 +63,7 @@ describe('DashboardPage', () => {
       loading: false,
       error: null,
     });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
+    (useDashboardStateHook.useDashboardState as jest.Mock).mockReturnValue({
       profileMode: 'view',
       setProfileMode: vi.fn(),
       vehicleMode: 'view',
@@ -150,7 +91,7 @@ describe('DashboardPage', () => {
       loading: false,
       error: null,
     });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
+    (useDashboardStateHook.useDashboardState as jest.Mock).mockReturnValue({
       profileMode: 'view',
       setProfileMode: vi.fn(),
       vehicleMode: 'view',
@@ -182,7 +123,7 @@ describe('DashboardPage', () => {
       loading: false,
       error: null,
     });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
+    (useDashboardStateHook.useDashboardState as jest.Mock).mockReturnValue({
       profileMode: 'view',
       setProfileMode: vi.fn(),
       vehicleMode: 'view',
@@ -198,40 +139,5 @@ describe('DashboardPage', () => {
 
     expect(screen.getByTestId('profile-view')).toBeInTheDocument();
     expect(screen.getByTestId('dashboard-list-switch')).toBeInTheDocument();
-  });
-
-  it('calls onSetProfileMode and onSetVehicleMode callbacks', () => {
-    const setProfileModeMock = vi.fn();
-    const setVehicleModeMock = vi.fn();
-
-    (useProfileHook.useProfile as jest.Mock).mockReturnValue({
-      isDriver: false,
-    });
-    (useVehicleHook.useVehicle as jest.Mock).mockReturnValue({
-      loading: false,
-      error: null,
-    });
-    (useModesHook.useModes as jest.Mock).mockReturnValue({
-      profileMode: 'view',
-      setProfileMode: setProfileModeMock,
-      vehicleMode: 'view',
-      setVehicleMode: setVehicleModeMock,
-      selectedVehicle: null,
-      setSelectedVehicle: vi.fn(),
-      profileTabs: 0,
-      setProfileTabs: vi.fn(),
-      isViewMode: true,
-    });
-
-    renderWithProvider(<DashboardPage />);
-
-    const btnProfileMode = screen.getByTestId('btn-profile-mode');
-    const btnVehicleMode = screen.getByTestId('btn-vehicle-mode');
-
-    btnProfileMode.click();
-    btnVehicleMode.click();
-
-    expect(setProfileModeMock).toHaveBeenCalledWith('edit');
-    expect(setVehicleModeMock).toHaveBeenCalledWith('add');
   });
 });

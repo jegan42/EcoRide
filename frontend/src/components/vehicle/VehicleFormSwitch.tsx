@@ -2,7 +2,7 @@
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
 import { useVehicle } from '../../hooks/useVehicle';
 import type { Vehicle } from '../../types/vehicle';
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import { VehicleForm } from './VehicleForm';
 
 interface Props {

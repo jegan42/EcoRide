@@ -46,7 +46,14 @@ export const ProfileForm: React.FC<Props> = ({
   });
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      sx={{
+        width: '100%',
+      }}
+    >
       {Object.entries(profileFields).map(([key, value]) => {
         return (
           <TextField

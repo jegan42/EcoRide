@@ -8,7 +8,6 @@ import {
   enqueueSnackbarSuccess,
 } from '../utils/enqueueSnackbar';
 import type { User } from '../types/user';
-import { cleanPayload } from '../utils/cleanPayload';
 import type { ProfileFormData } from '../validations/profileSchema';
 import { hasRole } from '../utils/hasRole';
 import { useAppSelector } from './useAppSelector';
@@ -34,9 +33,8 @@ export const useProfile = (): {
 
     setIsSubmitting(true);
     try {
-      const { message, data: updatedUser } = await userService.updateUser(
-        cleanPayload(formData)
-      );
+      const { message, data: updatedUser } =
+        await userService.updateUser(formData);
       setUser(updatedUser);
       dispatch(signinAction({ user: updatedUser, isAuthenticated: true }));
       enqueueSnackbarSuccess(message);

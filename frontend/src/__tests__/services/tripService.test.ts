@@ -73,6 +73,25 @@ describe('tripService', () => {
     expect(result.data).toEqual(mockTrip);
   });
 
+  it('fetchTripByDriver calls api.get', async () => {
+    const mockTrip = { id: 't1' };
+    (api.get as jest.Mock).mockResolvedValue({
+      data: {
+        message: 'getTripByDriver successful',
+        data: mockTrip,
+      },
+    });
+
+    const result = await tripService.fetchTripsByDriver();
+
+    expect(api.get).toHaveBeenCalledWith(
+      expect.stringMatching(/\/trips\/driver$/),
+      { withCredentials: true }
+    );
+    expect(result.message).toBe('getTripByDriver successful');
+    expect(result.data).toEqual(mockTrip);
+  });
+
   it('createTrip calls api.post with the trip data', async () => {
     const tripData = { departureCity: 'Paris' };
     const mockCreatedTrip = { id: 'new-trip', ...tripData };

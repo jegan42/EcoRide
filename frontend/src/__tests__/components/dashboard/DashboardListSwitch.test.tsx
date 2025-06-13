@@ -13,10 +13,16 @@ vi.mock('../../../components/preferences/PreferencesView', () => ({
   ),
 }));
 
+vi.mock('../../../components/trip/TripList', () => ({
+  TripList: () => <div data-testid="trip-list">TripList mock</div>,
+}));
+
 describe('DashboardListSwitch', () => {
   const mockSetVehicleMode = vi.fn();
   const mockSetSelectedVehicle = vi.fn();
   const mockSetPreferencesMode = vi.fn();
+  const mockSetTripMode = vi.fn();
+  const mockSetSelectedTrip = vi.fn();
 
   it('renders VehicleList when profileTabs is "vehicle"', () => {
     render(
@@ -25,6 +31,8 @@ describe('DashboardListSwitch', () => {
         onSetPreferencesMode={mockSetPreferencesMode}
         onSetVehicleMode={mockSetVehicleMode}
         onSetSelectedVehicle={mockSetSelectedVehicle}
+        onSetTripMode={mockSetTripMode}
+        onSetSelectedTrip={mockSetSelectedTrip}
       />
     );
 
@@ -38,10 +46,27 @@ describe('DashboardListSwitch', () => {
         onSetPreferencesMode={vi.fn()}
         onSetVehicleMode={mockSetVehicleMode}
         onSetSelectedVehicle={mockSetSelectedVehicle}
+        onSetTripMode={mockSetTripMode}
+        onSetSelectedTrip={mockSetSelectedTrip}
       />
     );
 
     expect(screen.getByTestId('preferences-view')).toBeInTheDocument();
+  });
+
+  it('renders TripList when profileTabs is "trip"', () => {
+    render(
+      <DashboardListSwitch
+        profileTabs="trip"
+        onSetPreferencesMode={vi.fn()}
+        onSetVehicleMode={mockSetVehicleMode}
+        onSetSelectedVehicle={mockSetSelectedVehicle}
+        onSetTripMode={mockSetTripMode}
+        onSetSelectedTrip={mockSetSelectedTrip}
+      />
+    );
+
+    expect(screen.getByTestId('trip-list')).toBeInTheDocument();
   });
 
   it('renders fallback text for other tabs', () => {
@@ -51,6 +76,8 @@ describe('DashboardListSwitch', () => {
         onSetPreferencesMode={mockSetPreferencesMode}
         onSetVehicleMode={mockSetVehicleMode}
         onSetSelectedVehicle={mockSetSelectedVehicle}
+        onSetTripMode={mockSetTripMode}
+        onSetSelectedTrip={mockSetSelectedTrip}
       />
     );
 

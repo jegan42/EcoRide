@@ -1,19 +1,13 @@
 // frontend/src/pages/Dashboard.tsx
 import React from 'react';
 import { Box, Collapse, Container, Paper, Typography } from '@mui/material';
-import { useProfile } from '../hooks/useProfile';
-import { useVehicle } from '../hooks/useVehicle';
 import { DashboardHeader } from '../components/dashboard/DashboardHeader';
-import { useModes } from '../hooks/useModes';
+import { useDashboardState } from '../hooks/useDashboardState';
 import { DashboardListSwitch } from '../components/dashboard/DashboardListSwitch';
 import { DashboardFormSwitch } from '../components/dashboard/DashboardFormSwitch';
 import { ProfileView } from '../components/profile/ProfileView';
-import { ProfileLoading } from '../components/profile/ProfileLoading';
 
 const DashboardPage: React.FC = () => {
-  const { isDriver } = useProfile();
-  const { loading, error } = useVehicle();
-
   const {
     profileMode,
     setProfileMode,
@@ -23,21 +17,14 @@ const DashboardPage: React.FC = () => {
     setVehicleMode,
     selectedVehicle,
     setSelectedVehicle,
+    tripMode,
+    setTripMode,
+    selectedTrip,
+    setSelectedTrip,
     profileTabs,
     setProfileTabs,
     isViewMode,
-  } = useModes();
-
-  if (isDriver && error) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 8 }}>
-        <Typography color="error" align="center">
-          {error}
-        </Typography>
-      </Container>
-    );
-  }
-
+  } = useDashboardState();
   return (
     <Container maxWidth="md" sx={{ mt: 4, px: { xs: 1, sm: 2, md: 4 } }}>
       <Paper
@@ -61,43 +48,44 @@ const DashboardPage: React.FC = () => {
           >
             Mon Tableau de Bord
           </Typography>
-          {loading ? (
-            <ProfileLoading />
-          ) : (
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              sx={{ minWidth: '100%' }}
-            >
-              <DashboardHeader />
-              <DashboardFormSwitch
-                profileMode={profileMode}
-                onSetProfileMode={setProfileMode}
-                preferencesMode={preferencesMode}
-                onSetPreferencesMode={setPreferencesMode}
-                vehicleMode={vehicleMode}
-                onSetVehicleMode={setVehicleMode}
-                selectedVehicle={selectedVehicle}
-              />
-              {isViewMode && (
-                <Collapse in={isViewMode} sx={{ minWidth: '100%' }}>
-                  <ProfileView
-                    onSetProfileMode={() => setProfileMode('edit')}
-                    onSetVehicleMode={() => setVehicleMode('add')}
-                    profileTabs={profileTabs}
-                    onSetProfileTabs={setProfileTabs}
-                  />
-                  <DashboardListSwitch
-                    profileTabs={profileTabs}
-                    onSetPreferencesMode={setPreferencesMode}
-                    onSetVehicleMode={setVehicleMode}
-                    onSetSelectedVehicle={setSelectedVehicle}
-                  />
-                </Collapse>
-              )}
-            </Box>
-          )}
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            sx={{ minWidth: '100%' }}
+          >
+            <DashboardHeader />
+            <DashboardFormSwitch
+              profileMode={profileMode}
+              onSetProfileMode={setProfileMode}
+              preferencesMode={preferencesMode}
+              onSetPreferencesMode={setPreferencesMode}
+              vehicleMode={vehicleMode}
+              onSetVehicleMode={setVehicleMode}
+              selectedVehicle={selectedVehicle}
+              onSetTripMode={setTripMode}
+              tripMode={tripMode}
+              selectedTrip={selectedTrip}
+            />
+            {isViewMode && (
+              <Collapse in={isViewMode} sx={{ minWidth: '100%' }}>
+                <ProfileView
+                  profileTabs={profileTabs}
+                  onSetProfileTabs={setProfileTabs}
+                  onSetProfileMode={setProfileMode}
+                  onSetVehicleMode={setVehicleMode}
+                />
+                <DashboardListSwitch
+                  profileTabs={profileTabs}
+                  onSetPreferencesMode={setPreferencesMode}
+                  onSetVehicleMode={setVehicleMode}
+                  onSetSelectedVehicle={setSelectedVehicle}
+                  onSetTripMode={setTripMode}
+                  onSetSelectedTrip={setSelectedTrip}
+                />
+              </Collapse>
+            )}
+          </Box>
         </Box>
       </Paper>
     </Container>

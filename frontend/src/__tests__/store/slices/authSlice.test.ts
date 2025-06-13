@@ -3,6 +3,7 @@ import authReducer, {
   setCsrfToken,
   signin,
   signout,
+  setUser,
   type AuthState,
 } from '../../../store/slices/authSlice';
 
@@ -48,5 +49,12 @@ describe('authSlice reducer', () => {
     const newState = authReducer(initialState, setCsrfToken(token));
 
     expect(newState.csrfToken).toBe(token);
+  });
+
+  it('should handle updateUser', () => {
+    const updateUser = { id: '1', name: 'Test User' };
+    const newState = authReducer(initialState, setUser({ user: updateUser }));
+
+    expect(newState.user).toBe(updateUser);
   });
 });

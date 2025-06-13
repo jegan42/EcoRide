@@ -28,13 +28,20 @@ vi.mock('../../../components/vehicle/VehicleFormSwitch', () => ({
     <div data-testid="vehicle-form">{vehicleMode}</div>
   ),
 }));
+vi.mock('../../../components/trip/TripFormSwitch', () => ({
+  TripFormSwitch: ({ tripMode }: { tripMode: string }) => (
+    <div data-testid="trip-form">{tripMode}</div>
+  ),
+}));
 
 describe('DashboardFormSwitch', () => {
   const baseProps = {
     onSetProfileMode: vi.fn(),
     onSetPreferencesMode: vi.fn(),
     onSetVehicleMode: vi.fn(),
+    onSetTripMode: vi.fn(),
     selectedVehicle: null,
+    selectedTrip: null,
   };
 
   it('renders ProfileFormSwitch if profileMode is different from "view"', () => {
@@ -44,6 +51,7 @@ describe('DashboardFormSwitch', () => {
         profileMode="edit"
         preferencesMode="view"
         vehicleMode="view"
+        tripMode="view"
       />
     );
 
@@ -57,6 +65,7 @@ describe('DashboardFormSwitch', () => {
         profileMode="view"
         preferencesMode="edit"
         vehicleMode="view"
+        tripMode="view"
       />
     );
 
@@ -70,10 +79,25 @@ describe('DashboardFormSwitch', () => {
         profileMode="view"
         preferencesMode="view"
         vehicleMode="edit"
+        tripMode="view"
       />
     );
 
     expect(screen.getByTestId('vehicle-form')).toBeInTheDocument();
+  });
+
+  it('renders TripFormSwitch if tripMode is different from "view" and other modes are "view"', () => {
+    render(
+      <DashboardFormSwitch
+        {...baseProps}
+        profileMode="view"
+        preferencesMode="view"
+        vehicleMode="view"
+        tripMode="edit"
+      />
+    );
+
+    expect(screen.getByTestId('trip-form')).toBeInTheDocument();
   });
 
   it('renders nothing if all modes are "view"', () => {
@@ -83,6 +107,7 @@ describe('DashboardFormSwitch', () => {
         profileMode="view"
         preferencesMode="view"
         vehicleMode="view"
+        tripMode="view"
       />
     );
 
@@ -106,6 +131,7 @@ describe('DashboardFormSwitch', () => {
         profileMode="edit"
         preferencesMode="view"
         vehicleMode="view"
+        tripMode="view"
       />
     );
 

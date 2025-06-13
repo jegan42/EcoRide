@@ -1,11 +1,14 @@
 // frontend/src/component/dashboard/DashboardFormSwitch.tsx
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import { usePreferences } from '../../hooks/usePreferences';
 import { useProfile } from '../../hooks/useProfile';
+import { useTrip } from '../../hooks/useTrip';
 import { useVehicle } from '../../hooks/useVehicle';
+import type { Trip } from '../../types/trip';
 import type { Vehicle } from '../../types/vehicle';
 import { PreferencesFormSwitch } from '../preferences/PreferencesFormSwitch';
 import { ProfileFormSwitch } from '../profile/ProfileFormSwitch';
+import { TripFormSwitch } from '../trip/TripFormSwitch';
 import { VehicleFormSwitch } from '../vehicle/VehicleFormSwitch';
 
 interface Props {
@@ -16,6 +19,9 @@ interface Props {
   vehicleMode: FormMode;
   onSetVehicleMode: (mode: FormMode) => void;
   selectedVehicle: Vehicle | null;
+  onSetTripMode: (mode: FormMode) => void;
+  tripMode: FormMode;
+  selectedTrip: Trip | null;
 }
 
 export const DashboardFormSwitch: React.FC<Props> = ({
@@ -26,6 +32,9 @@ export const DashboardFormSwitch: React.FC<Props> = ({
   vehicleMode,
   onSetVehicleMode,
   selectedVehicle,
+  onSetTripMode,
+  tripMode,
+  selectedTrip,
 }) => {
   const { isSubmitting: isUserSubmitting } = useProfile();
 
@@ -33,13 +42,12 @@ export const DashboardFormSwitch: React.FC<Props> = ({
 
   const { isSubmitting: isVehicleSubmitting } = useVehicle();
 
-  const isSubmitting =
-    isUserSubmitting || isPreferencesSubmitting || isVehicleSubmitting;
+  const { isSubmitting: isTripSubmitting } = useTrip();
 
   if (profileMode !== 'view') {
     return (
       <ProfileFormSwitch
-        isSubmitting={isSubmitting}
+        isSubmitting={isUserSubmitting}
         profileMode={profileMode}
         onSetProfileMode={onSetProfileMode}
       />
@@ -49,7 +57,7 @@ export const DashboardFormSwitch: React.FC<Props> = ({
   if (preferencesMode !== 'view') {
     return (
       <PreferencesFormSwitch
-        isSubmitting={isSubmitting}
+        isSubmitting={isPreferencesSubmitting}
         preferencesMode={preferencesMode}
         onSetPreferencesMode={onSetPreferencesMode}
       />
@@ -60,12 +68,22 @@ export const DashboardFormSwitch: React.FC<Props> = ({
     return (
       <VehicleFormSwitch
         selectedVehicle={selectedVehicle}
-        isSubmitting={isSubmitting}
+        isSubmitting={isVehicleSubmitting}
         vehicleMode={vehicleMode}
         onSetVehicleMode={onSetVehicleMode}
       />
     );
   }
 
+  if (tripMode !== 'view') {
+    return (
+      <TripFormSwitch
+        selectedTrip={selectedTrip}
+        isSubmitting={isTripSubmitting}
+        tripMode={tripMode}
+        onSetTripMode={onSetTripMode}
+      />
+    );
+  }
   return null;
 };

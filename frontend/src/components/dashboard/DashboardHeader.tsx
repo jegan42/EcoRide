@@ -20,7 +20,7 @@ export const DashboardHeader: React.FC = () => {
       <Typography
         variant="h5"
         fontWeight="bold"
-        sx={{ color: theme.palette.primary.main }}
+        sx={{ color: theme.palette.primary.main, textTransform: 'uppercase' }}
         gutterBottom
       >
         {user?.username}

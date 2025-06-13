@@ -24,9 +24,11 @@ export const vehicleSchema = z
         (val) => /^[A-Z0-9-]+$/.test(val),
         'Caractères autorisés : lettres, chiffres, tirets'
       ),
-    energy: z.enum(vehicleEnergyEnum, {
-      errorMap: () => ({ message: "Le type d'énergie est invalide" }),
-    }),
+    energy: z
+      .enum(vehicleEnergyEnum, {
+        errorMap: () => ({ message: "Le type d'énergie est invalide" }),
+      })
+      .or(z.literal('')),
     seatCount: z.string().nonempty('Le nombre de places est requis'),
     photo: z
       .union([z.string().url('URL invalide'), z.literal(''), z.undefined()])

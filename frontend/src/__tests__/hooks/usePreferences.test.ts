@@ -1,4 +1,4 @@
-// tests/__tests__/hooks/usePreferences.test
+// tests/__tests__/hooks/usePreferences.test.ts
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { usePreferences } from '../../hooks/usePreferences';
 import userPreferencesService from '../../services/userPreferencesService';
@@ -47,7 +47,7 @@ describe('usePreferences', () => {
     });
 
     expect(result.current.error).toBe(
-      'Erreur lors du chargement des préférences'
+      'Vous n’avez encore enregistré aucune préférence.'
     );
     expect(enqueue.enqueueSnackbarError).toHaveBeenCalled();
   });

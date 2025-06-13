@@ -3,24 +3,32 @@ import React, { type JSX } from 'react';
 import { Typography, Button, Stack, Box } from '@mui/material';
 import { ProfileTabs, type ProfileTabsMode } from './ProfileTabs';
 import { useProfile } from '../../hooks/useProfile';
+import type { FormMode } from '../../hooks/useDashboardState';
 
 interface Props {
-  onSetProfileMode: () => void;
-  onSetVehicleMode: () => void;
   profileTabs: ProfileTabsMode;
   onSetProfileTabs: (mode: ProfileTabsMode) => void;
+  onSetProfileMode: (mode: FormMode) => void;
+  onSetVehicleMode: (mode: FormMode) => void;
 }
 
 export const ProfileView: React.FC<Props> = ({
-  onSetProfileMode,
-  onSetVehicleMode,
   profileTabs,
   onSetProfileTabs,
+  onSetProfileMode,
+  onSetVehicleMode,
 }): JSX.Element => {
-  const { user } = useProfile();
+  const { user, isDriver } = useProfile();
   return (
     <>
-      <Box sx={{ display: 'flex', width: '80%', mx: 'auto' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '80%',
+          mx: 'auto',
+          textTransform: 'capitalize',
+        }}
+      >
         <Stack spacing={1} width="100%" mt={2}>
           <Info label="Prénom" value={user?.firstName} />
           <Info label="Nom" value={user?.lastName} />
@@ -43,17 +51,19 @@ export const ProfileView: React.FC<Props> = ({
         <Button
           variant="contained"
           sx={{ mt: 4, fontSize: { xs: '0.8rem', md: '1rem' } }}
-          onClick={onSetProfileMode}
+          onClick={() => onSetProfileMode('edit')}
         >
           Modifier mon profil
         </Button>
-        <Button
-          variant="contained"
-          sx={{ mt: 4, fontSize: { xs: '0.8rem', md: '1rem' } }}
-          onClick={onSetVehicleMode}
-        >
-          Ajouter un véhicule
-        </Button>
+        {!isDriver && (
+          <Button
+            variant="contained"
+            sx={{ mt: 4, fontSize: { xs: '0.8rem', md: '1rem' } }}
+            onClick={() => onSetVehicleMode('add')}
+          >
+            Ajouter un véhicule
+          </Button>
+        )}
       </Box>
       <Box sx={{ mt: 4 }}>
         <ProfileTabs profileTabs={profileTabs} onChange={onSetProfileTabs} />

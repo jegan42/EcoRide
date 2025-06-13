@@ -39,9 +39,13 @@ const authSlice = createSlice({
     setCsrfToken(state, action: PayloadAction<string>) {
       state.csrfToken = action.payload;
     },
+    setUser(state, action: PayloadAction<{ user: Partial<User> }>) {
+      state.user = action.payload.user;
+      state.loading = false;
+    },
   },
 });
 
-export const { setAuthLoading, signin, signout, setCsrfToken } =
+export const { setAuthLoading, signin, signout, setCsrfToken, setUser } =
   authSlice.actions;
 export default authSlice.reducer;

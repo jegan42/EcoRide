@@ -7,7 +7,6 @@ import {
   Button,
   Box,
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -70,7 +69,14 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmitHandler)} noValidate>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmitHandler)}
+      noValidate
+      sx={{
+        width: '100%',
+      }}
+    >
       {Object.entries(vehicleFields)
         .filter(([_key, label]) => label !== '')
         .map(([key, label]) =>
@@ -86,7 +92,7 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
               <Controller
                 name="energy"
                 control={control}
-                defaultValue={undefined}
+                defaultValue={defaultValues?.energy ?? ''}
                 render={({ field }) => (
                   <Select labelId="energy-label" label={label} {...field}>
                     {energyOptions.map(({ value, label }) => (
@@ -97,9 +103,6 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
                   </Select>
                 )}
               />
-              {errors.energy && (
-                <FormHelperText>{errors.energy.message}</FormHelperText>
-              )}
             </FormControl>
           ) : (
             <TextField

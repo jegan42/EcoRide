@@ -1,0 +1,106 @@
+// frontend/src/component/trip/TripCard.tsx
+import { Paper, Box, Stack, Typography, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import type { Trip } from '../../types/trip';
+import { useDialog } from '../../hooks/useDialog';
+import { ConfirmDialog } from '../dailog/ConfirmDialog';
+import { formatDateTime } from '../../utils/formatDateTime';
+import { formatField } from '../../utils/formatField';
+
+interface Props {
+  trip?: Partial<Trip>;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
+  const { dialogOpen, setDialogOpen, handleDeleteClick, handleConfirmDelete } =
+    useDialog();
+
+  const tripId = trip?.id;
+
+  return (
+    <Paper
+      elevation={3}
+      sx={(theme) => ({
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 3,
+        border: `2px solid ${theme.palette.primary.main}`,
+        gap: 2,
+        textTransform: 'capitalize',
+      })}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Stack spacing={1}>
+          <Typography variant="subtitle2" fontWeight={700}>
+            Trajet
+          </Typography>
+          <Typography variant="body2">
+            {trip?.departureCity} → {trip?.arrivalCity}
+          </Typography>
+          <Typography variant="body2">
+            Départ : {formatDateTime(trip?.departureDate)}
+          </Typography>
+          <Typography variant="body2">
+            Arrivée : {formatDateTime(trip?.arrivalDate)}
+          </Typography>
+        </Stack>
+
+        <Stack spacing={1}>
+          <Typography variant="subtitle2" fontWeight={700}>
+            Infos
+          </Typography>
+          <Typography variant="body2">
+            Prix : {formatField(trip?.price)} €
+          </Typography>
+          <Typography variant="body2">
+            Places dispo : {formatField(trip?.availableSeats)}
+          </Typography>
+          <Typography variant="body2">
+            Statut : {formatField(trip?.status)}
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="column"
+          alignItems="center"
+          justifyContent={'space-between'}
+        >
+          <IconButton
+            aria-label="edit"
+            onClick={() => tripId && onEdit(tripId)}
+            sx={(theme) => ({ color: theme.palette.primary.main })}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            aria-label="cancel"
+            onClick={() => tripId && handleDeleteClick(tripId)}
+            sx={(theme) => ({ color: theme.palette.error.main })}
+          >
+            <DeleteForeverIcon />
+          </IconButton>
+        </Stack>
+      </Box>
+
+      <ConfirmDialog
+        open={dialogOpen}
+        message={`Es-tu sûr de vouloir supprimer \
+                le voyage ${trip?.departureCity} → ${trip?.arrivalCity} \
+                du ${formatDateTime(trip?.departureDate)} au ${formatDateTime(trip?.arrivalDate)} ?`}
+        onCancel={() => setDialogOpen(false)}
+        onConfirm={() => onDelete && handleConfirmDelete(onDelete)}
+      />
+    </Paper>
+  );
+};

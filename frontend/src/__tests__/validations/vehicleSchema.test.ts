@@ -1,4 +1,4 @@
-// frontend/src/test/validations/vehicleSchema.ts
+// frontend/src/__tests__/validations/vehicleSchema.ts
 import {
   vehicleSchema,
   parseVehicleForm,
@@ -108,23 +108,5 @@ describe('vehicleSchema', () => {
     expect(parsed.seatCount).toBe(5);
     expect(parsed.energy).toBe('petrol');
     expect(parsed.photo).toBe('https://test.com/');
-  });
-
-  it('should reject empty string as energy', () => {
-    const result = vehicleSchema.safeParse({
-      brand: 'Toyota',
-      model: 'Yaris',
-      color: 'Rouge',
-      vehicleYear: '2020',
-      licensePlate: 'AB-123-CD',
-      energy: '',
-      seatCount: '5',
-      photo: '',
-    });
-
-    expect(result.success).toBe(false);
-    expect(result.error?.format().energy?._errors[0]).toBe(
-      "Le type d'énergie est invalide"
-    );
   });
 });

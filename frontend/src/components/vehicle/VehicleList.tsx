@@ -1,9 +1,12 @@
 // frontend/src/component/vehicle/VehicleList.tsx
-import { Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { type Vehicle } from '../../types/vehicle';
 import { useVehicle } from '../../hooks/useVehicle';
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import { VehicleCard } from './VehicleCard';
+import { useFilterVehicle } from '../../hooks/useFilterVehicle';
+import { VehicleFilters } from './VehicleFilters';
+import { VehicleSort } from './VehicleSort';
 
 interface Props {
   onSetVehicleMode: (mode: FormMode) => void;
@@ -14,16 +17,86 @@ export const VehicleList: React.FC<Props> = ({
   onSetVehicleMode,
   onSetSelectedVehicle,
 }) => {
-  const { vehicles, onDeleteVehicle } = useVehicle();
+  const { error, vehicles, onDeleteVehicle } = useVehicle();
+
+  const vehiclesToSet = (vehicles ?? []).filter(
+    (v): v is Vehicle => v !== undefined
+  );
+
+  const {
+    filteredVehicles,
+    energyFilter,
+    seatFilter,
+    sortKey,
+    sortOrder,
+    setEnergyFilter,
+    setSeatFilter,
+    setSortKey,
+    setSortOrder,
+    resetfilters,
+  } = useFilterVehicle(vehiclesToSet);
+
+  const filteredVehiclesToSet = filteredVehicles.filter(
+    (v): v is Vehicle => v !== undefined
+  );
 
   return (
     <>
-      {vehicles.length > 0 ? (
-        vehicles.map((vehicle) => {
-          if (!vehicle) return;
+      {error && (
+        <Typography variant="body1" color="text.secondary">
+          {error}
+        </Typography>
+      )}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2,
+          mt: 3,
+        }}
+      >
+        <VehicleFilters
+          filteredVehicles={filteredVehiclesToSet}
+          energyFilter={energyFilter}
+          seatFilter={seatFilter}
+          setEnergyFilter={setEnergyFilter}
+          setSeatFilter={setSeatFilter}
+          resetfilters={resetfilters}
+        />
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between',
+          gap: 2,
+          mt: 3,
+        }}
+      >
+        <VehicleSort
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          setSortKey={setSortKey}
+          setSortOrder={setSortOrder}
+        />
+        <Button
+          variant="contained"
+          sx={{
+            fontSize: '0.85rem',
+            whiteSpace: 'nowrap',
+            alignSelf: { xs: 'stretch', sm: 'center' },
+          }}
+          onClick={() => onSetVehicleMode('add')}
+        >
+          Ajouter un véhicule
+        </Button>
+      </Box>
+
+      {filteredVehiclesToSet.length > 0 ? (
+        filteredVehiclesToSet.map((vehicle) => {
           return (
             <VehicleCard
-              key={vehicle?.id}
+              key={vehicle.id}
               vehicle={vehicle}
               onEdit={() => {
                 onSetVehicleMode('edit');
@@ -35,7 +108,7 @@ export const VehicleList: React.FC<Props> = ({
         })
       ) : (
         <Typography variant="body1" sx={{ mt: 2 }} color="text.secondary">
-          Vous n’avez encore enregistré aucun véhicule.
+          Aucun véhicule ne correspond aux filtres.
         </Typography>
       )}
     </>

@@ -1,6 +1,6 @@
 // frontend/src/component/preferences/PreferencesFormSwitch.tsx
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
-import type { FormMode } from '../../hooks/useModes';
+import type { FormMode } from '../../hooks/useDashboardState';
 import { PreferencesForm } from './PreferencesForm';
 import { usePreferences } from '../../hooks/usePreferences';
 

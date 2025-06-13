@@ -1,5 +1,6 @@
 // frontend/src/hooks/useVehicle.ts
 import { useEffect, useState } from 'react';
+import { setUser } from '../store/slices/authSlice';
 import vehicleService from '../services/vehicleService';
 import {
   enqueueSnackbarError,
@@ -7,6 +8,8 @@ import {
 } from '../utils/enqueueSnackbar';
 import type { VehicleFormOutput } from '../validations/vehicleSchema';
 import type { Vehicle } from '../types/vehicle';
+import userService from '../services/userService';
+import { useDispatch } from 'react-redux';
 
 export const useVehicle = (): {
   vehicles: Partial<Vehicle[]>;
@@ -18,6 +21,7 @@ export const useVehicle = (): {
   onUpdateVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
   onDeleteVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
 } => {
+  const dispatch = useDispatch();
   const [vehicle, setVehicle] = useState<Partial<Vehicle> | undefined>(
     undefined
   );
@@ -47,11 +51,15 @@ export const useVehicle = (): {
   const onCreateVehicle = async (data: VehicleFormOutput): Promise<boolean> => {
     setIsSubmitting(true);
     try {
-      const { data: newVehicle, message } =
+      const { data: newVehicle, message: vehicleMessage } =
         await vehicleService.createVehicle(data);
       setVehicle(newVehicle);
       setVehicles((prev) => [...prev, newVehicle]);
-      enqueueSnackbarSuccess(message);
+      enqueueSnackbarSuccess(vehicleMessage);
+      const { data: user, message: userMessage } =
+        await userService.fetchUser();
+      dispatch(setUser({ user }));
+      enqueueSnackbarSuccess(userMessage);
       return true;
     } catch (err) {
       enqueueSnackbarError(err);
@@ -81,6 +89,7 @@ export const useVehicle = (): {
       return true;
     } catch (error) {
       enqueueSnackbarError(error);
+      setError('Erreur lors de la mise à jour du véhicule');
       return false;
     } finally {
       setIsSubmitting(false);
@@ -104,6 +113,7 @@ export const useVehicle = (): {
       return true;
     } catch (error) {
       enqueueSnackbarError(error);
+      setError('Erreur lors de la suppression du véhicule');
       return false;
     } finally {
       setIsSubmitting(false);
