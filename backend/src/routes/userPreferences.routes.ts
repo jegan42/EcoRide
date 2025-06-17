@@ -23,7 +23,6 @@ router.get('/me', authenticate, PreferencesController.getUser);
 
 router.get(
   '/:id',
-  authenticate,
   uuidParamValidator,
   handleValidationErrors,
   PreferencesController.getByUserId

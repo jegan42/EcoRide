@@ -21,7 +21,7 @@ router.get(
   TripController.getByDriver
 );
 
-router.get('/', searchTripValidator, TripController.getAll);
+router.post('/search', searchTripValidator, TripController.getAll);
 
 router.get(
   '/:id',

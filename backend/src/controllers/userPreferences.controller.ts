@@ -67,7 +67,6 @@ export class PreferencesController {
     res: Response
   ): Promise<void> => {
     const { id } = req.params;
-    if (!assertOwnership(req, res, id)) return;
 
     try {
       const userPreferences = await prismaNewClient.userPreferences.findUnique({
