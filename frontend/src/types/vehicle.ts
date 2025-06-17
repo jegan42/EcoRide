@@ -34,7 +34,7 @@ export const energyOptions: { value: VehicleEnergy; label: string }[] = [
   { value: 'hybrid', label: 'Hybride' },
   { value: 'lpg', label: 'GPL' },
   { value: 'electric', label: 'Électrique' },
-  { value: 'plug_in_hybrid', label: 'Hybride rechargeable' },
+  { value: 'plug_in_hybrid', label: 'Rechargeable' },
   { value: 'cng', label: 'GNC' },
   { value: 'hydrogen', label: 'Hydrogène' },
   { value: 'ethanol', label: 'Éthanol' },
@@ -45,3 +45,11 @@ export const getEnergyLabel = (value?: VehicleEnergy): string => {
     energyOptions.find((option) => option.value === value)?.label ?? value ?? ''
   );
 };
+
+export const fuelEcoGroups = {
+  notEco: ['diesel', 'petrol', 'lpg'],
+  mediumEco: ['cng', 'ethanol', 'hybrid', 'plug_in_hybrid'],
+  eco: ['electric', 'hydrogen'],
+};
+
+export type FuelEcoGroup = 'eco' | 'mediumEco' | 'notEco' | 'unknown';

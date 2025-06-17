@@ -1,5 +1,5 @@
 // frontend/src/utils/formatField.ts
 
-export function formatField(value: unknown): string {
+export const formatField = (value: unknown): string => {
   return value != null && value !== '' ? String(value) : '—';
-}
+};

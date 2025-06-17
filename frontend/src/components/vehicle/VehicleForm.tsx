@@ -18,7 +18,6 @@ import {
   type VehicleFormOutput,
 } from '../../validations/vehicleSchema';
 import { energyOptions, type Vehicle } from '../../types/vehicle';
-import { cleanPayload } from '../../utils/cleanPayload';
 
 interface VehicleFormProps {
   defaultValues?: Partial<Vehicle> | null;
@@ -64,7 +63,7 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
   });
 
   const onSubmitHandler = (data: VehicleFormData): void => {
-    const cleanedData = cleanPayload(parseVehicleForm(data));
+    const cleanedData = parseVehicleForm(data);
     onSubmit(cleanedData);
   };
 

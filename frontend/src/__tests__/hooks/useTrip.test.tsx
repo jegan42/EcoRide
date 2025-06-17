@@ -7,8 +7,23 @@ import * as snackbar from '../../utils/enqueueSnackbar';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { TripStatus } from '../../types/trip';
 import type { JSX } from 'react';
+import authReducer from '../../store/slices/authSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
 
 const theme = createTheme();
+
+const store = configureStore({
+  reducer: { auth: authReducer },
+  preloadedState: {
+    auth: {
+      user: null,
+      isAuthenticated: false,
+      loading: true,
+      csrfToken: null,
+    },
+  },
+});
 
 vi.mock('../../services/tripService');
 vi.mock('../../utils/enqueueSnackbar');
@@ -18,7 +33,11 @@ describe('useTrip - onCreateTrip', () => {
     children,
   }: {
     children: React.ReactNode;
-  }): JSX.Element => <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  }): JSX.Element => (
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </Provider>
+  );
 
   const mockTrip = {
     id: '1',
@@ -234,7 +253,7 @@ describe('useTrip - onCreateTrip', () => {
   it('handles create error', async () => {
     (tripService.createTrip as jest.Mock).mockRejectedValue('Erreur');
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await act(async () => {
       const success = await result.current.onCreateTrip({
@@ -266,7 +285,7 @@ describe('useTrip - onCreateTrip', () => {
       message: 'Modifié',
     });
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await waitFor(() => {
       expect(result.current.trips).toEqual([initial]);
@@ -284,7 +303,7 @@ describe('useTrip - onCreateTrip', () => {
   it('handles update error', async () => {
     (tripService.updateTrip as jest.Mock).mockRejectedValue('Erreur maj');
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await act(async () => {
       const success = await result.current.onUpdateTrip('1', mockTrip);
@@ -312,7 +331,7 @@ describe('useTrip - onCreateTrip', () => {
       message: 'Mise à jour',
     });
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await act(async () => {
       await result.current.onCreateTrip(oldTrip);
@@ -367,7 +386,7 @@ describe('useTrip - onCreateTrip', () => {
       'Erreur annulation'
     );
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await act(async () => {
       const success = await result.current.onCancelTrip('1');
@@ -404,7 +423,7 @@ describe('useTrip - onCreateTrip', () => {
       message: 'Trajet annulé',
     });
 
-    const { result } = renderHook(() => useTrip());
+    const { result } = renderHook(() => useTrip(), { wrapper });
 
     await act(async () => {
       await result.current.onCreateTrip(trip1);
@@ -429,5 +448,56 @@ describe('useTrip - onCreateTrip', () => {
     expect(snackbar.enqueueSnackbarSuccess).toHaveBeenCalledWith(
       'Trajet annulé'
     );
+  });
+
+  it("filters out user's own trip when user is authenticated", async () => {
+    const user = { id: 'u1', username: 'Alice' };
+
+    const storeWithUser = configureStore({
+      reducer: { auth: authReducer },
+      preloadedState: {
+        auth: {
+          user,
+          isAuthenticated: true,
+          loading: false,
+          csrfToken: 'test-token',
+        },
+      },
+    });
+
+    const wrapperWithUser = ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }): JSX.Element => (
+      <Provider store={storeWithUser}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </Provider>
+    );
+
+    const tripByUser = { ...mockTrip, driverId: 'u1' };
+    const tripByOther = { ...mockTrip, id: '2', driverId: 'u2' };
+
+    (tripService.fetchTrips as jest.Mock).mockResolvedValue({
+      data: [tripByUser, tripByOther],
+      message: 'Filtres appliqués',
+    });
+
+    const { result } = renderHook(() => useTrip(), {
+      wrapper: wrapperWithUser,
+    });
+
+    await act(async () => {
+      const success = await result.current.fetchTrips({});
+      expect(success).toBe(true);
+    });
+
+    await waitFor(() => {
+      expect(result.current.allTrips).toEqual([tripByOther]);
+      expect(result.current.allTrips).not.toContainEqual(tripByUser);
+      expect(snackbar.enqueueSnackbarSuccess).toHaveBeenCalledWith(
+        'Filtres appliqués'
+      );
+    });
   });
 });

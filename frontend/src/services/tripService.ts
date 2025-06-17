@@ -10,25 +10,28 @@ const fetchTrips = async (
   filters?: Partial<{
     departureCity: string;
     arrivalCity: string;
-    date: string;
+    departureDate: string;
     flexible: boolean;
   }>
 ): Promise<ApiResponse<Trip[]>> => {
-  const params: Partial<{
+  const body: Partial<{
     departureCity: string;
     arrivalCity: string;
-    date: string;
+    departureDate: string;
     flexible: boolean;
   }> = {};
-  if (filters?.departureCity) params.departureCity = filters.departureCity;
-  if (filters?.arrivalCity) params.arrivalCity = filters.arrivalCity;
-  if (filters?.date) params.date = filters.date;
-  if (filters?.flexible) params.flexible = filters.flexible;
+  if (filters?.departureCity) body.departureCity = filters.departureCity;
+  if (filters?.arrivalCity) body.arrivalCity = filters.arrivalCity;
+  if (filters?.departureDate) body.departureDate = filters.departureDate;
+  if (filters?.flexible) body.flexible = filters.flexible;
 
-  const response = await api.get(`${API_URL}/trips`, {
-    withCredentials: true,
-    params,
-  });
+  const response = await api.post(
+    `${API_URL}/trips/search`,
+    cleanPayload(body),
+    {
+      withCredentials: true,
+    }
+  );
   return handleApiResponseSafe<Trip[]>(response.data);
 };
 

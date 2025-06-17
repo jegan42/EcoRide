@@ -29,9 +29,7 @@ const fetchUserPreferences = async (): Promise<
 const fetchUserPreferencesById = async (
   userId: string
 ): Promise<ApiResponse<UserPreferences>> => {
-  const response = await api.get(`${API_URL}/preferences/${userId}`, {
-    withCredentials: true,
-  });
+  const response = await api.get(`${API_URL}/preferences/${userId}`);
   return handleApiResponseSafe<UserPreferences>(response.data);
 };
 

@@ -5,6 +5,8 @@ import Signin from '../pages/SigninPage';
 import ProtectedRoute from './ProtectedRoute';
 import Dashboard from '../pages/Dashboard';
 import { AppLayout } from '../layouts/AppLayout';
+import { FindTripPage } from '../pages/FindTripPage';
+import { TripDetailsPage } from '../pages/TripDetailsPage';
 
 const router = createBrowserRouter([
   {
@@ -12,6 +14,8 @@ const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { path: 'signin', element: <Signin /> },
+      { path: 'findtrip', element: <FindTripPage /> },
+      { path: 'tripdetails/:id', element: <TripDetailsPage /> },
       {
         element: <ProtectedRoute />,
         children: [

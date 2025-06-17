@@ -11,7 +11,7 @@ describe('vehicleService', () => {
   });
 
   it('createVehicle calls api.post with the correct parameters', async () => {
-    const mockVehicle = { id: 'v1', brand: 'Tesla' };
+    const mockVehicle = { id: 'v1', brand: 'tesla' };
     (api.post as jest.Mock).mockResolvedValue({
       data: {
         message: 'createVehicle successful',
@@ -19,11 +19,11 @@ describe('vehicleService', () => {
       },
     });
 
-    const result = await vehicleService.createVehicle({ brand: 'Tesla' });
+    const result = await vehicleService.createVehicle({ brand: 'tesla' });
 
     expect(api.post).toHaveBeenCalledWith(
       expect.stringMatching(/\/vehicles$/),
-      { brand: 'Tesla' },
+      { brand: 'tesla' },
       { withCredentials: true }
     );
     expect(result.message).toBe('createVehicle successful');
@@ -70,7 +70,7 @@ describe('vehicleService', () => {
 
   it('updateVehicle appelle api.put avec id et les données', async () => {
     const vehicleId = 'v123';
-    const updates = { brand: 'Peugeot' };
+    const updates = { brand: 'peugeot' };
     const mockResponse = { id: vehicleId, ...updates };
     (api.put as jest.Mock).mockResolvedValue({
       data: {

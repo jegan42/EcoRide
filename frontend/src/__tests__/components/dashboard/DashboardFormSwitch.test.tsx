@@ -2,6 +2,9 @@
 import { render, screen } from '@testing-library/react';
 import { DashboardFormSwitch } from '../../../components/dashboard/DashboardFormSwitch';
 import { vi } from 'vitest';
+import authReducer from '../../../store/slices/authSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
 
 vi.mock('../../../hooks/useProfile', () => ({
   useProfile: () => ({ isSubmitting: false }),
@@ -43,16 +46,29 @@ describe('DashboardFormSwitch', () => {
     selectedVehicle: null,
     selectedTrip: null,
   };
+  const store = configureStore({
+    reducer: { auth: authReducer },
+    preloadedState: {
+      auth: {
+        user: null,
+        isAuthenticated: false,
+        loading: true,
+        csrfToken: null,
+      },
+    },
+  });
 
   it('renders ProfileFormSwitch if profileMode is different from "view"', () => {
     render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="edit"
-        preferencesMode="view"
-        vehicleMode="view"
-        tripMode="view"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="edit"
+          preferencesMode="view"
+          vehicleMode="view"
+          tripMode="view"
+        />
+      </Provider>
     );
 
     expect(screen.getByTestId('profile-form')).toBeInTheDocument();
@@ -60,13 +76,15 @@ describe('DashboardFormSwitch', () => {
 
   it('returns PreferencesFormSwitch if preferencesMode is different from "view" and profileMode is "view"', () => {
     render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="view"
-        preferencesMode="edit"
-        vehicleMode="view"
-        tripMode="view"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="view"
+          preferencesMode="edit"
+          vehicleMode="view"
+          tripMode="view"
+        />
+      </Provider>
     );
 
     expect(screen.getByTestId('preferences-form')).toBeInTheDocument();
@@ -74,13 +92,15 @@ describe('DashboardFormSwitch', () => {
 
   it('renders VehicleFormSwitch if vehicleMode is different from "view" and other modes are "view"', () => {
     render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="view"
-        preferencesMode="view"
-        vehicleMode="edit"
-        tripMode="view"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="view"
+          preferencesMode="view"
+          vehicleMode="edit"
+          tripMode="view"
+        />
+      </Provider>
     );
 
     expect(screen.getByTestId('vehicle-form')).toBeInTheDocument();
@@ -88,13 +108,15 @@ describe('DashboardFormSwitch', () => {
 
   it('renders TripFormSwitch if tripMode is different from "view" and other modes are "view"', () => {
     render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="view"
-        preferencesMode="view"
-        vehicleMode="view"
-        tripMode="edit"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="view"
+          preferencesMode="view"
+          vehicleMode="view"
+          tripMode="edit"
+        />
+      </Provider>
     );
 
     expect(screen.getByTestId('trip-form')).toBeInTheDocument();
@@ -102,13 +124,15 @@ describe('DashboardFormSwitch', () => {
 
   it('renders nothing if all modes are "view"', () => {
     const { container } = render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="view"
-        preferencesMode="view"
-        vehicleMode="view"
-        tripMode="view"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="view"
+          preferencesMode="view"
+          vehicleMode="view"
+          tripMode="view"
+        />
+      </Provider>
     );
 
     expect(container).toBeEmptyDOMElement();
@@ -126,13 +150,15 @@ describe('DashboardFormSwitch', () => {
     }));
 
     const { unmount } = render(
-      <DashboardFormSwitch
-        {...baseProps}
-        profileMode="edit"
-        preferencesMode="view"
-        vehicleMode="view"
-        tripMode="view"
-      />
+      <Provider store={store}>
+        <DashboardFormSwitch
+          {...baseProps}
+          profileMode="edit"
+          preferencesMode="view"
+          vehicleMode="view"
+          tripMode="view"
+        />
+      </Provider>
     );
 
     expect(screen.getByTestId('profile-form')).toBeInTheDocument();

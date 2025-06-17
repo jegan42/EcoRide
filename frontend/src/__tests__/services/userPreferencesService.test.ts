@@ -66,8 +66,7 @@ describe('userPreferencesService', () => {
       await userPreferencesService.fetchUserPreferencesById(userId);
 
     expect(api.get).toHaveBeenCalledWith(
-      expect.stringMatching(new RegExp(`/preferences/${userId}$`)),
-      { withCredentials: true }
+      expect.stringMatching(new RegExp(`/preferences/${userId}$`))
     );
     expect(result.message).toBe('getPreferencesById successful');
     expect(result.data).toEqual(mockResponse);
@@ -87,7 +86,7 @@ describe('userPreferencesService', () => {
       await userPreferencesService.updateUserPreferences(prefsData);
 
     expect(api.put).toHaveBeenCalledWith(
-      expect.stringMatching(new RegExp(`/preferences`)),
+      expect.stringMatching(/\/preferences/),
       prefsData,
       { withCredentials: true }
     );
@@ -105,7 +104,7 @@ describe('userPreferencesService', () => {
     const result = await userPreferencesService.deleteUserPreferences();
 
     expect(api.delete).toHaveBeenCalledWith(
-      expect.stringMatching(new RegExp(`/preferences`)),
+      expect.stringMatching(/\/preferences/),
       { withCredentials: true }
     );
     expect(result.message).toBe('deletePreferences successful');

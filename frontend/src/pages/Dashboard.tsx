@@ -26,7 +26,7 @@ const DashboardPage: React.FC = () => {
     isViewMode,
   } = useDashboardState();
   return (
-    <Container maxWidth="md" sx={{ mt: 4, px: { xs: 1, sm: 2, md: 4 } }}>
+    <Container maxWidth="md" sx={{ my: 4, px: { xs: 1, sm: 2, md: 4 } }}>
       <Paper
         elevation={3}
         sx={{

@@ -12,32 +12,36 @@ describe('tripService', () => {
 
   it('fetchTrips calls api.get without filter', async () => {
     const mockTrips = [{ id: '1' }, { id: '2' }];
-    (api.get as jest.Mock).mockResolvedValue({
+    (api.post as jest.Mock).mockResolvedValue({
       data: {
         message: 'getAllTrips successful',
         data: mockTrips,
       },
     });
 
-    const result = await tripService.fetchTrips();
+    const result = await tripService.fetchTrips({});
 
-    expect(api.get).toHaveBeenCalledWith(expect.stringMatching(/\/trips$/), {
-      withCredentials: true,
-      params: {},
-    });
+    expect(api.post).toHaveBeenCalledWith(
+      expect.stringMatching(/\/trips\/search$/),
+      {},
+      {
+        withCredentials: true,
+      }
+    );
     expect(result.message).toBe('getAllTrips successful');
     expect(result.data).toEqual(mockTrips);
   });
 
-  it('fetchTrips calls api.get with filters', async () => {
+  it('fetchTrips calls api.post with filters', async () => {
     const filters = {
-      departureCity: 'Paris',
-      arrivalCity: 'Lyon',
-      date: '2025-06-01',
+      departureCity: 'paris',
+      arrivalCity: 'lyon',
+      departureDate: '2025-06-16T00:00:00.000Z',
       flexible: true,
     };
+
     const mockTrips = [{ id: 'filtered-trip' }];
-    (api.get as jest.Mock).mockResolvedValue({
+    (api.post as jest.Mock).mockResolvedValue({
       data: {
         message: 'getTripWithFilters successful',
         data: mockTrips,
@@ -46,10 +50,12 @@ describe('tripService', () => {
 
     const result = await tripService.fetchTrips(filters);
 
-    expect(api.get).toHaveBeenCalledWith(expect.stringMatching(/\/trips$/), {
-      withCredentials: true,
-      params: filters,
-    });
+    expect(api.post).toHaveBeenCalledWith(
+      expect.stringMatching(/\/trips\/search$/),
+      filters,
+      { withCredentials: true }
+    );
+
     expect(result.message).toBe('getTripWithFilters successful');
     expect(result.data).toEqual(mockTrips);
   });
@@ -93,7 +99,7 @@ describe('tripService', () => {
   });
 
   it('createTrip calls api.post with the trip data', async () => {
-    const tripData = { departureCity: 'Paris' };
+    const tripData = { departureCity: 'paris' };
     const mockCreatedTrip = { id: 'new-trip', ...tripData };
     (api.post as jest.Mock).mockResolvedValue({
       data: {
@@ -115,7 +121,7 @@ describe('tripService', () => {
 
   it('updateTrip calls api.put with trip id and data', async () => {
     const tripId = 't2';
-    const updateData = { arrivalCity: 'Nice' };
+    const updateData = { arrivalCity: 'nice' };
     const updatedTrip = { id: tripId, ...updateData };
     (api.put as jest.Mock).mockResolvedValue({
       data: {

@@ -19,13 +19,7 @@ import authService from '../../services/authService';
 import { signout as signoutAction } from '../../store/slices/authSlice';
 import { enqueueSnackbarSuccess } from '../../utils/enqueueSnackbar';
 import { HeaderLogButton } from './HeaderLogButton';
-
-const navLinks = [
-  { label: 'Accueil', to: '/' },
-  { label: 'Trouver trajet', to: '/findtrip' },
-  { label: 'À propos', to: '/about' },
-  { label: 'Tableau de board', to: '/dashboard' },
-];
+import { useAppSelector } from '../../hooks/useAppSelector';
 
 export const HeaderNav = (): JSX.Element => {
   const theme = useTheme();
@@ -39,6 +33,16 @@ export const HeaderNav = (): JSX.Element => {
     dispatch(signoutAction());
     enqueueSnackbarSuccess(message);
   };
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const navLinks = [
+    { label: 'Accueil', to: '/' },
+    { label: 'Trouver trajet', to: '/findtrip' },
+    { label: 'À propos', to: '/about' },
+    ...(isAuthenticated
+      ? [{ label: 'Tableau de board', to: '/dashboard' }]
+      : []),
+  ];
   if (isMobile) {
     return (
       <>

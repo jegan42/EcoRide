@@ -1,7 +1,6 @@
 //frontend/src/layouts/AppLayout.tsx
 import { type JSX } from 'react';
 import { Outlet } from 'react-router-dom';
-import Container from '@mui/material/Container';
 import { Box } from '@mui/material';
 import { useInitApp } from '../hooks/useInitApp';
 import { Header } from '../components/header/Header';
@@ -16,19 +15,24 @@ export const AppLayout = (): JSX.Element => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
+        width: '100vw',
+        p: 0,
+        m: 0,
       }}
     >
       <Header />
-      <Container
+      <Box
         sx={{
-          my: { xs: 1, md: 2 },
           flexGrow: 1,
           display: 'flex',
-          px: 2,
+          justifyContent: 'center',
+          p: 0,
+          m: 0,
         }}
+        aria-label="main content"
       >
         <Outlet />
-      </Container>
+      </Box>
       <Footer />
     </Box>
   );

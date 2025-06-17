@@ -1,13 +1,16 @@
 // frontend/src/hooks/useTrip.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import tripService from '../services/tripService';
 import {
   enqueueSnackbarSuccess,
   enqueueSnackbarError,
 } from '../utils/enqueueSnackbar';
 import type { Trip } from '../types/trip';
+import { useAppSelector } from './useAppSelector';
+import type { User } from '../types/user';
+import type { Vehicle } from '../types/vehicle';
 
-type TripFilters = Partial<{
+export type TripFilters = Partial<{
   departureCity: string;
   arrivalCity: string;
   date: string;
@@ -17,7 +20,7 @@ type TripFilters = Partial<{
 export const useTrip = (): {
   allTrips: Partial<Trip>[];
   trips: Partial<Trip>[];
-  selectedTrip: Partial<Trip> | null;
+  selectedTrip: Partial<Trip & { driver: User; vehicle: Vehicle }> | null;
   loading: boolean;
   error: string | null;
   isSubmitting: boolean;
@@ -25,7 +28,7 @@ export const useTrip = (): {
     data: Partial<{
       departureCity: string;
       arrivalCity: string;
-      date: string;
+      departureDate: string;
       flexible: boolean;
     }>
   ) => Promise<boolean>;
@@ -40,22 +43,33 @@ export const useTrip = (): {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAppSelector((state) => state.auth);
 
-  const fetchTrips = async (filters?: TripFilters): Promise<boolean> => {
-    setLoading(true);
-    try {
-      const { data, message } = await tripService.fetchTrips(filters);
-      setAllTrips(data);
-      enqueueSnackbarSuccess(message);
-      return true;
-    } catch (err) {
-      enqueueSnackbarError(err);
-      setError('Erreur lors du chargement des trajets');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchTrips = useCallback(
+    async (filters?: TripFilters): Promise<boolean> => {
+      setLoading(true);
+      try {
+        const { data, message } = await tripService.fetchTrips(filters);
+        if (user) {
+          const tripsWithoutOwnTrip = data.filter(
+            (trip: Trip) => trip.driverId !== user.id
+          );
+          setAllTrips(tripsWithoutOwnTrip);
+        } else {
+          setAllTrips(data);
+        }
+        enqueueSnackbarSuccess(message);
+        return true;
+      } catch (err) {
+        enqueueSnackbarError(err);
+        setError('Erreur lors du chargement des trajets');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
 
   const fetchTripById = async (id: string): Promise<boolean> => {
     setLoading(true);

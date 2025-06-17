@@ -9,7 +9,7 @@ describe('getEnergyLabel', () => {
       hybrid: 'Hybride',
       lpg: 'GPL',
       electric: 'Électrique',
-      plug_in_hybrid: 'Hybride rechargeable',
+      plug_in_hybrid: 'Rechargeable',
       cng: 'GNC',
       hydrogen: 'Hydrogène',
       ethanol: 'Éthanol',

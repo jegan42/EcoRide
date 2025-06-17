@@ -49,7 +49,7 @@ export const TripForm: React.FC<TripFormProps> = ({
   defaultDateAdd1h.setHours(defaultDateAdd1h.getHours() + 1);
 
   const defaultDateAdd2h = new Date(defaultDate);
-  defaultDateAdd2h.setHours(defaultDateAdd2h.getMonth() + 2);
+  defaultDateAdd2h.setHours(defaultDateAdd2h.getHours() + 2);
 
   const {
     register,

@@ -3,9 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TripFormSwitch } from '../../../components/trip/TripFormSwitch';
 import { vi } from 'vitest';
 import type { Trip, TripStatus } from '../../../types/trip';
-
+import authReducer from '../../../store/slices/authSlice';
 import * as useProfileHook from '../../../hooks/useProfile';
 import * as useTripHook from '../../../hooks/useTrip';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
 
 vi.mock('../../../components/trip/TripForm', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,17 +36,31 @@ describe('TripFormSwitch', () => {
   });
 
   it('displays the form to add a trip if tripMode = "add"', () => {
+    const store = configureStore({
+      reducer: { auth: authReducer },
+      preloadedState: {
+        auth: {
+          user: null,
+          isAuthenticated: false,
+          loading: true,
+          csrfToken: null,
+        },
+      },
+    });
     const onSetTripMode = vi.fn();
 
-    render(
-      <TripFormSwitch
-        tripMode="add"
-        isSubmitting={false}
-        selectedTrip={null}
-        onSetTripMode={onSetTripMode}
-      />
+    const { container } = render(
+      <Provider store={store}>
+        <TripFormSwitch
+          tripMode="add"
+          isSubmitting={false}
+          selectedTrip={null}
+          onSetTripMode={onSetTripMode}
+        />
+      </Provider>
     );
 
+    expect(container).toBeInTheDocument();
     expect(screen.getByText('Ajouter un Voyage')).toBeInTheDocument();
     fireEvent.click(screen.getByText('CancelForm'));
     expect(onSetTripMode).toHaveBeenCalledWith('view');
@@ -85,6 +101,17 @@ describe('TripFormSwitch', () => {
   });
 
   it('displays the form to modify a trip if tripMode = "edit"', () => {
+    const store = configureStore({
+      reducer: { auth: authReducer },
+      preloadedState: {
+        auth: {
+          user: null,
+          isAuthenticated: false,
+          loading: true,
+          csrfToken: null,
+        },
+      },
+    });
     const onSetTripMode = vi.fn();
     const selectedTrip: Trip = {
       id: 'trip-123',
@@ -102,15 +129,17 @@ describe('TripFormSwitch', () => {
     };
 
     render(
-      <TripFormSwitch
-        tripMode="edit"
-        isSubmitting={false}
-        selectedTrip={{
-          ...selectedTrip,
-          status: selectedTrip.status as TripStatus,
-        }}
-        onSetTripMode={onSetTripMode}
-      />
+      <Provider store={store}>
+        <TripFormSwitch
+          tripMode="edit"
+          isSubmitting={false}
+          selectedTrip={{
+            ...selectedTrip,
+            status: selectedTrip.status as TripStatus,
+          }}
+          onSetTripMode={onSetTripMode}
+        />
+      </Provider>
     );
 
     expect(screen.getByText('Modifier un Voyage')).toBeInTheDocument();
@@ -171,14 +200,29 @@ describe('TripFormSwitch', () => {
   });
 
   it('returns nothing if tripMode invalid or data missing', () => {
+    const store = configureStore({
+      reducer: { auth: authReducer },
+      preloadedState: {
+        auth: {
+          user: null,
+          isAuthenticated: false,
+          loading: true,
+          csrfToken: null,
+        },
+      },
+    });
+
     const { container } = render(
-      <TripFormSwitch
-        tripMode="view"
-        isSubmitting={false}
-        selectedTrip={null}
-        onSetTripMode={vi.fn()}
-      />
+      <Provider store={store}>
+        <TripFormSwitch
+          tripMode="view"
+          isSubmitting={false}
+          selectedTrip={null}
+          onSetTripMode={vi.fn()}
+        />
+      </Provider>
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 
