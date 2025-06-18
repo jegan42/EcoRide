@@ -23,12 +23,14 @@ interface Props {
   booking: BookingFull;
   isDriverBookings?: boolean;
   setOnUpdate: (update: boolean) => void;
+  onValidate?: () => void;
 }
 
 export const BookingCard = ({
   booking,
   isDriverBookings = false,
   setOnUpdate,
+  onValidate,
 }: Props): JSX.Element => {
   const { user: getUser } = useAppSelector((state) => state.auth);
   const isDriver = useIsDriver();
@@ -44,7 +46,7 @@ export const BookingCard = ({
     selectedBooking,
     submitting,
     handleCloseBooking,
-  } = useBookingsDialogValidate();
+  } = useBookingsDialogValidate(onValidate && (() => onValidate()));
 
   return (
     <Card>

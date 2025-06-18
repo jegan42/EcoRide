@@ -9,7 +9,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
 
-export const useBookingsDialog = (): {
+export const useBookingsDialog = (
+  onBookingConfirmed?: () => void
+): {
   handleOpenBooking: (trip: Partial<Trip>) => void;
   handleConfirm: (trip: Partial<Trip>) => void;
   dialogTrip: Partial<Trip> | null;
@@ -57,6 +59,7 @@ export const useBookingsDialog = (): {
       });
       enqueueSnackbarSuccess(message ?? 'Réservation effectuée.');
       handleCloseBooking();
+      if (onBookingConfirmed) onBookingConfirmed();
     } catch (error) {
       enqueueSnackbarError(error);
     } finally {

@@ -52,7 +52,7 @@ export const FindTripPage: React.FC = () => {
     seats,
     setSeats,
     handleOpenBooking,
-  } = useBookingsDialog();
+  } = useBookingsDialog(() => fetchTrips({}));
 
   const SidebarContent = (): JSX.Element => (
     <Box

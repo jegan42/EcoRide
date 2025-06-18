@@ -97,6 +97,7 @@ export const BookingList = (): JSX.Element => {
             booking={booking}
             isDriverBookings={isDriverBookings}
             setOnUpdate={setOnUpdate}
+            onValidate={refetchAll}
           />
         ))}
       </Box>

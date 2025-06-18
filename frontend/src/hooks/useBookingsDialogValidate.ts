@@ -11,7 +11,9 @@ import type { Booking } from '../types/booking';
 
 type BookingValidationAction = 'accept' | 'reject';
 
-export const useBookingsDialogValidate = (): {
+export const useBookingsDialogValidate = (
+  onBookingValidate?: () => void
+): {
   handleOpenBooking: (booking: Partial<Booking>) => void;
   handleConfirm: (
     isPassenger: boolean,
@@ -63,6 +65,7 @@ export const useBookingsDialogValidate = (): {
         );
       }
       handleCloseBooking();
+      if (onBookingValidate) onBookingValidate();
     } catch (error) {
       enqueueSnackbarError(error);
     } finally {
