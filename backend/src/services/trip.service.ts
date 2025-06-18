@@ -96,6 +96,9 @@ export class TripService {
 
     return {
       status: 'open',
+      availableSeats: {
+        gt: 0,
+      },
       ...(departureCity && { departureCity }),
       ...(arrivalCity && { arrivalCity }),
       ...(departureDate && { departureDate }),

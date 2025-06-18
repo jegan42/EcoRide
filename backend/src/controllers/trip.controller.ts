@@ -115,6 +115,9 @@ export class TripController {
           ? TripService.buildWhereClause(req.body)
           : ({
               status: 'open',
+              availableSeats: {
+                gt: 0,
+              },
             } as Prisma.TripWhereInput);
 
       const trips = await prismaNewClient.trip.findMany({
