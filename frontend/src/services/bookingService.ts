@@ -3,7 +3,10 @@ import api from '../api/axios';
 import { API_URL } from '../constants/api';
 import type { ApiResponse } from '../types/api';
 import type { Booking } from '../types/booking';
-import { handleApiResponseSafe } from '../utils/handleApiResponse';
+import {
+  handleApiResponseBasic,
+  handleApiResponseSafe,
+} from '../utils/handleApiResponse';
 
 const createBooking = async (
   bookingData: Partial<Booking>
@@ -44,11 +47,18 @@ const fetchBookingsByTrip = async (
   return handleApiResponseSafe<Booking[]>(response.data);
 };
 
-const validateBooking = async (id: string): Promise<ApiResponse<Booking[]>> => {
-  const response = await api.post(`${API_URL}/bookings/${id}/validate`, {
-    withCredentials: true,
-  });
-  return handleApiResponseSafe<Booking[]>(response.data);
+const validateBooking = async (
+  id: string,
+  action: 'accept' | 'reject'
+): Promise<ApiResponse<Booking[]>> => {
+  const response = await api.post(
+    `${API_URL}/bookings/${id}/validate`,
+    { action },
+    {
+      withCredentials: true,
+    }
+  );
+  return handleApiResponseBasic<Booking[]>(response.data);
 };
 
 const fetchBookingById = async (id: string): Promise<ApiResponse<Booking>> => {

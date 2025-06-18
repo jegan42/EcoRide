@@ -3,10 +3,7 @@ import { Paper, Box, Stack, Button } from '@mui/material';
 import type { Vehicle } from '../../types/vehicle';
 import type { Trip } from '../../types/trip';
 import type { User } from '../../types/user';
-import { useIsMobile } from '../../hooks/useIsMobile';
-import { FindTripInfoTrip } from './FindTripInfoTrip';
-import { FindTripInfoDriver } from './FindTripInfoDriver';
-import { FindTripInfoVehicle } from './FindTripInfoVehicle';
+import { TripDetails } from '../trip/TripDetails';
 
 interface Props {
   trip?: Partial<Trip> & {
@@ -18,15 +15,11 @@ interface Props {
 }
 
 export const FindTripCard: React.FC<Props> = ({ trip, onBook, onDetails }) => {
-  const isMobile = useIsMobile();
-  const stackDirection = isMobile ? 'column' : 'row';
-  const wdthContainer = isMobile ? '100%' : '260px';
-
   return (
     <Paper
       elevation={3}
       sx={(theme) => ({
-        width: wdthContainer,
+        width: { xs: '100%', sm: '260px' },
         maxWidth: '100%',
         mt: 4,
         borderRadius: 3,
@@ -34,7 +27,7 @@ export const FindTripCard: React.FC<Props> = ({ trip, onBook, onDetails }) => {
       })}
     >
       <Stack
-        direction={stackDirection}
+        direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
         alignItems="stretch"
         flexWrap="wrap"
@@ -49,79 +42,43 @@ export const FindTripCard: React.FC<Props> = ({ trip, onBook, onDetails }) => {
             flexWrap: 'wrap',
           }}
         >
-          <Paper
-            elevation={3}
-            sx={(theme) => ({
-              p: 2,
-              borderTopLeftRadius: '1rem !important',
-              borderTopRightRadius: '1rem !important',
-              borderBottomLeftRadius: '0 !important',
-              borderBottomRightRadius: '0 !important',
-              border: `2px solid ${theme.palette.primary.main}`,
-            })}
-          >
-            <FindTripInfoDriver driver={trip?.driver} />
-          </Paper>
-          <Paper
-            elevation={3}
-            sx={(theme) => ({
-              p: 2,
-              borderRadius: 0,
-              border: `2px solid ${theme.palette.primary.main}`,
-            })}
-          >
-            <FindTripInfoTrip trip={trip} />
-          </Paper>
-          <Paper
-            elevation={3}
-            sx={(theme) => ({
-              p: 2,
-              borderRadius: 0,
-              border: `2px solid ${theme.palette.primary.main}`,
-            })}
-          >
-            <FindTripInfoVehicle vehicle={trip?.vehicle} />
-          </Paper>
-          <Paper
-            elevation={3}
-            sx={(theme) => ({
-              p: 2,
-              borderTopLeftRadius: '0 !important',
-              borderTopRightRadius: '0 !important',
-              borderBottomLeftRadius: '1rem !important',
-              borderBottomRightRadius: '1rem !important',
-              border: `2px solid ${theme.palette.primary.main}`,
-            })}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                maxHeight: 64,
-                flexWrap: 'wrap',
-                gap: 2,
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={onBook}
-                sx={{ width: '45%' }}
-                aria-label="Réserver ce trajet"
+          {trip && <TripDetails trip={trip} />}
+          <Box p={2}>
+            {(onBook || onDetails) && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  maxHeight: 64,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                }}
               >
-                Réserver
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={onDetails}
-                sx={{ width: '45%' }}
-                aria-label="Voir les détails du trajet"
-              >
-                Détails
-              </Button>
-            </Box>
-          </Paper>
+                {onBook && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onBook}
+                    sx={{ width: '45%' }}
+                    aria-label="Réserver ce trajet"
+                  >
+                    Réserver
+                  </Button>
+                )}
+                {onDetails && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onDetails}
+                    sx={{ width: '45%' }}
+                    aria-label="Voir les détails du trajet"
+                  >
+                    Détails
+                  </Button>
+                )}
+              </Box>
+            )}
+          </Box>
         </Box>
       </Stack>
     </Paper>

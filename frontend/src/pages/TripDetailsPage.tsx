@@ -1,6 +1,6 @@
 // frontend/src/pages/TripDetailsPage.tsx
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -11,29 +11,32 @@ import {
   Button,
 } from '@mui/material';
 import { useTrip } from '../hooks/useTrip';
-import { FindTripInfoDriver } from '../components/findtrip/FindTripInfoDriver';
-import { FindTripInfoTrip } from '../components/findtrip/FindTripInfoTrip';
-import { FindTripInfoVehicle } from '../components/findtrip/FindTripInfoVehicle';
-import { FindTripInfoDriverPreferences } from '../components/findtrip/FindTripInfoDriverPreferences';
+import { TripDetails } from '../components/trip/TripDetails';
+import { FindTripDialogContent } from '../components/findtrip/FindTripDialogContent';
+import { ConfirmDialog } from '../components/dailog/ConfirmDialog';
+import { useBookingsDialog } from '../hooks/useBookingsDialog';
 
 export const TripDetailsPage: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { fetchTripById, selectedTrip, loading } = useTrip();
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setLoaded(false);
-    const loadTrip = async (): Promise<void> => {
-      if (id) {
-        const success = await fetchTripById(id);
-        if (success) setLoaded(true);
-      }
-    };
-    void loadTrip();
+    if (id) void fetchTripById(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (loading || !loaded) {
+  const {
+    dialogTrip,
+    submitting,
+    handleCloseBooking,
+    handleConfirm,
+    seats,
+    setSeats,
+    handleOpenBooking,
+  } = useBookingsDialog();
+
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={5}>
         <CircularProgress />
@@ -57,24 +60,7 @@ export const TripDetailsPage: React.FC = () => {
 
       <Paper elevation={4} sx={{ borderRadius: 3, overflow: 'hidden' }}>
         <Stack spacing={0}>
-          <Box p={2} borderBottom="1px solid #ccc">
-            <FindTripInfoDriver driver={selectedTrip.driver} allInfo={true} />
-          </Box>
-
-          <Box p={2} borderBottom="1px solid #ccc">
-            <FindTripInfoTrip trip={selectedTrip} allInfo={true} />
-          </Box>
-
-          <Box p={2} borderBottom="1px solid #ccc">
-            <FindTripInfoVehicle
-              vehicle={selectedTrip.vehicle}
-              allInfo={true}
-            />
-          </Box>
-
-          <Box p={2}>
-            <FindTripInfoDriverPreferences id={selectedTrip.driverId} />
-          </Box>
+          <TripDetails trip={selectedTrip} allInfo={true} />
 
           <Divider />
           <Box
@@ -84,15 +70,41 @@ export const TripDetailsPage: React.FC = () => {
             py={2}
             flexWrap="wrap"
           >
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleOpenBooking(selectedTrip)}
+              disabled={!selectedTrip?.availableSeats}
+            >
               Réserver
             </Button>
-            <Button variant="outlined" color="primary" href="/findtrip">
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => navigate('/findtrip')}
+            >
               Retour
             </Button>
           </Box>
         </Stack>
       </Paper>
+
+      {dialogTrip && (
+        <ConfirmDialog
+          title={'Réserver un trajet'}
+          open={!!dialogTrip}
+          submitting={submitting}
+          onClose={handleCloseBooking}
+          onConfirm={() => handleConfirm(dialogTrip)}
+        >
+          <FindTripDialogContent
+            trip={dialogTrip}
+            maxSeats={dialogTrip.availableSeats || 1}
+            seats={seats}
+            setSeats={setSeats}
+          />
+        </ConfirmDialog>
+      )}
     </Box>
   );
 };

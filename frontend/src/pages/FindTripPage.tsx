@@ -12,10 +12,14 @@ import { FindTripFilters } from '../components/findtrip/FindTripFilters';
 import { FindTripSort } from '../components/findtrip/FindTripSort';
 import { useFindTripFilters } from '../hooks/useFindTripFilters';
 import { useNavigate } from 'react-router-dom';
+import { FindTripDialogContent } from '../components/findtrip/FindTripDialogContent';
+import { ConfirmDialog } from '../components/dailog/ConfirmDialog';
+import { useBookingsDialog } from '../hooks/useBookingsDialog';
 
 export const FindTripPage: React.FC = () => {
-  const { allTrips, fetchTrips } = useTrip();
   const navigate = useNavigate();
+
+  const { allTrips, fetchTrips } = useTrip();
 
   const safeTrips = allTrips.filter((v): v is Trip => !!v?.id);
 
@@ -39,6 +43,16 @@ export const FindTripPage: React.FC = () => {
     setSortOrder,
     resetFilters,
   } = useFindTripFilters(safeTrips);
+
+  const {
+    dialogTrip,
+    submitting,
+    handleCloseBooking,
+    handleConfirm,
+    seats,
+    setSeats,
+    handleOpenBooking,
+  } = useBookingsDialog();
 
   const SidebarContent = (): JSX.Element => (
     <Box
@@ -77,12 +91,8 @@ export const FindTripPage: React.FC = () => {
         component="main"
         role="main"
         sx={{ flexGrow: 1, p: { xs: 2, md: 4 } }}
-        aria-label="main Box"
       >
-        <Box
-          sx={{ display: 'flex', justifyContent: 'center' }}
-          aria-label="main Box1"
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography variant="h4" fontWeight={600}>
             Trouver un trajet
           </Typography>
@@ -91,7 +101,6 @@ export const FindTripPage: React.FC = () => {
           sx={{
             mx: 'auto',
           }}
-          aria-label="main BoxBB"
         >
           <FindTripSearch
             fetchTrips={fetchTrips}
@@ -105,8 +114,8 @@ export const FindTripPage: React.FC = () => {
           }}
         >
           <Typography variant="h6">
-            {filteredTrips.length} trajet{filteredTrips.length !== 1 ? 's' : ''}{' '}
-            trouvé
+            {filteredTrips.length} trajet
+            {filteredTrips.length !== 1 ? 's' : ''} trouvé
           </Typography>
           {filteredTrips.length === 0 ? (
             <Typography variant="body1">
@@ -130,17 +139,35 @@ export const FindTripPage: React.FC = () => {
                     driver?: Partial<User>;
                   }
                 ) => (
-                  <FindTripCard
-                    key={trip.id}
-                    trip={trip}
-                    onDetails={() => navigate(`/tripdetails/${trip.id}`)}
-                  />
+                  <Box key={trip.id}>
+                    <FindTripCard
+                      trip={trip}
+                      onDetails={() => navigate(`/tripdetails/${trip.id}`)}
+                      onBook={() => handleOpenBooking(trip)}
+                    />
+                  </Box>
                 )
               )}
             </Box>
           )}
         </Box>
       </Box>
+      {dialogTrip && (
+        <ConfirmDialog
+          title={'Réserver un trajet'}
+          open={!!dialogTrip}
+          submitting={submitting}
+          onClose={handleCloseBooking}
+          onConfirm={() => handleConfirm(dialogTrip)}
+        >
+          <FindTripDialogContent
+            trip={dialogTrip}
+            maxSeats={dialogTrip.availableSeats || 1}
+            seats={seats}
+            setSeats={setSeats}
+          />
+        </ConfirmDialog>
+      )}
     </Sidebar>
   );
 };

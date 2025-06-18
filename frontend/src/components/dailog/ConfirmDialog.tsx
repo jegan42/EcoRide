@@ -9,37 +9,54 @@ import {
 } from '@mui/material';
 
 interface ConfirmDialogProps {
-  open: boolean;
   title?: string;
-  message: string;
-  onCancel: () => void;
+  open: boolean;
+  submitting?: boolean;
+  message?: string;
+  children?: React.ReactNode;
+  onClose: () => void;
   onConfirm: () => void;
+  isDelete?: boolean;
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
-  open,
   title = 'Confirmation',
-  message,
-  onCancel,
+  open,
+  submitting = false,
+  message = '',
+  children = null,
+  onClose,
   onConfirm,
+  isDelete = false,
+  maxWidth = 'sm',
 }) => {
+  const buttonColor = isDelete ? 'error' : 'primary';
   return (
-    <Dialog open={open} onClose={onCancel}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth={!!children}
+      maxWidth={maxWidth}
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <Typography>{message}</Typography>
+        {message && <Typography>{message}</Typography>}
+        {children}
       </DialogContent>
       <DialogActions>
-        <Button aria-label="cancel" onClick={onCancel} color="inherit">
+        <Button aria-label="cancel" onClick={onClose} disabled={submitting}>
           Annuler
         </Button>
         <Button
           aria-label="confirm"
           onClick={onConfirm}
-          color="error"
+          color={buttonColor}
           variant="contained"
+          disabled={submitting}
+          autoFocus
         >
-          Confirmer
+          {submitting ? 'Chargement...' : 'Confirmer'}
         </Button>
       </DialogActions>
     </Dialog>

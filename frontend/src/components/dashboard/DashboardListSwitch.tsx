@@ -1,5 +1,4 @@
 // frontend/src/component/dashboard/DashboardListSwitch.tsx
-import { Typography } from '@mui/material';
 import type { Vehicle } from '../../types/vehicle';
 import type { ProfileTabsMode } from '../profile/ProfileTabs';
 import { VehicleList } from '../vehicle/VehicleList';
@@ -7,6 +6,7 @@ import type { FormMode } from '../../hooks/useDashboardState';
 import { PreferencesView } from '../preferences/PreferencesView';
 import type { Trip } from '../../types/trip';
 import { TripList } from '../trip/TripList';
+import { BookingList } from '../booking/BookingList';
 
 interface Props {
   profileTabs: ProfileTabsMode;
@@ -25,29 +25,26 @@ export const DashboardListSwitch: React.FC<Props> = ({
   onSetTripMode,
   onSetSelectedTrip,
 }) => {
-  if (profileTabs === 'preference') {
-    return <PreferencesView onSetPreferencesMode={onSetPreferencesMode} />;
+  switch (profileTabs) {
+    case 'preference':
+      return <PreferencesView onSetPreferencesMode={onSetPreferencesMode} />;
+    case 'vehicle':
+      return (
+        <VehicleList
+          onSetVehicleMode={onSetVehicleMode}
+          onSetSelectedVehicle={onSetSelectedVehicle}
+        />
+      );
+    case 'trip':
+      return (
+        <TripList
+          onSetTripMode={onSetTripMode}
+          onSetSelectedTrip={onSetSelectedTrip}
+        />
+      );
+    case 'booking':
+      return <BookingList />;
+    default:
+      return null;
   }
-  if (profileTabs === 'vehicle') {
-    return (
-      <VehicleList
-        onSetVehicleMode={onSetVehicleMode}
-        onSetSelectedVehicle={onSetSelectedVehicle}
-      />
-    );
-  }
-  if (profileTabs === 'trip') {
-    return (
-      <TripList
-        onSetTripMode={onSetTripMode}
-        onSetSelectedTrip={onSetSelectedTrip}
-      />
-    );
-  }
-
-  return (
-    <Typography variant="body1" sx={{ mt: 2 }} color="text.secondary">
-      {`Vous n'avez encore enregistré aucun ${profileTabs}.`}
-    </Typography>
-  );
 };

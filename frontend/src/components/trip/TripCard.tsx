@@ -98,8 +98,9 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
         message={`Es-tu sûr de vouloir supprimer \
                 le voyage ${trip?.departureCity} → ${trip?.arrivalCity} \
                 du ${formatDateTime(trip?.departureDate)} au ${formatDateTime(trip?.arrivalDate)} ?`}
-        onCancel={() => setDialogOpen(false)}
+        onClose={() => setDialogOpen(false)}
         onConfirm={() => onDelete && handleConfirmDelete(onDelete)}
+        isDelete={true}
       />
     </Paper>
   );

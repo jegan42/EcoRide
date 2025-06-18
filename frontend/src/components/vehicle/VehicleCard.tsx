@@ -125,11 +125,12 @@ export const VehicleCard: React.FC<Props> = ({ vehicle, onEdit, onDelete }) => {
           <ConfirmDialog
             open={dialogOpen}
             message={`Es-tu sûr de vouloir supprimer \
-          ${vehicle?.brand?.toUpperCase()} \
-          model ${vehicle?.model?.toUpperCase()} \
-          dont la plaque d'immatriculation est ${vehicle?.licensePlate?.toUpperCase()} ?`}
-            onCancel={() => setDialogOpen(false)}
+                    ${vehicle?.brand?.toUpperCase()} \
+                    model ${vehicle?.model?.toUpperCase()} \
+                    dont la plaque d'immatriculation est ${vehicle?.licensePlate?.toUpperCase()} ?`}
+            onClose={() => setDialogOpen(false)}
             onConfirm={() => onDelete && handleConfirmDelete(onDelete)}
+            isDelete={true}
           />
         </Stack>
       )}
