@@ -42,7 +42,15 @@ export class BookingService {
   ): Promise<Booking[]> => {
     return prismaNewClient.booking.findMany({
       where: { userId },
-      include: { trip: true },
+      include: {
+        user: true,
+        trip: {
+          include: {
+            driver: true,
+            vehicle: true,
+          },
+        },
+      },
     });
   };
 
@@ -55,7 +63,15 @@ export class BookingService {
           driverId,
         },
       },
-      include: { trip: true },
+      include: {
+        user: true,
+        trip: {
+          include: {
+            driver: true,
+            vehicle: true,
+          },
+        },
+      },
     });
   };
 
