@@ -3,21 +3,20 @@ import {
   Card,
   CardContent,
   Typography,
-  Chip,
   Stack,
   Button,
-  DialogContent,
+  Box,
 } from '@mui/material';
 import type { BookingFull } from '../../types/booking';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import { useIsDriver } from '../../hooks/useIsDriver';
 import { useBookingsDialogValidate } from '../../hooks/useBookingsDialogValidate';
 import { ConfirmDialog } from '../dailog/ConfirmDialog';
 import { TripDetails } from '../trip/TripDetails';
-import { useState, type JSX } from 'react';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { type JSX } from 'react';
 import { FindTripInfoDriver } from '../findtrip/FindTripInfoDriver';
 import { FindTripInfoTrip } from '../findtrip/FindTripInfoTrip';
+import { getDialogContent, getDialogTitle } from './BookingDialogContent';
+import { BookingDetails } from './BookingDetails';
 
 interface Props {
   booking: BookingFull;
@@ -32,13 +31,8 @@ export const BookingCard = ({
   setOnUpdate,
   onValidate,
 }: Props): JSX.Element => {
-  const { user: getUser } = useAppSelector((state) => state.auth);
   const isDriver = useIsDriver();
-  const isMobile = useIsMobile();
-  const { user, trip, seatCount, totalPrice, status, createdAt, updatedAt } =
-    booking;
-  const [action, setAction] = useState<'accept' | 'reject' | ''>('');
-  const isPassenger = user?.id === getUser?.id;
+  const { trip, status } = booking;
 
   const {
     handleOpenBooking,
@@ -46,65 +40,67 @@ export const BookingCard = ({
     selectedBooking,
     submitting,
     handleCloseBooking,
-  } = useBookingsDialogValidate(onValidate && (() => onValidate()));
+    action,
+    setAction,
+    rating,
+    setRating,
+    comment,
+    setComment,
+    hasReviewed,
+  } = useBookingsDialogValidate(onValidate, booking);
+
+  const endingDate = trip?.arrivalDate || 0;
+
+  const canReview =
+    !hasReviewed && status === 'confirmed' && new Date(endingDate) < new Date();
+
+  const handleConfirmWithUpdate = async (): Promise<void> => {
+    await handleConfirm();
+    setOnUpdate(true);
+  };
 
   return (
     <Card>
       <CardContent
         sx={(theme) => ({
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
+          flexDirection: { xs: 'column', sm: 'row' },
           gap: 2,
           border: `1px solid ${theme.palette.primary.main}`,
         })}
       >
         {trip && (
-          <Stack spacing={2} p={2} width={isMobile ? '100%' : '40%'}>
+          <Stack spacing={2} p={2} sx={{ width: { xs: '100%', sm: '40%' } }}>
             <Typography variant="h6">Détail du voyage</Typography>
             <FindTripInfoDriver driver={trip.driver} />
             <FindTripInfoTrip trip={trip} />
           </Stack>
         )}
-        <Stack spacing={2} p={2} width={isMobile ? '100%' : '40%'}>
-          <Stack
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}
+        <BookingDetails booking={booking} />
+
+        {canReview && (
+          <Box
+            textAlign="center"
+            p={2}
+            sx={{ width: { xs: '100%', sm: '15%' } }}
           >
-            <Typography variant="h6">Détail de la réservation</Typography>
-            <Typography>Passager : {user?.username}</Typography>
-            <Typography>{seatCount} siège(s) réservé(s)</Typography>
-            <Typography>Prix total : {totalPrice} €</Typography>
-            <Typography variant="body2" color="text.secondary">
-              Réservée le{' '}
-              {createdAt
-                ? new Date(createdAt).toLocaleDateString()
-                : 'Date inconnue'}
-            </Typography>
-            {status !== 'pending' && (
-              <Typography
-                variant="body2"
-                color={status === 'cancelled' ? 'error' : 'primary'}
-              >
-                {status === 'cancelled' ? 'Annulée' : 'Confirmée'} le{' '}
-                {updatedAt
-                  ? new Date(updatedAt).toLocaleDateString()
-                  : 'Date inconnue'}
-              </Typography>
-            )}
-            <Chip
-              label={status}
-              color={status === 'cancelled' ? 'error' : 'primary'}
-            />
-          </Stack>
-        </Stack>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleOpenBooking(booking);
+                setAction('review');
+              }}
+            >
+              Ajouter un avis
+            </Button>
+          </Box>
+        )}
+
         {status === 'pending' && (
           <Stack
             sx={{
               display: 'flex',
-              flexDirection: isMobile ? 'row' : 'column',
+              flexDirection: { xs: 'row', sm: 'column' },
               justifyContent: 'space-between',
             }}
           >
@@ -138,24 +134,18 @@ export const BookingCard = ({
 
       {action !== '' && selectedBooking && (
         <ConfirmDialog
-          title={`${
-            action === 'accept' ? 'Validation' : 'Annulation'
-          } de la réservation`}
+          title={`${getDialogTitle(action)} de la réservation`}
           open={!!selectedBooking}
           submitting={submitting}
           onClose={handleCloseBooking}
-          onConfirm={() => {
-            if (submitting) return;
-            handleConfirm(isPassenger, selectedBooking, action);
-            setOnUpdate(true);
-          }}
+          onConfirm={() => handleConfirmWithUpdate}
+          disabledConfirm={
+            action === 'review' && (!rating || !comment || hasReviewed)
+          }
         >
           <>
             {trip && <TripDetails trip={trip} />}
-            <DialogContent>
-              <Typography variant="body2">{`Voulez-vous \
-              ${action === 'accept' ? 'valider' : 'annuler'} ce voyage ?`}</Typography>
-            </DialogContent>
+            {getDialogContent(action, rating, setRating, comment, setComment)}
           </>
         </ConfirmDialog>
       )}

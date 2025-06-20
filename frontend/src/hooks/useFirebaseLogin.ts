@@ -6,11 +6,11 @@ import { useAppSelector } from './useAppSelector';
 import axios from 'axios';
 import { API_URL } from '../constants/api';
 
-export const useFirebaseLogin = () => {
+export const useFirebaseLogin = (): void => {
   const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    const connectFirebase = async () => {
+    const connectFirebase = async (): Promise<void> => {
       if (!user?.id) return;
 
       try {
@@ -25,6 +25,6 @@ export const useFirebaseLogin = () => {
       }
     };
 
-    connectFirebase();
+    void connectFirebase();
   }, [user?.id]);
 };

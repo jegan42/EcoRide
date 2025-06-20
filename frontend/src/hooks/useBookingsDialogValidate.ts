@@ -1,5 +1,5 @@
 // frontend/src/hooks/useBookingsDialogValidate.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import bookingService from '../services/bookingService';
 import {
   enqueueSnackbarError,
@@ -7,29 +7,72 @@ import {
 } from '../utils/enqueueSnackbar';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
-import type { Booking } from '../types/booking';
+import type { Booking, BookingFull } from '../types/booking';
+import { addReview, hasAlreadyReviewedBooking } from '../services';
+import type { Review } from '../types/review';
 
-type BookingValidationAction = 'accept' | 'reject';
-
-export const useBookingsDialogValidate = (
-  onBookingValidate?: () => void
-): {
+interface UseBookingsDialogValidateReturn {
   handleOpenBooking: (booking: Partial<Booking>) => void;
-  handleConfirm: (
-    isPassenger: boolean,
-    booking: Partial<Booking>,
-    action: BookingValidationAction
-  ) => void;
+  handleConfirm: () => void;
   selectedBooking: Partial<Booking> | null;
   submitting: boolean;
   handleCloseBooking: () => void;
-} => {
-  const navigate = useNavigate();
-  const [submitting, setSubmitting] = useState(false);
+  action: 'accept' | 'reject' | 'review' | '';
+  setAction: React.Dispatch<
+    React.SetStateAction<'accept' | 'reject' | 'review' | ''>
+  >;
+  rating: number;
+  setRating: React.Dispatch<React.SetStateAction<number>>;
+  comment: string;
+  setComment: React.Dispatch<React.SetStateAction<string>>;
+  hasReviewed: boolean;
+}
 
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+export const useBookingsDialogValidate = (
+  onBookingValidate?: () => void,
+  booking?: BookingFull
+): UseBookingsDialogValidateReturn => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [action, setAction] = useState<'accept' | 'reject' | 'review' | ''>('');
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [hasReviewed, setHasReviewed] = useState<boolean>(true);
   const [selectedBooking, setSelectedBooking] =
     useState<Partial<Booking> | null>(null);
+
+  const isPassenger = selectedBooking?.user?.id === user?.id;
+
+  const endingDate = booking?.trip?.arrivalDate || 0;
+
+  useEffect(() => {
+    const checkReview = async (): Promise<void> => {
+      if (
+        booking?.status === 'confirmed' &&
+        new Date(endingDate) < new Date() &&
+        user?.id
+      ) {
+        const reviewed = Boolean(
+          booking.id && (await hasAlreadyReviewedBooking(user.id, booking.id))
+        );
+        setHasReviewed(reviewed);
+      }
+    };
+
+    void checkReview();
+  }, [booking?.status, booking?.id, user?.id, endingDate]);
+
+  const reset = (): void => {
+    setSubmitting(false);
+    setAction('');
+    setRating(0);
+    setComment('');
+    setHasReviewed(true);
+    setSelectedBooking(null);
+  };
+
   const handleOpenBooking = (booking: Partial<Booking>): void => {
     if (!isAuthenticated) {
       void navigate('/signin');
@@ -38,34 +81,55 @@ export const useBookingsDialogValidate = (
     setSelectedBooking(booking);
   };
 
-  const handleCloseBooking = (): void => setSelectedBooking(null);
+  const handleCloseBooking = (): void => reset();
 
-  const handleConfirm = async (
-    isPassenger: boolean,
-    booking: Partial<Booking>,
-    action: BookingValidationAction
-  ): Promise<void> => {
-    if (!booking.id) {
+  const handleConfirm = async (): Promise<void> => {
+    if (!selectedBooking || !selectedBooking.id) {
       enqueueSnackbarError(new Error('Réservation invalide.'));
       return;
     }
     try {
       setSubmitting(true);
-      if (isPassenger) {
-        const { message } = await bookingService.cancelBooking(booking.id);
-        enqueueSnackbarSuccess(message ?? 'Réservation annulée.');
+      if (action === 'accept' || action === 'reject') {
+        if (isPassenger) {
+          const { message } = await bookingService.cancelBooking(
+            selectedBooking.id
+          );
+          enqueueSnackbarSuccess(message ?? 'Réservation annulée.');
+        } else {
+          const { message } = await bookingService.validateBooking(
+            selectedBooking.id,
+            action
+          );
+          enqueueSnackbarSuccess(
+            message ??
+              `Réservation ${action === 'accept' ? 'validée' : 'annulée'}.`
+          );
+        }
+      } else if (action === 'review') {
+        const newReview: Review = {
+          authorId: user?.id ?? '',
+          targetId: isPassenger
+            ? (selectedBooking.trip?.driverId ?? '')
+            : (selectedBooking.user?.id ?? ''),
+          tripId: selectedBooking.trip?.id ?? '',
+          bookingId: selectedBooking.id,
+          rating,
+          comment,
+        };
+
+        const res = await addReview(newReview);
+
+        if (res.data) {
+          enqueueSnackbarSuccess('Avis soumis avec succès.');
+        } else {
+          throw new Error(res.message || 'Erreur lors de la soumission.');
+        }
       } else {
-        const { message } = await bookingService.validateBooking(
-          booking.id,
-          action
-        );
-        enqueueSnackbarSuccess(
-          message ??
-            `Réservation ${action === 'accept' ? 'validée' : 'annulée'}.`
-        );
+        enqueueSnackbarError(new Error(`Action inconnue : ${action}`));
       }
       handleCloseBooking();
-      if (onBookingValidate) onBookingValidate();
+      onBookingValidate?.();
     } catch (error) {
       enqueueSnackbarError(error);
     } finally {
@@ -79,5 +143,12 @@ export const useBookingsDialogValidate = (
     selectedBooking,
     submitting,
     handleCloseBooking,
+    action,
+    setAction,
+    rating,
+    setRating,
+    comment,
+    setComment,
+    hasReviewed,
   };
 };

@@ -16,20 +16,21 @@ import {
   handleApiResponseBasic,
   handleApiResponseSafe,
 } from '../utils/handleApiResponse';
-
-interface Review {
-  author_id: string;
-  target_id: string;
-  trip_id: string;
-  rating: number;
-  comment: string;
-  created_at?: Date;
-  updated_at?: Date;
-}
+import type { Review } from '../types/review';
 
 export const addReview = async (
   review: Review
 ): Promise<ApiResponse<DocumentReference>> => {
+  const alreadyReviewed = await hasAlreadyReviewedBooking(
+    review.authorId,
+    review.bookingId
+  );
+
+  if (alreadyReviewed) {
+    return handleApiResponseBasic<DocumentReference>({
+      message: 'Un avis a déjà été laissé pour cette réservation.',
+    });
+  }
   const reviewsCollection = collection(db, 'reviews');
   const docRef = await addDoc(reviewsCollection, {
     ...review,
@@ -106,4 +107,18 @@ export const deleteReview = async (id: string): Promise<ApiResponse<void>> => {
     message: 'Avis supprimé',
     data: undefined,
   });
+};
+
+export const hasAlreadyReviewedBooking = async (
+  authorId: string,
+  bookingId: string
+): Promise<boolean> => {
+  const reviewsCollection = collection(db, 'reviews');
+  const q = query(
+    reviewsCollection,
+    where('authorId', '==', authorId),
+    where('bookingId', '==', bookingId)
+  );
+  const snapshot = await getDocs(q);
+  return !snapshot.empty;
 };

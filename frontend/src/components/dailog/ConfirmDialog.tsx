@@ -1,4 +1,4 @@
-// components/dialog/ConfirmDialog.tsx
+// frontend/src/components/dialog/ConfirmDialog.tsx
 import {
   Dialog,
   DialogTitle,
@@ -13,11 +13,12 @@ interface ConfirmDialogProps {
   open: boolean;
   submitting?: boolean;
   message?: string;
-  children?: React.ReactNode;
+  children?: React.ReactElement | React.ReactElement[] | null;
   onClose: () => void;
   onConfirm: () => void;
   isDelete?: boolean;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
+  disabledConfirm?: boolean;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -30,15 +31,11 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   isDelete = false,
   maxWidth = 'sm',
+  disabledConfirm = false,
 }) => {
   const buttonColor = isDelete ? 'error' : 'primary';
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth={!!children}
-      maxWidth={maxWidth}
-    >
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth={maxWidth}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         {message && <Typography>{message}</Typography>}
@@ -53,7 +50,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           onClick={onConfirm}
           color={buttonColor}
           variant="contained"
-          disabled={submitting}
+          disabled={submitting || disabledConfirm}
           autoFocus
         >
           {submitting ? 'Chargement...' : 'Confirmer'}
