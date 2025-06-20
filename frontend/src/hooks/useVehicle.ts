@@ -12,8 +12,8 @@ import userService from '../services/userService';
 import { useDispatch } from 'react-redux';
 
 export const useVehicle = (): {
-  vehicles: Partial<Vehicle[]>;
-  vehicle: Partial<Vehicle> | undefined;
+  vehicles: Vehicle[];
+  vehicle: Vehicle | undefined;
   loading: boolean;
   error: string | null;
   isSubmitting: boolean;
@@ -22,10 +22,8 @@ export const useVehicle = (): {
   onDeleteVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
 } => {
   const dispatch = useDispatch();
-  const [vehicle, setVehicle] = useState<Partial<Vehicle> | undefined>(
-    undefined
-  );
-  const [vehicles, setVehicles] = useState<Partial<Vehicle[]>>([]);
+  const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

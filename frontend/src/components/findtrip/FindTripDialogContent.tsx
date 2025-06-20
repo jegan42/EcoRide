@@ -10,7 +10,7 @@ export const FindTripDialogContent = ({
   seats,
   setSeats,
 }: {
-  trip: Partial<Trip>;
+  trip: Trip;
   maxSeats: number;
   seats: number;
   setSeats: (seats: number) => void;

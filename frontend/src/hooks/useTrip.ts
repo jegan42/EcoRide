@@ -7,8 +7,6 @@ import {
 } from '../utils/enqueueSnackbar';
 import type { Trip } from '../types/trip';
 import { useAppSelector } from './useAppSelector';
-import type { User } from '../types/user';
-import type { Vehicle } from '../types/vehicle';
 
 export type TripFilters = Partial<{
   departureCity: string;
@@ -18,9 +16,9 @@ export type TripFilters = Partial<{
 }>;
 
 export const useTrip = (): {
-  allTrips: Partial<Trip>[];
-  trips: Partial<Trip>[];
-  selectedTrip: Partial<Trip & { driver: User; vehicle: Vehicle }> | null;
+  allTrips: Trip[];
+  trips: Trip[];
+  selectedTrip: Trip | null;
   loading: boolean;
   error: string | null;
   isSubmitting: boolean;
@@ -33,8 +31,8 @@ export const useTrip = (): {
     }>
   ) => Promise<boolean>;
   fetchTripById: (id: string) => Promise<boolean>;
-  onCreateTrip: (data: Partial<Trip>) => Promise<boolean>;
-  onUpdateTrip: (id: string, tripData: Partial<Trip>) => Promise<boolean>;
+  onCreateTrip: (data: Trip) => Promise<boolean>;
+  onUpdateTrip: (id: string, tripData: Trip) => Promise<boolean>;
   onCancelTrip: (id: string) => Promise<boolean>;
 } => {
   const [allTrips, setAllTrips] = useState<Trip[]>([]);
@@ -115,7 +113,7 @@ export const useTrip = (): {
     };
   }, []);
 
-  const onCreateTrip = async (tripData: Partial<Trip>): Promise<boolean> => {
+  const onCreateTrip = async (tripData: Trip): Promise<boolean> => {
     setIsSubmitting(true);
     try {
       const { data, message } = await tripService.createTrip({

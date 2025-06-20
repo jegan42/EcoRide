@@ -7,14 +7,14 @@ import {
 } from '../utils/enqueueSnackbar';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
-import type { Booking, BookingFull } from '../types/booking';
+import type { Booking } from '../types/booking';
 import { addReview, hasAlreadyReviewedBooking } from '../services';
 import type { Review } from '../types/review';
 
 interface UseBookingsDialogValidateReturn {
-  handleOpenBooking: (booking: Partial<Booking>) => void;
+  handleOpenBooking: (booking: Booking) => void;
   handleConfirm: () => void;
-  selectedBooking: Partial<Booking> | null;
+  selectedBooking: Booking | null;
   submitting: boolean;
   handleCloseBooking: () => void;
   action: 'accept' | 'reject' | 'review' | '';
@@ -30,7 +30,7 @@ interface UseBookingsDialogValidateReturn {
 
 export const useBookingsDialogValidate = (
   onBookingValidate?: () => void,
-  booking?: BookingFull
+  booking?: Booking
 ): UseBookingsDialogValidateReturn => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
@@ -40,8 +40,7 @@ export const useBookingsDialogValidate = (
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [hasReviewed, setHasReviewed] = useState<boolean>(true);
-  const [selectedBooking, setSelectedBooking] =
-    useState<Partial<Booking> | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   const isPassenger = selectedBooking?.user?.id === user?.id;
 
@@ -73,7 +72,7 @@ export const useBookingsDialogValidate = (
     setSelectedBooking(null);
   };
 
-  const handleOpenBooking = (booking: Partial<Booking>): void => {
+  const handleOpenBooking = (booking: Booking): void => {
     if (!isAuthenticated) {
       void navigate('/signin');
       return;
@@ -112,6 +111,7 @@ export const useBookingsDialogValidate = (
           targetId: isPassenger
             ? (selectedBooking.trip?.driverId ?? '')
             : (selectedBooking.user?.id ?? ''),
+          driverId: selectedBooking.trip?.driverId ?? '',
           tripId: selectedBooking.trip?.id ?? '',
           bookingId: selectedBooking.id,
           rating,

@@ -15,8 +15,11 @@ export interface Booking {
   seatCount: number;
   createdAt: string;
   updatedAt: string;
-  user?: Partial<User>;
-  trip?: Partial<Trip>;
+  user?: User;
+  trip?: Trip & {
+    driver?: User;
+    vehicle?: Vehicle;
+  };
 }
 
 export type BookingFull = Partial<Booking> & {

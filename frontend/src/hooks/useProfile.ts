@@ -13,14 +13,14 @@ import { hasRole } from '../utils/hasRole';
 import { useAppSelector } from './useAppSelector';
 
 export const useProfile = (): {
-  user: Partial<User> | null;
+  user: User | null;
   isDriver: boolean;
   isSubmitting: boolean;
   onUpdateUser: (formData: ProfileFormData) => Promise<boolean>;
 } => {
   const { user: getUser } = useAppSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const [user, setUser] = useState<Partial<User> | null>(getUser);
+  const [user, setUser] = useState<User | null>(getUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isDriver = user ? hasRole(user, 'driver') : false;

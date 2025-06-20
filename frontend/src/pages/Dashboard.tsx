@@ -9,7 +9,7 @@ import { ProfileView } from '../components/profile/ProfileView';
 import { useFirebaseLogin } from '../hooks/useFirebaseLogin';
 
 const DashboardPage: React.FC = () => {
-  useFirebaseLogin();
+  const isLoading = useFirebaseLogin();
 
   const {
     profileMode,
@@ -28,6 +28,9 @@ const DashboardPage: React.FC = () => {
     setProfileTabs,
     isViewMode,
   } = useDashboardState();
+
+  if (isLoading) return '...chargement';
+
   return (
     <Container maxWidth="md" sx={{ my: 4, px: { xs: 1, sm: 2, md: 4 } }}>
       <Paper

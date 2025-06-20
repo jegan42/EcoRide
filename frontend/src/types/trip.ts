@@ -1,3 +1,6 @@
+import type { User } from './user';
+import type { Vehicle } from './vehicle';
+
 // frontend/src/types/trip.ts
 export type TripStatus = 'open' | 'full' | 'cancelled';
 
@@ -14,4 +17,6 @@ export interface Trip {
   status: TripStatus;
   createdAt: string;
   updatedAt: string;
+  driver?: User;
+  vehicle?: Vehicle;
 }

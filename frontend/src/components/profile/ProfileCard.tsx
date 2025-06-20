@@ -3,7 +3,7 @@ import { Avatar, Box, Paper, Stack, Typography } from '@mui/material';
 import type { User } from '../../types/user';
 
 interface Props {
-  user?: Partial<User>;
+  user?: User;
 }
 
 export const ProfileCard: React.FC<Props> = ({ user }) => {

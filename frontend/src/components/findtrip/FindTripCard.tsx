@@ -6,9 +6,14 @@ import type { User } from '../../types/user';
 import { TripDetails } from '../trip/TripDetails';
 
 interface Props {
-  trip?: Partial<Trip> & {
-    vehicle?: Partial<Vehicle>;
-    driver?: Partial<User>;
+  trip?: Trip & {
+    vehicle?: Vehicle;
+    driver?: User & {
+      averageRating?: {
+        asDriver?: { rating: number; reviewCount: number };
+        asPassenger?: { rating: number; reviewCount: number };
+      };
+    };
   };
   onBook?: () => void;
   onDetails?: () => void;

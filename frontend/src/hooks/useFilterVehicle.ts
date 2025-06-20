@@ -5,7 +5,7 @@ import type { Vehicle } from '../types/vehicle';
 export const useFilterVehicle = (
   vehicles: Vehicle[]
 ): {
-  filteredVehicles: Partial<Vehicle[]>;
+  filteredVehicles: Vehicle[];
   energyFilter: string;
   seatFilter: number | string;
   sortKey: string;

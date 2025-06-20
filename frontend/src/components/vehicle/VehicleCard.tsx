@@ -1,14 +1,14 @@
 // frontend/src/component/vehicle/VehicleCard.tsx
-import { Paper, Box, Stack, Typography, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
+import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
 import ecoRideLogo from '../../assets/ecoride_logo.png';
+import { useDialog } from '../../hooks/useDialog';
 import { getEnergyLabel, type Vehicle } from '../../types/vehicle';
 import { ConfirmDialog } from '../dailog/ConfirmDialog';
-import { useDialog } from '../../hooks/useDialog';
 
 interface Props {
-  vehicle?: Partial<Vehicle>;
+  vehicle?: Vehicle;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }

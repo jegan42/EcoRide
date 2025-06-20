@@ -3,7 +3,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '../../types/user';
 
 export interface AuthState {
-  user: Partial<User> | null;
+  user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
   csrfToken: string | null;
@@ -25,7 +25,7 @@ const authSlice = createSlice({
     },
     signin(
       state,
-      action: PayloadAction<{ user: Partial<User>; isAuthenticated: boolean }>
+      action: PayloadAction<{ user: User; isAuthenticated: boolean }>
     ) {
       state.user = action.payload.user;
       state.isAuthenticated = action.payload.isAuthenticated;
@@ -39,7 +39,7 @@ const authSlice = createSlice({
     setCsrfToken(state, action: PayloadAction<string>) {
       state.csrfToken = action.payload;
     },
-    setUser(state, action: PayloadAction<{ user: Partial<User> }>) {
+    setUser(state, action: PayloadAction<{ user: User }>) {
       state.user = action.payload.user;
       state.loading = false;
     },

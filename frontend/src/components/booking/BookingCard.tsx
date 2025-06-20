@@ -7,7 +7,7 @@ import {
   Button,
   Box,
 } from '@mui/material';
-import type { BookingFull } from '../../types/booking';
+import type { Booking } from '../../types/booking';
 import { useIsDriver } from '../../hooks/useIsDriver';
 import { useBookingsDialogValidate } from '../../hooks/useBookingsDialogValidate';
 import { ConfirmDialog } from '../dailog/ConfirmDialog';
@@ -19,7 +19,7 @@ import { getDialogContent, getDialogTitle } from './BookingDialogContent';
 import { BookingDetails } from './BookingDetails';
 
 interface Props {
-  booking: BookingFull;
+  booking: Booking;
   isDriverBookings?: boolean;
   setOnUpdate: (update: boolean) => void;
   onValidate?: () => void;
@@ -54,8 +54,8 @@ export const BookingCard = ({
   const canReview =
     !hasReviewed && status === 'confirmed' && new Date(endingDate) < new Date();
 
-  const handleConfirmWithUpdate = async (): Promise<void> => {
-    await handleConfirm();
+  const handleConfirmWithUpdate = (): void => {
+    handleConfirm();
     setOnUpdate(true);
   };
 
@@ -138,7 +138,7 @@ export const BookingCard = ({
           open={!!selectedBooking}
           submitting={submitting}
           onClose={handleCloseBooking}
-          onConfirm={() => handleConfirmWithUpdate}
+          onConfirm={handleConfirmWithUpdate}
           disabledConfirm={
             action === 'review' && (!rating || !comment || hasReviewed)
           }

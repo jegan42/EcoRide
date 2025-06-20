@@ -1,17 +1,12 @@
 // frontend/src/component/trip/TripInfo.tsx
 import { Paper, Box, Stack } from '@mui/material';
-import type { Vehicle } from '../../types/vehicle';
 import type { Trip } from '../../types/trip';
-import type { User } from '../../types/user';
 import { VehicleCard } from '../vehicle/VehicleCard';
 import { TripCard } from './TripCard';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface Props {
-  trip?: Partial<Trip> & {
-    vehicle?: Partial<Vehicle>;
-    driver?: Partial<User>;
-  };
+  trip?: Trip;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }

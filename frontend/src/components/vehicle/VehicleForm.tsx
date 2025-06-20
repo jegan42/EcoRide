@@ -20,7 +20,7 @@ import {
 import { energyOptions, type Vehicle } from '../../types/vehicle';
 
 interface VehicleFormProps {
-  defaultValues?: Partial<Vehicle> | null;
+  defaultValues?: Vehicle | null;
   isSubmitting: boolean;
   onSubmit: (data: VehicleFormOutput) => void;
   onCancel: () => void;

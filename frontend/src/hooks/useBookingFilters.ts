@@ -1,11 +1,11 @@
 // frontend/src/hooks/useBookingFilters.ts
 import { useMemo, useState } from 'react';
-import type { BookingFull } from '../types/booking';
+import type { Booking } from '../types/booking';
 
 export const useBookingFilters = (
-  bookings: BookingFull[]
+  bookings: Booking[]
 ): {
-  filteredBookings: BookingFull[];
+  filteredBookings: Booking[];
   statusFilter: string;
   sortKey: string;
   sortOrder: 'asc' | 'desc';
@@ -27,7 +27,7 @@ export const useBookingFilters = (
   const filteredBookings = useMemo(() => {
     let result = [...bookings].filter(Boolean);
 
-    const getSortValue = (booking: BookingFull): number => {
+    const getSortValue = (booking: Booking): number => {
       switch (sortKey) {
         case 'addedAt':
           return booking.createdAt ? new Date(booking.createdAt).getTime() : 0;

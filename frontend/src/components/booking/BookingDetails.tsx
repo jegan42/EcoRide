@@ -1,10 +1,10 @@
 // frontend/src/components/booking/BookingDetails.tsx
 import { Stack, Typography, Chip } from '@mui/material';
-import type { BookingFull } from '../../types/booking';
+import type { Booking } from '../../types/booking';
 import type { JSX } from 'react';
 
 interface Props {
-  booking: BookingFull;
+  booking: Booking;
 }
 
 export const BookingDetails = ({ booking }: Props): JSX.Element => {

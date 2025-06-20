@@ -19,8 +19,7 @@ interface Props {
 }
 
 export const FindTripInfoDriverPreferences: React.FC<Props> = ({ id }) => {
-  const [preferences, setPreferences] =
-    useState<Partial<UserPreferences> | null>(null);
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {

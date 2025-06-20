@@ -5,11 +5,9 @@ import { FindTripInfoDriver } from '../findtrip/FindTripInfoDriver';
 import { FindTripInfoDriverPreferences } from '../findtrip/FindTripInfoDriverPreferences';
 import { FindTripInfoTrip } from '../findtrip/FindTripInfoTrip';
 import { FindTripInfoVehicle } from '../findtrip/FindTripInfoVehicle';
-import type { User } from '../../types/user';
-import type { Vehicle } from '../../types/vehicle';
 
 interface Props {
-  trip: Partial<Trip & { driver: Partial<User>; vehicle: Partial<Vehicle> }>;
+  trip: Trip;
   allInfo?: boolean;
   width?: string;
 }

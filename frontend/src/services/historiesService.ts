@@ -19,7 +19,7 @@ import {
 } from '../utils/handleApiResponse';
 
 export const addHistory = async (
-  history: Partial<History>
+  history: History
 ): Promise<ApiResponse<DocumentReference>> => {
   const historiesCollection = collection(db, 'histories');
   const docRef = await addDoc(historiesCollection, {

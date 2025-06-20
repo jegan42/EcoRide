@@ -9,7 +9,7 @@ import {
 } from '../utils/handleApiResponse';
 
 const createUserPreferences = async (
-  prefsData: Partial<UserPreferences>
+  prefsData: UserPreferences
 ): Promise<ApiResponse<UserPreferences>> => {
   const response = await api.post(`${API_URL}/preferences`, prefsData, {
     withCredentials: true,

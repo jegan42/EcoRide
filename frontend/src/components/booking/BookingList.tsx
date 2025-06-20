@@ -5,7 +5,7 @@ import { BookingCard } from './BookingCard';
 import { useEffect, useState, type JSX } from 'react';
 import { SwitchButton } from '../switchbutton/SwitchButton';
 import { useIsDriver } from '../../hooks/useIsDriver';
-import type { Booking, BookingFull } from '../../types/booking';
+import type { Booking } from '../../types/booking';
 import { useBookingFilters } from '../../hooks/useBookingFilters';
 import { BookingFilters } from './BookingFilters';
 import { BookingSort } from './BookingSort';
@@ -29,7 +29,7 @@ export const BookingList = (): JSX.Element => {
 
   const safeBookings = (isDriverBookings ? driverBookings : bookings).filter(
     (v): v is Booking => !!v?.id
-  ) as BookingFull[];
+  ) as Booking[];
 
   const {
     filteredBookings,

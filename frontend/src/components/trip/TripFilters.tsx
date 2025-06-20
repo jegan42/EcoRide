@@ -9,14 +9,9 @@ import {
 } from '@mui/material';
 import RestoreIcon from '@mui/icons-material/Restore';
 import type { Trip } from '../../types/trip';
-import type { User } from '../../types/user';
-import type { Vehicle } from '../../types/vehicle';
 
 interface Props {
-  trips: (Partial<Trip> & {
-    vehicle?: Partial<Vehicle>;
-    driver?: Partial<User>;
-  })[];
+  trips: Trip[];
   vehicleFilter: string;
   energyFilter: string;
   departureFilter: string;

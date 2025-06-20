@@ -12,9 +12,9 @@ import { useAppSelector } from './useAppSelector';
 export const useBookingsDialog = (
   onBookingConfirmed?: () => void
 ): {
-  handleOpenBooking: (trip: Partial<Trip>) => void;
-  handleConfirm: (trip: Partial<Trip>) => void;
-  dialogTrip: Partial<Trip> | null;
+  handleOpenBooking: (trip: Trip) => void;
+  handleConfirm: (trip: Trip) => void;
+  dialogTrip: Trip | null;
   submitting: boolean;
   handleCloseBooking: () => void;
   seats: number;
@@ -25,8 +25,8 @@ export const useBookingsDialog = (
   const [submitting, setSubmitting] = useState(false);
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const [dialogTrip, setDialogTrip] = useState<Partial<Trip> | null>(null);
-  const handleOpenBooking = (trip: Partial<Trip>): void => {
+  const [dialogTrip, setDialogTrip] = useState<Trip | null>(null);
+  const handleOpenBooking = (trip: Trip): void => {
     if (!isAuthenticated) {
       void navigate('/signin');
       return;
@@ -39,7 +39,7 @@ export const useBookingsDialog = (
     setSeats(1);
   };
 
-  const handleConfirm = async (trip: Partial<Trip>): Promise<void> => {
+  const handleConfirm = async (trip: Trip): Promise<void> => {
     if (!trip.id) {
       enqueueSnackbarError(
         new Error('Erreur de réservation : ID du trajet manquant.')

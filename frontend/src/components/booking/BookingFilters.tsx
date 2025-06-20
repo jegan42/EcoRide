@@ -11,7 +11,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import type { Booking } from '../../types/booking';
 
 interface Props {
-  bookings: Partial<Booking>[];
+  bookings: Booking[];
   statusFilter: string;
   setStatusFilter: (value: string) => void;
   resetFilters: () => void;

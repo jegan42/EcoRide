@@ -1,19 +1,11 @@
 // frontend/src/hooks/useFilterTrip.ts
 import { useMemo, useState } from 'react';
 import type { Trip } from '../types/trip';
-import type { User } from '../types/user';
-import type { Vehicle } from '../types/vehicle';
 
 export const useFilterTrip = (
-  trips: (Partial<Trip> & {
-    vehicle?: Partial<Vehicle>;
-    driver?: Partial<User>;
-  })[]
+  trips: Trip[]
 ): {
-  filteredTrips: (Partial<Trip> & {
-    vehicle?: Partial<Vehicle>;
-    driver?: Partial<User>;
-  })[];
+  filteredTrips: Trip[];
   vehicleFilter: string;
   energyFilter: string;
   departureFilter: string;
@@ -51,12 +43,7 @@ export const useFilterTrip = (
   const filteredTrips = useMemo(() => {
     let result = [...trips].filter(Boolean);
 
-    const getSortValue = (
-      trip: Partial<Trip> & {
-        vehicle?: Partial<Vehicle>;
-        driver?: Partial<User>;
-      }
-    ): number => {
+    const getSortValue = (trip: Trip): number => {
       switch (sortKey) {
         case 'addedAt':
           return trip.createdAt ? new Date(trip.createdAt).getTime() : 0;

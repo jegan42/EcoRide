@@ -14,7 +14,7 @@ import { formatMinutesToHours } from '../../utils/formatMinutesToHours';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface Props {
-  trip?: Partial<Trip>;
+  trip?: Trip;
   allInfo?: boolean;
 }
 

@@ -9,7 +9,7 @@ import { formatDateTime } from '../../utils/formatDateTime';
 import { formatField } from '../../utils/formatField';
 
 interface Props {
-  trip?: Partial<Trip>;
+  trip?: Trip;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }

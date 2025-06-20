@@ -17,7 +17,7 @@ import {
 } from '../utils/handleApiResponse';
 
 export const addContact = async (
-  contact: Partial<Contact>
+  contact: Contact
 ): Promise<ApiResponse<DocumentReference>> => {
   const contactsCollection = collection(db, 'contacts');
   const docRef = await addDoc(contactsCollection, {

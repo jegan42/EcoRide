@@ -16,4 +16,10 @@ export interface User {
   lastLogin: string;
   createdAt: string;
   updatedAt: string;
+  averageRating?: AverageRating;
+}
+
+export interface AverageRating {
+  asDriver?: { rating: number; reviewCount: number };
+  asPassenger?: { rating: number; reviewCount: number };
 }

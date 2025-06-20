@@ -23,18 +23,18 @@ type UpdatePayload = Pick<
 
 export const updateUser = async (
   data: Partial<UpdatePayload>
-): Promise<ApiResponse<Partial<User>>> => {
+): Promise<ApiResponse<User>> => {
   const response = await api.put(`${API_URL}/auth/update`, cleanPayload(data), {
     withCredentials: true,
   });
-  return handleApiResponseSafe<Partial<User>>(response.data);
+  return handleApiResponseSafe<User>(response.data);
 };
 
-export const fetchUser = async (): Promise<ApiResponse<Partial<User>>> => {
+export const fetchUser = async (): Promise<ApiResponse<User>> => {
   const response = await api.get(`${API_URL}/auth/me`, {
     withCredentials: true,
   });
-  return handleApiResponseSafe<Partial<User>>(response.data);
+  return handleApiResponseSafe<User>(response.data);
 };
 
 export default {

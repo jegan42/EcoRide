@@ -28,7 +28,7 @@ import type { Vehicle } from '../../types/vehicle';
 
 interface TripFormProps {
   driverId?: string;
-  defaultValues?: Partial<TripFormOutput> | null;
+  defaultValues?: TripFormOutput | null;
   isSubmitting: boolean;
   onSubmit: (data: TripFormOutput) => void;
   onCancel: () => void;
@@ -42,6 +42,8 @@ export const TripForm: React.FC<TripFormProps> = ({
   onCancel,
 }) => {
   const { vehicles } = useVehicle();
+  const safeVehicles = vehicles.filter((v): v is Vehicle => v !== undefined);
+
   const [maxSeats, setMaxSeats] = useState(9);
   const defaultDate = new Date();
 
@@ -71,7 +73,7 @@ export const TripForm: React.FC<TripFormProps> = ({
 
   const handleVehicleChange = (
     vehicleId: string,
-    vehicles: Partial<Vehicle[]> = [],
+    vehicles: Vehicle[] = [],
     onChange: (val: string) => void,
     setMaxSeats: (count: number) => void
   ): void => {
@@ -151,13 +153,13 @@ export const TripForm: React.FC<TripFormProps> = ({
                 onChange={(event) =>
                   handleVehicleChange(
                     event.target.value,
-                    vehicles,
+                    safeVehicles,
                     field.onChange,
                     setMaxSeats
                   )
                 }
               >
-                {vehicles.map((vehicle) => (
+                {safeVehicles.map((vehicle) => (
                   <MenuItem key={vehicle?.id} value={vehicle?.id}>
                     {`${vehicle?.brand} ${vehicle?.model} - ${vehicle?.licensePlate}`}
                   </MenuItem>

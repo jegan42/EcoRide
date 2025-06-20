@@ -15,7 +15,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import PaletteIcon from '@mui/icons-material/Palette';
 
 interface Props {
-  vehicle?: Partial<Vehicle>;
+  vehicle?: Vehicle;
   allInfo?: boolean;
 }
 

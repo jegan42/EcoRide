@@ -35,6 +35,11 @@ const fetchTrips = async (
   return handleApiResponseSafe<Trip[]>(response.data);
 };
 
+const fetchAllTrips = async (): Promise<ApiResponse<Trip[]>> => {
+  const response = await api.get(`${API_URL}/trips/all`);
+  return handleApiResponseSafe<Trip[]>(response.data);
+};
+
 const fetchTripById = async (id: string): Promise<ApiResponse<Trip>> => {
   const response = await api.get(`${API_URL}/trips/${id}`, {
     withCredentials: true,
@@ -81,6 +86,7 @@ const cancelTrip = async (id: string): Promise<ApiResponse<Trip>> => {
 
 export default {
   fetchTrips,
+  fetchAllTrips,
   fetchTripById,
   fetchTripsByDriver,
   createTrip,

@@ -17,6 +17,8 @@ import {
   handleApiResponseSafe,
 } from '../utils/handleApiResponse';
 import type { Review } from '../types/review';
+import tripService from './tripService';
+import type { Trip } from '../types/trip';
 
 export const addReview = async (
   review: Review
@@ -60,7 +62,7 @@ export const getReviewsByAuthor = async (
   authorId: string
 ): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
-  const q = query(reviewsCollection, where('author_id', '==', authorId));
+  const q = query(reviewsCollection, where('authorId', '==', authorId));
   const snapshot = await getDocs(q);
   const reviews = snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -76,7 +78,7 @@ export const getReviewsByTarget = async (
   targetId: string
 ): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
-  const q = query(reviewsCollection, where('target_id', '==', targetId));
+  const q = query(reviewsCollection, where('targetId', '==', targetId));
   const snapshot = await getDocs(q);
   const reviews = snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -90,7 +92,7 @@ export const getReviewsByTarget = async (
 
 export const updateReview = async (
   id: string,
-  data: Partial<Review>
+  data: Review
 ): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
   await updateDoc(reviewDoc, { ...data, updated_at: new Date() });
@@ -121,4 +123,60 @@ export const hasAlreadyReviewedBooking = async (
   );
   const snapshot = await getDocs(q);
   return !snapshot.empty;
+};
+
+let cachedTrips: Trip[] | null = null;
+
+export const getAverageRatingsByTargetUser = async (
+  userId: string
+): Promise<{
+  asDriver?: { rating: number; reviewCount: number };
+  asPassenger?: { rating: number; reviewCount: number };
+}> => {
+  const { data: dataReviews } = await getReviewsByTarget(userId);
+  if (!dataReviews || dataReviews.length === 0) return {};
+
+  if (!cachedTrips) {
+    const { data: allTrips } = await tripService.fetchAllTrips();
+    if (!allTrips) return {};
+    cachedTrips = allTrips;
+  }
+
+  const tripMap = new Map(cachedTrips.map((t) => [t.id, t]));
+
+  const driverRatings: number[] = [];
+  const passengerRatings: number[] = [];
+
+  for (const review of dataReviews) {
+    const trip = tripMap.get(review.tripId);
+    if (!trip) continue;
+
+    if (trip.driverId === userId) {
+      driverRatings.push(review.rating);
+    } else {
+      passengerRatings.push(review.rating);
+    }
+  }
+
+  const computeStats = (
+    arr: number[]
+  ):
+    | {
+        rating: number;
+        reviewCount: number;
+      }
+    | undefined =>
+    arr.length > 0
+      ? {
+          rating: parseFloat(
+            (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(1)
+          ),
+          reviewCount: arr.length,
+        }
+      : undefined;
+
+  return {
+    asDriver: computeStats(driverRatings),
+    asPassenger: computeStats(passengerRatings),
+  };
 };
