@@ -71,6 +71,10 @@ export class TripController {
           availableSeats,
           price,
         },
+        include: {
+          driver: true,
+          vehicle: true,
+        },
       });
 
       successCreateResponse(res, 'Trip', 'created', trip);
@@ -106,6 +110,24 @@ export class TripController {
   };
 
   static readonly getAll = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const trips = await prismaNewClient.trip.findMany({
+        include: {
+          driver: true,
+          vehicle: true,
+        },
+      });
+
+      successResponse(res, 'Trips', 'getAll', trips);
+    } catch (error) {
+      errorResponse(res, 'Trip', 'failed to getAll', error);
+    }
+  };
+
+  static readonly getWithFilter = async (
     req: Request,
     res: Response
   ): Promise<void> => {
@@ -212,6 +234,10 @@ export class TripController {
       const trip = await prismaNewClient.trip.update({
         where: { id },
         data: req.body,
+        include: {
+          driver: true,
+          vehicle: true,
+        },
       });
 
       successResponse(res, 'Trip', 'updated', trip);

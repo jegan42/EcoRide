@@ -56,6 +56,10 @@ export class TripService {
             lte: endOfDay,
           },
         },
+        include: {
+          driver: true,
+          vehicle: true,
+        },
       });
 
       return existingTrip;
