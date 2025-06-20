@@ -6,8 +6,11 @@ import { useDashboardState } from '../hooks/useDashboardState';
 import { DashboardListSwitch } from '../components/dashboard/DashboardListSwitch';
 import { DashboardFormSwitch } from '../components/dashboard/DashboardFormSwitch';
 import { ProfileView } from '../components/profile/ProfileView';
+import { useFirebaseLogin } from '../hooks/useFirebaseLogin';
 
 const DashboardPage: React.FC = () => {
+  useFirebaseLogin();
+
   const {
     profileMode,
     setProfileMode,

@@ -8,6 +8,8 @@ import {
   handleApiResponseSafe,
 } from '../utils/handleApiResponse';
 import { cleanPayload } from '../utils/cleanPayload';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
 
 const signup = async (
   payload: Partial<User>
@@ -43,8 +45,18 @@ const signout = async (): Promise<ApiResponse<void>> => {
   return handleApiResponseBasic<void>(response.data);
 };
 
+const logoutFirebase = async (): Promise<void> => {
+  try {
+    await signOut(auth);
+    console.log('[Firebase] Déconnecté avec succès');
+  } catch (error) {
+    console.error('[Firebase] Erreur lors de la déconnexion :', error);
+  }
+};
+
 export default {
   signup,
   signin,
   signout,
+  logoutFirebase,
 };

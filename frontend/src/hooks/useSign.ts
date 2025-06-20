@@ -26,7 +26,7 @@ export const useSign = (): {
 
   useEffect(() => {
     if (isAuthenticated) {
-      void navigate('/');
+      void navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 

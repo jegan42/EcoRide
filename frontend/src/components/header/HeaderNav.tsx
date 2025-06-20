@@ -29,9 +29,14 @@ export const HeaderNav = (): JSX.Element => {
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const signoutSubmit = async (): Promise<void> => {
-    const { message, data: _ } = await authService.signout();
-    dispatch(signoutAction());
-    enqueueSnackbarSuccess(message);
+    try {
+      const { message, data: _ } = await authService.signout();
+      await authService.logoutFirebase();
+      dispatch(signoutAction());
+      enqueueSnackbarSuccess(message);
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
   };
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
