@@ -42,17 +42,16 @@ export const RatingFilter: React.FC<RatingFilterProps> = ({
         alignItems="center"
         onFocus={() => setFocused(true)}
         onBlur={(e) => {
-          // ne perdre le focus que si on sort du conteneur
           if (!containerRef.current?.contains(e.relatedTarget as Node)) {
             setFocused(false);
           }
         }}
-        tabIndex={-1} // Permet le focus du conteneur si besoin
+        tabIndex={-1}
       >
         {[1, 2, 3, 4, 5].map((value) => (
           <IconButton
             key={value}
-            onClick={() => onChange(value)}
+            onClick={() => onChange(rating === value ? value - 1 : value)}
             sx={{
               color: value <= rating ? '#fbc02d' : 'gray',
             }}

@@ -1,27 +1,30 @@
 // frontend/src/pages/FindTripPage.tsx
-import React, { type JSX } from 'react';
+import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTrip } from '../hooks/useTrip';
 import { Sidebar } from '../components/sidebar/Sidebar';
 import { FindTripCard } from '../components/findtrip/FindTripCard';
 import type { Trip } from '../types/trip';
-import type { User } from '../types/user';
-import type { Vehicle } from '../types/vehicle';
 import { FindTripSearch } from '../components/findtrip/FindTripSearch';
-import { FindTripFilters } from '../components/findtrip/FindTripFilters';
-import { FindTripSort } from '../components/findtrip/FindTripSort';
 import { useFindTripFilters } from '../hooks/useFindTripFilters';
 import { useNavigate } from 'react-router-dom';
 import { FindTripDialogContent } from '../components/findtrip/FindTripDialogContent';
 import { ConfirmDialog } from '../components/dailog/ConfirmDialog';
 import { useBookingsDialog } from '../hooks/useBookingsDialog';
+import { useAverageRating } from '../hooks/useAverageRating';
+import { FindTripSidebarContent } from '../components/findtrip/FindTripSidebarContent';
 
 export const FindTripPage: React.FC = () => {
   const navigate = useNavigate();
 
   const { allTrips, fetchTrips } = useTrip();
 
-  const safeTrips = allTrips.filter((v): v is Trip => !!v?.id);
+  const safeTrips = allTrips.filter(
+    (v): v is Trip =>
+      !!v?.id && new Date(v.departureDate).getTime() > new Date().getTime()
+  );
+
+  const { enrichedTrips } = useAverageRating(safeTrips);
 
   const {
     filteredTrips,
@@ -42,7 +45,7 @@ export const FindTripPage: React.FC = () => {
     setSortKey,
     setSortOrder,
     resetFilters,
-  } = useFindTripFilters(safeTrips);
+  } = useFindTripFilters(enrichedTrips);
 
   const {
     dialogTrip,
@@ -54,39 +57,28 @@ export const FindTripPage: React.FC = () => {
     handleOpenBooking,
   } = useBookingsDialog(() => fetchTrips({}));
 
-  const SidebarContent = (): JSX.Element => (
-    <Box
-      aria-label="Filtres de recherche"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-      }}
-    >
-      <FindTripSort
-        sortKey={sortKey}
-        sortOrder={sortOrder}
-        setSortKey={setSortKey}
-        setSortOrder={setSortOrder}
-      />
-      <FindTripFilters
-        ecoFilter={ecoFilter}
-        ecoCounts={ecoCounts}
-        priceRange={priceRange}
-        selectedSeats={selectedSeats}
-        seatCounts={seatCounts}
-        starFilter={starFilter}
-        setEcoFilter={setEcoFilter}
-        setPriceRange={setPriceRange}
-        setSelectedSeats={setSelectedSeats}
-        setStarFilter={setStarFilter}
-        resetFilters={resetFilters}
-      />
-    </Box>
-  );
-
   return (
-    <Sidebar sidebarContent={<SidebarContent />}>
+    <Sidebar
+      sidebarContent={
+        <FindTripSidebarContent
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          setSortKey={setSortKey}
+          setSortOrder={setSortOrder}
+          ecoFilter={ecoFilter}
+          ecoCounts={ecoCounts}
+          priceRange={priceRange}
+          selectedSeats={selectedSeats}
+          seatCounts={seatCounts}
+          starFilter={starFilter}
+          setEcoFilter={setEcoFilter}
+          setPriceRange={setPriceRange}
+          setSelectedSeats={setSelectedSeats}
+          setStarFilter={setStarFilter}
+          resetFilters={resetFilters}
+        />
+      }
+    >
       <Box
         component="main"
         role="main"
@@ -117,7 +109,7 @@ export const FindTripPage: React.FC = () => {
             {filteredTrips.length} trajet
             {filteredTrips.length !== 1 ? 's' : ''} trouvé
           </Typography>
-          {filteredTrips.length === 0 ? (
+          {filteredTrips.length === 0 && allTrips.length > 0 ? (
             <Typography variant="body1">
               Aucun trajet ne correspond à vos critères.
             </Typography>
@@ -132,22 +124,15 @@ export const FindTripPage: React.FC = () => {
                 gap: 2,
               }}
             >
-              {filteredTrips.map(
-                (
-                  trip: Partial<Trip> & {
-                    vehicle?: Partial<Vehicle>;
-                    driver?: Partial<User>;
-                  }
-                ) => (
-                  <Box key={trip.id}>
-                    <FindTripCard
-                      trip={trip}
-                      onDetails={() => navigate(`/tripdetails/${trip.id}`)}
-                      onBook={() => handleOpenBooking(trip)}
-                    />
-                  </Box>
-                )
-              )}
+              {filteredTrips.map((trip: Trip) => (
+                <Box key={trip.id}>
+                  <FindTripCard
+                    trip={trip}
+                    onDetails={() => navigate(`/tripdetails/${trip.id}`)}
+                    onBook={() => handleOpenBooking(trip)}
+                  />
+                </Box>
+              ))}
             </Box>
           )}
         </Box>

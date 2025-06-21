@@ -22,6 +22,7 @@ const sortOptions = [
   { value: 'addedAt', label: 'Date d’ajout' },
   { value: 'updatedAt', label: 'Date de modification' },
   { value: 'departureDate', label: 'Date de départ' },
+  { value: 'rating', label: 'Note' },
   { value: 'price', label: 'Prix' },
   { value: 'availableSeats', label: 'Places disponibles' },
 ];

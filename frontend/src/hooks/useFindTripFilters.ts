@@ -25,7 +25,7 @@ export const useFindTripFilters = (
   setSortOrder: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
   resetFilters: () => void;
 } => {
-  const [sortKey, setSortKey] = useState('addedAt');
+  const [sortKey, setSortKey] = useState('rating');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [ecoFilter, setEcoFilter] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
@@ -33,7 +33,7 @@ export const useFindTripFilters = (
   const [starFilter, setStarFilter] = useState(0);
 
   const resetFilters = (): void => {
-    setSortKey('addedAt');
+    setSortKey('rating');
     setSortOrder('desc');
     setEcoFilter('');
     setPriceRange([0, 100]);
@@ -58,6 +58,8 @@ export const useFindTripFilters = (
           return Number(trip.price);
         case 'availableSeats':
           return Number(trip.availableSeats);
+        case 'rating':
+          return Number(trip.driver?.averageRating?.asDriver?.rating);
         default:
           return 0;
       }
@@ -86,9 +88,11 @@ export const useFindTripFilters = (
       });
     }
 
-    // if (starFilter > 0) {
-    //     result = result.filter((t) => t.driver?.averageRating >= starFilter);
-    //   }
+    if (starFilter > 0) {
+      result = result.filter(
+        (t) => (t.driver?.averageRating?.asDriver?.rating ?? 0) >= starFilter
+      );
+    }
 
     result.sort((a, b) => {
       const aVal = getSortValue(a);
@@ -98,7 +102,15 @@ export const useFindTripFilters = (
     });
 
     return result;
-  }, [trips, ecoFilter, priceRange, selectedSeats, sortKey, sortOrder]);
+  }, [
+    trips,
+    ecoFilter,
+    priceRange,
+    selectedSeats,
+    starFilter,
+    sortKey,
+    sortOrder,
+  ]);
 
   const seatCounts = filteredTrips.reduce(
     (acc, trip) => {

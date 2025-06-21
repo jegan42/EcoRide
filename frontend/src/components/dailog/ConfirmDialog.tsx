@@ -15,10 +15,12 @@ interface ConfirmDialogProps {
   message?: string;
   children?: React.ReactElement | React.ReactElement[] | null;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   isDelete?: boolean;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
   disabledConfirm?: boolean;
+  closeName?: string;
+  confirmName?: string;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -32,6 +34,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   isDelete = false,
   maxWidth = 'sm',
   disabledConfirm = false,
+  closeName = 'Annuler',
+  confirmName = 'Confirmer',
 }) => {
   const buttonColor = isDelete ? 'error' : 'primary';
   return (
@@ -43,18 +47,20 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       </DialogContent>
       <DialogActions>
         <Button aria-label="cancel" onClick={onClose} disabled={submitting}>
-          Annuler
+          {closeName}
         </Button>
-        <Button
-          aria-label="confirm"
-          onClick={onConfirm}
-          color={buttonColor}
-          variant="contained"
-          disabled={submitting || disabledConfirm}
-          autoFocus
-        >
-          {submitting ? 'Chargement...' : 'Confirmer'}
-        </Button>
+        {onConfirm && (
+          <Button
+            aria-label="confirm"
+            onClick={onConfirm}
+            color={buttonColor}
+            variant="contained"
+            disabled={submitting || disabledConfirm}
+            autoFocus
+          >
+            {submitting ? 'Chargement...' : confirmName}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

@@ -7,6 +7,7 @@ import { PreferencesView } from '../preferences/PreferencesView';
 import type { Trip } from '../../types/trip';
 import { TripList } from '../trip/TripList';
 import { BookingList } from '../booking/BookingList';
+import { ReviewListSwitch } from '../review/ReviewListSwitch';
 
 interface Props {
   profileTabs: ProfileTabsMode;
@@ -44,6 +45,8 @@ export const DashboardListSwitch: React.FC<Props> = ({
       );
     case 'booking':
       return <BookingList />;
+    case 'review':
+      return <ReviewListSwitch />;
     default:
       return null;
   }

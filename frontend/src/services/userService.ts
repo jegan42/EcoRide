@@ -37,7 +37,13 @@ export const fetchUser = async (): Promise<ApiResponse<User>> => {
   return handleApiResponseSafe<User>(response.data);
 };
 
+export const fetchUserById = async (id: string): Promise<ApiResponse<User>> => {
+  const response = await api.get(`${API_URL}/auth/${id}`);
+  return handleApiResponseSafe<User>(response.data);
+};
+
 export default {
   updateUser,
   fetchUser,
+  fetchUserById,
 };

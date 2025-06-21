@@ -67,6 +67,7 @@ export const BookingCard = ({
           flexDirection: { xs: 'column', sm: 'row' },
           gap: 2,
           border: `1px solid ${theme.palette.primary.main}`,
+          borderRadius: 1,
         })}
       >
         {trip && (

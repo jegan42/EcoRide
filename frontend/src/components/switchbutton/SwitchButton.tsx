@@ -7,6 +7,7 @@ interface Props {
   onChange: (checked: boolean) => void;
   switchOn?: string;
   switchOff?: string;
+  labelPlacement?: 'end' | 'start' | 'top' | 'bottom' | undefined;
 }
 
 export const SwitchButton: React.FC<Props> = ({
@@ -14,6 +15,7 @@ export const SwitchButton: React.FC<Props> = ({
   onChange,
   switchOn = 'Activé',
   switchOff = 'Désactivé',
+  labelPlacement = 'end',
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     onChange(event.target.checked);
@@ -23,7 +25,7 @@ export const SwitchButton: React.FC<Props> = ({
     <FormControlLabel
       control={<Switch checked={checked} onChange={handleChange} />}
       label={checked ? switchOn : switchOff}
-      labelPlacement="end"
+      labelPlacement={labelPlacement}
     />
   );
 };

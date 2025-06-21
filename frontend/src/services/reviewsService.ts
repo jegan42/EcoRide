@@ -19,6 +19,7 @@ import {
 import type { Review } from '../types/review';
 import tripService from './tripService';
 import type { Trip } from '../types/trip';
+import type { AverageRating } from '../types/user';
 
 export const addReview = async (
   review: Review
@@ -36,8 +37,8 @@ export const addReview = async (
   const reviewsCollection = collection(db, 'reviews');
   const docRef = await addDoc(reviewsCollection, {
     ...review,
-    created_at: new Date(),
-    updated_at: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
   return handleApiResponseSafe<DocumentReference>({
     message: 'Avis ajouté avec succès',
@@ -95,7 +96,7 @@ export const updateReview = async (
   data: Review
 ): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
-  await updateDoc(reviewDoc, { ...data, updated_at: new Date() });
+  await updateDoc(reviewDoc, { ...data, updatedAt: new Date() });
   return handleApiResponseBasic<void>({
     message: 'Avis mis à jour',
     data: undefined,
@@ -126,20 +127,26 @@ export const hasAlreadyReviewedBooking = async (
 };
 
 let cachedTrips: Trip[] | null = null;
+let cachedTripsTimestamp = 0;
+
+export const clearTripCache = (): void => {
+  cachedTrips = null;
+  cachedTripsTimestamp = 0;
+};
+
+const CACHE_TTL = 15 * 60 * 1000;
 
 export const getAverageRatingsByTargetUser = async (
   userId: string
-): Promise<{
-  asDriver?: { rating: number; reviewCount: number };
-  asPassenger?: { rating: number; reviewCount: number };
-}> => {
+): Promise<AverageRating> => {
   const { data: dataReviews } = await getReviewsByTarget(userId);
   if (!dataReviews || dataReviews.length === 0) return {};
 
-  if (!cachedTrips) {
+  if (!cachedTrips || Date.now() - cachedTripsTimestamp > CACHE_TTL) {
     const { data: allTrips } = await tripService.fetchAllTrips();
     if (!allTrips) return {};
     cachedTrips = allTrips;
+    cachedTripsTimestamp = Date.now();
   }
 
   const tripMap = new Map(cachedTrips.map((t) => [t.id, t]));
