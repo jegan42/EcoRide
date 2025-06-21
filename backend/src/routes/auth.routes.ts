@@ -39,6 +39,8 @@ router.put(
 
 router.get('/me', authenticate, AuthController.getMe);
 
+router.get('/:id', AuthController.getUserById);
+
 router.get(
   '/google',
   passport.authenticate('google', {

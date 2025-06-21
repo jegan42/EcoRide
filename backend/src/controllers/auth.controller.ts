@@ -112,6 +112,32 @@ export class AuthController {
     successResponse(res, 'Auth', 'getMe', AuthService.sanitizedUser(user));
   };
 
+  static readonly getUserById = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const { id } = req.params;
+
+    try {
+      const user = await prismaNewClient.user.findUnique({
+        where: { id },
+      });
+      if (!user) {
+        notFoundResponse(res, 'Auth', 'user not found');
+        return;
+      }
+
+      successResponse(
+        res,
+        'Auth',
+        'getUserById',
+        AuthService.sanitizedUser(user)
+      );
+    } catch (error) {
+      errorResponse(res, 'Auth', 'failed to getUserById', error);
+    }
+  };
+
   static readonly update = async (
     req: Request,
     res: Response
