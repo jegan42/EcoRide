@@ -1,10 +1,16 @@
 // frontend/src/types/contact.ts
+
+import type { FirestoreTimestamp } from './common';
+
+export type ContactStatus = 'unread' | 'answered';
+
 export interface Contact {
   id?: string;
   email: string;
   subject: string;
   message: string;
-  sentAt?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  status: ContactStatus;
+  sentAt?: FirestoreTimestamp;
+  createdAt?: FirestoreTimestamp;
+  updatedAt?: FirestoreTimestamp;
 }

@@ -22,9 +22,9 @@ export const addContact = async (
   const contactsCollection = collection(db, 'contacts');
   const docRef = await addDoc(contactsCollection, {
     ...contact,
-    sent_at: new Date(),
-    created_at: new Date(),
-    updated_at: new Date(),
+    sentAt: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
   return handleApiResponseSafe<DocumentReference>({
     message: 'Contact ajouté avec succès',
@@ -50,7 +50,7 @@ export const updateContact = async (
   data: Partial<Contact>
 ): Promise<ApiResponse<void>> => {
   const contactDoc = doc(db, 'contacts', id);
-  await updateDoc(contactDoc, { ...data, updated_at: new Date() });
+  await updateDoc(contactDoc, { ...data, updatedAt: new Date() });
   return handleApiResponseBasic<void>({
     message: 'Contact mis à jour',
     data: undefined,

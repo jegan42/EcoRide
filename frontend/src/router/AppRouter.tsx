@@ -10,6 +10,7 @@ import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { Home } from '../pages/Home';
 import { LegalNotice } from '../pages/LegalNotice';
 import { About } from '../pages/About';
+import { Contact } from '../pages/Contact';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: 'tripdetails/:id', element: <TripDetailsPage /> },
       { path: 'notices', element: <LegalNotice /> },
       { path: 'about', element: <About /> },
+      { path: 'contact', element: <Contact /> },
       {
         element: <ProtectedRoute />,
         children: [{ path: 'dashboard', element: <Dashboard /> }],
