@@ -22,8 +22,8 @@ export const About: React.FC = () => {
 
         <Typography variant="body1">
           Grâce à notre plateforme, nous connectons des conducteurs et des
-          passagers partageant les mêmes trajets, en mettant l'accent sur
-          l'utilisation de véhicules électriques et les bonnes pratiques de
+          passagers partageant les mêmes trajets, en mettant l’accent sur
+          l’utilisation de véhicules électriques et les bonnes pratiques de
           conduite.
         </Typography>
 
@@ -75,7 +75,7 @@ export const About: React.FC = () => {
                 <Typography variant="body2">
                   Nous sommes une équipe passionnée de développeurs, designers
                   et experts en mobilité durable. Chaque ligne de code est
-                  pensée pour rendre l'expérience plus fluide, plus humaine, et
+                  pensée pour rendre l’expérience plus fluide, plus humaine, et
                   plus respectueuse de notre planète.
                 </Typography>
               </Paper>

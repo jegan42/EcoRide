@@ -17,6 +17,12 @@ export const HeaderLogButton: React.FC<Props> = ({
 }): JSX.Element => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  const onSignout = (): void => {
+    void onSignoutSubmit();
+    void navigate('/');
+  };
+
   if (isAuthenticated) {
     return (
       <Button
@@ -24,7 +30,7 @@ export const HeaderLogButton: React.FC<Props> = ({
         variant="contained"
         color="primary"
         sx={{ borderRadius: 2, textTransform: 'none' }}
-        onClick={onSignoutSubmit}
+        onClick={onSignout}
       >
         Déconnexion
       </Button>

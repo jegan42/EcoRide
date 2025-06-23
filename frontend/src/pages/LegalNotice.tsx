@@ -76,7 +76,7 @@ export const LegalNotice: React.FC = () => {
         </Typography>
         <Typography variant="body1">
           Le site EcoRide peut être amené à utiliser des cookies à des fins de
-          fonctionnement, de statistiques ou d'amélioration de l’expérience
+          fonctionnement, de statistiques ou d’amélioration de l’expérience
           utilisateur. Vous pouvez configurer vos préférences via les paramètres
           de votre navigateur.
         </Typography>
