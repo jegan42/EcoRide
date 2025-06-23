@@ -3,7 +3,9 @@ import { DialogContent, Typography } from '@mui/material';
 import { ReviewForm } from '../review/ReviewForm';
 import type { JSX } from 'react';
 
-export const getDialogTitle = (action: string): string => {
+type BookingAction = 'accept' | 'reject' | 'review' | 'no_show';
+
+export const getDialogTitle = (action: BookingAction): string => {
   switch (action) {
     case 'accept':
       return 'Validation';
@@ -11,8 +13,10 @@ export const getDialogTitle = (action: string): string => {
       return 'Annulation';
     case 'review':
       return 'Un avis';
+    case 'no_show':
+      return 'Non Présentation';
     default:
-      return '';
+      return 'Action';
   }
 };
 
@@ -35,14 +39,19 @@ export const getDialogContent = (
       </DialogContent>
     );
   }
+  if (action === 'no_show') {
+    return (
+      <DialogContent>
+        <Typography variant="body2">
+          {`Vous confirmez que la personne ne s'est pas présentée ?`}
+        </Typography>
+      </DialogContent>
+    );
+  }
 
-  const label =
-    action === 'accept'
-      ? 'valider'
-      : action === 'reject'
-        ? 'annuler'
-        : 'continuer';
+  if (action !== 'accept' && action !== 'reject') return <></>;
 
+  const label = action === 'accept' ? 'valider' : 'annuler';
   return (
     <DialogContent>
       <Typography variant="body2">

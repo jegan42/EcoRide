@@ -12,7 +12,6 @@ import { useIsDriver } from '../../hooks/useIsDriver';
 import { useBookingsDialogValidate } from '../../hooks/useBookingsDialogValidate';
 import { ConfirmDialog } from '../dailog/ConfirmDialog';
 import { TripDetails } from '../trip/TripDetails';
-import { type JSX } from 'react';
 import { FindTripInfoDriver } from '../findtrip/FindTripInfoDriver';
 import { FindTripInfoTrip } from '../findtrip/FindTripInfoTrip';
 import { getDialogContent, getDialogTitle } from './BookingDialogContent';
@@ -25,12 +24,12 @@ interface Props {
   onValidate?: () => void;
 }
 
-export const BookingCard = ({
+export const BookingCard: React.FC<Props> = ({
   booking,
   isDriverBookings = false,
   setOnUpdate,
   onValidate,
-}: Props): JSX.Element => {
+}) => {
   const isDriver = useIsDriver();
   const { trip, status } = booking;
 
@@ -47,12 +46,8 @@ export const BookingCard = ({
     comment,
     setComment,
     hasReviewed,
+    canReview,
   } = useBookingsDialogValidate(onValidate, booking);
-
-  const endingDate = trip?.arrivalDate || 0;
-
-  const canReview =
-    !hasReviewed && status === 'confirmed' && new Date(endingDate) < new Date();
 
   const handleConfirmWithUpdate = (): void => {
     handleConfirm();
@@ -81,9 +76,12 @@ export const BookingCard = ({
 
         {canReview && (
           <Box
-            textAlign="center"
-            p={2}
-            sx={{ width: { xs: '100%', sm: '15%' } }}
+            sx={{
+              width: { xs: '100%', sm: '15%' },
+              display: 'flex',
+              flexDirection: { xs: 'row', sm: 'column' },
+              justifyContent: 'space-between',
+            }}
           >
             <Button
               variant="contained"
@@ -94,12 +92,23 @@ export const BookingCard = ({
             >
               Ajouter un avis
             </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleOpenBooking(booking);
+                setAction('no_show');
+              }}
+            >
+              Pas présent
+            </Button>
           </Box>
         )}
 
         {status === 'pending' && (
           <Stack
             sx={{
+              width: { xs: '100%', sm: '15%' },
               display: 'flex',
               flexDirection: { xs: 'row', sm: 'column' },
               justifyContent: 'space-between',

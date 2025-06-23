@@ -1,9 +1,10 @@
+// frontend/src/hooks/useReviewList.ts
 import { useState, useEffect } from 'react';
-import type { Review } from '../../types/review';
+import type { Review } from '../types/review';
 import {
   getReviewsByAuthor,
   getReviewsByTarget,
-} from '../../services/reviewsService';
+} from '../services/reviewsService';
 
 export const useReviewList = (
   userId?: string

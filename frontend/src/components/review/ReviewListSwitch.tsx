@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useMemo, useState, type JSX } from 'react';
 import { useProfile } from '../../hooks/useProfile';
 import type { Review } from '../../types/review';
-import { useReviewList } from './useReviewList';
+import { useReviewList } from '../../hooks/useReviewList';
 import { SwitchButton } from '../switchbutton/SwitchButton';
 import { ReviewList } from './ReviewList';
 

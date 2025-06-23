@@ -1,9 +1,6 @@
 // frontend/src/types/review.ts
 
-export interface FirestoreTimestamp {
-  seconds: number;
-  nanoseconds: number;
-}
+import type { FirestoreTimestamp } from './common';
 
 export interface Review {
   id?: string;

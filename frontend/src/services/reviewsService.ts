@@ -20,6 +20,7 @@ import type { Review } from '../types/review';
 import tripService from './tripService';
 import type { Trip } from '../types/trip';
 import type { AverageRating } from '../types/user';
+import type { Booking } from '../types/booking';
 
 export const addReview = async (
   review: Review
@@ -187,3 +188,22 @@ export const getAverageRatingsByTargetUser = async (
     asPassenger: computeStats(passengerRatings),
   };
 };
+
+export const buildReview = (
+  userId: string,
+  booking: Booking,
+  action: 'review' | 'no_show',
+  rating: number,
+  comment: string
+): Review => ({
+  authorId: userId,
+  targetId:
+    booking.user?.id === userId
+      ? (booking.trip?.driverId ?? '')
+      : (booking.user?.id ?? ''),
+  driverId: booking.trip?.driverId ?? '',
+  tripId: booking.trip?.id ?? '',
+  bookingId: booking.id,
+  rating: action === 'review' ? rating : 0,
+  comment: action === 'review' ? comment : 'Pas présent',
+});

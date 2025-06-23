@@ -24,6 +24,11 @@ const cancelBooking = async (id: string): Promise<ApiResponse<Booking>> => {
   return handleApiResponseSafe<Booking>(response.data);
 };
 
+const fetchAllBookings = async (): Promise<ApiResponse<Booking[]>> => {
+  const response = await api.get(`${API_URL}/bookings/all`);
+  return handleApiResponseSafe<Booking[]>(response.data);
+};
+
 const fetchBookings = async (): Promise<ApiResponse<Booking[]>> => {
   const response = await api.get(`${API_URL}/bookings/me`, {
     withCredentials: true,
@@ -76,4 +81,5 @@ export default {
   fetchBookingsByTrip,
   validateBooking,
   fetchBookingById,
+  fetchAllBookings,
 };

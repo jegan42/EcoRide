@@ -21,11 +21,3 @@ export interface Booking {
     vehicle?: Vehicle;
   };
 }
-
-export type BookingFull = Partial<Booking> & {
-  user?: Partial<User>;
-  trip?: Partial<Trip> & {
-    driver?: Partial<User>;
-    vehicle?: Partial<Vehicle>;
-  };
-};

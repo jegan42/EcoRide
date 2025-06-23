@@ -8,8 +8,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
 import type { Booking } from '../types/booking';
-import { addReview, hasAlreadyReviewedBooking } from '../services';
+import {
+  addHistory,
+  addReview,
+  buildHistory,
+  buildReview,
+  hasAlreadyHistory,
+  hasAlreadyReviewedBooking,
+} from '../services';
 import type { Review } from '../types/review';
+import type { History, HistoryStatusEnum } from '../types/history';
 
 interface UseBookingsDialogValidateReturn {
   handleOpenBooking: (booking: Booking) => void;
@@ -17,16 +25,23 @@ interface UseBookingsDialogValidateReturn {
   selectedBooking: Booking | null;
   submitting: boolean;
   handleCloseBooking: () => void;
-  action: 'accept' | 'reject' | 'review' | '';
+  action: 'accept' | 'reject' | 'review' | 'no_show' | '';
   setAction: React.Dispatch<
-    React.SetStateAction<'accept' | 'reject' | 'review' | ''>
+    React.SetStateAction<'accept' | 'reject' | 'review' | 'no_show' | ''>
   >;
   rating: number;
   setRating: React.Dispatch<React.SetStateAction<number>>;
   comment: string;
   setComment: React.Dispatch<React.SetStateAction<string>>;
   hasReviewed: boolean;
+  canReview: boolean;
 }
+
+const actionToHistoryStatus: Record<string, HistoryStatusEnum> = {
+  reject: 'cancelled',
+  review: 'completed',
+  no_show: 'no_show',
+};
 
 export const useBookingsDialogValidate = (
   onBookingValidate?: () => void,
@@ -36,15 +51,23 @@ export const useBookingsDialogValidate = (
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const [submitting, setSubmitting] = useState(false);
-  const [action, setAction] = useState<'accept' | 'reject' | 'review' | ''>('');
+  const [action, setAction] = useState<
+    'accept' | 'reject' | 'review' | 'no_show' | ''
+  >('');
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [hasReviewed, setHasReviewed] = useState<boolean>(true);
+  const [hasHistory, setHasHistory] = useState<boolean>(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-
   const isPassenger = selectedBooking?.user?.id === user?.id;
 
   const endingDate = booking?.trip?.arrivalDate || 0;
+
+  const canReview =
+    !hasReviewed &&
+    !hasHistory &&
+    booking?.status === 'confirmed' &&
+    new Date(endingDate) < new Date();
 
   useEffect(() => {
     const checkReview = async (): Promise<void> => {
@@ -57,11 +80,16 @@ export const useBookingsDialogValidate = (
           booking.id && (await hasAlreadyReviewedBooking(user.id, booking.id))
         );
         setHasReviewed(reviewed);
+        const history = Boolean(
+          booking.trip?.id &&
+            (await hasAlreadyHistory(user.id, booking.trip.id, booking.id))
+        );
+        setHasHistory(history);
       }
     };
 
     void checkReview();
-  }, [booking?.status, booking?.id, user?.id, endingDate]);
+  }, [booking?.status, booking?.id, booking?.trip?.id, user?.id, endingDate]);
 
   const reset = (): void => {
     setSubmitting(false);
@@ -106,17 +134,13 @@ export const useBookingsDialogValidate = (
           );
         }
       } else if (action === 'review') {
-        const newReview: Review = {
-          authorId: user?.id ?? '',
-          targetId: isPassenger
-            ? (selectedBooking.trip?.driverId ?? '')
-            : (selectedBooking.user?.id ?? ''),
-          driverId: selectedBooking.trip?.driverId ?? '',
-          tripId: selectedBooking.trip?.id ?? '',
-          bookingId: selectedBooking.id,
+        const newReview: Review = buildReview(
+          user?.id ?? '',
+          selectedBooking,
+          action,
           rating,
-          comment,
-        };
+          comment
+        );
 
         const res = await addReview(newReview);
 
@@ -128,6 +152,23 @@ export const useBookingsDialogValidate = (
       } else {
         enqueueSnackbarError(new Error(`Action inconnue : ${action}`));
       }
+      const status = actionToHistoryStatus[action];
+
+      if (status) {
+        const newHistory: History = buildHistory(
+          user?.id ?? '',
+          selectedBooking,
+          status,
+          isPassenger ? 'passenger' : 'driver'
+        );
+
+        if (!newHistory.tripId) {
+          console.warn('Trip ID manquant pour l’historique');
+        }
+
+        await addHistory(newHistory);
+      }
+
       handleCloseBooking();
       onBookingValidate?.();
     } catch (error) {
@@ -150,5 +191,6 @@ export const useBookingsDialogValidate = (
     comment,
     setComment,
     hasReviewed,
+    canReview,
   };
 };

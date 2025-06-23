@@ -16,11 +16,13 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 interface Props {
   trip?: Trip;
   allInfo?: boolean;
+  minInfo?: boolean;
 }
 
 export const FindTripInfoTrip: React.FC<Props> = ({
   trip,
   allInfo = false,
+  minInfo = false,
 }) => {
   const isMobile = useIsMobile();
   const stackDirection = allInfo ? 'row' : 'column';
@@ -69,15 +71,17 @@ export const FindTripInfoTrip: React.FC<Props> = ({
           spacing={2}
           sx={{ width: { xs: '80%', sm: stackWidth } }}
         >
-          <TripInfoRow
-            icon={
-              <EuroIcon
-                sx={(theme) => ({ color: theme.palette.primary.dark })}
-              />
-            }
-            label="Prix :"
-            value={<strong>{`${formatField(trip?.price)} €`}</strong>}
-          />
+          {!minInfo && (
+            <TripInfoRow
+              icon={
+                <EuroIcon
+                  sx={(theme) => ({ color: theme.palette.primary.dark })}
+                />
+              }
+              label="Prix :"
+              value={<strong>{`${formatField(trip?.price)} €`}</strong>}
+            />
+          )}
 
           <TripInfoRow
             icon={
@@ -139,15 +143,17 @@ export const FindTripInfoTrip: React.FC<Props> = ({
             />
           )}
 
-          <TripInfoRow
-            icon={
-              <ChairIcon
-                sx={(theme) => ({ color: theme.palette.primary.dark })}
-              />
-            }
-            label="Places dispo :"
-            value={formatField(trip?.availableSeats)}
-          />
+          {!minInfo && (
+            <TripInfoRow
+              icon={
+                <ChairIcon
+                  sx={(theme) => ({ color: theme.palette.primary.dark })}
+                />
+              }
+              label="Places dispo :"
+              value={formatField(trip?.availableSeats)}
+            />
+          )}
         </Stack>
       </Stack>
     </>

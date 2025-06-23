@@ -1,20 +1,10 @@
 // frontend/src/component/findtrip/FindTripCard.tsx
 import { Paper, Box, Stack, Button } from '@mui/material';
-import type { Vehicle } from '../../types/vehicle';
 import type { Trip } from '../../types/trip';
-import type { User } from '../../types/user';
 import { TripDetails } from '../trip/TripDetails';
 
 interface Props {
-  trip?: Trip & {
-    vehicle?: Vehicle;
-    driver?: User & {
-      averageRating?: {
-        asDriver?: { rating: number; reviewCount: number };
-        asPassenger?: { rating: number; reviewCount: number };
-      };
-    };
-  };
+  trip?: Trip;
   onBook?: () => void;
   onDetails?: () => void;
 }
