@@ -15,6 +15,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fr } from 'date-fns/locale/fr';
 import { useFindTripSearch } from '../../hooks/useFindTripSearch';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   fetchTrips: (
@@ -27,6 +28,13 @@ interface Props {
   ) => Promise<boolean>;
   availableDepartureCities: string[];
   availableArrivalCities: string[];
+  isHome?: boolean;
+  initialValues?: {
+    departureCity?: string;
+    arrivalCity?: string;
+    date?: Date | null;
+    flexible?: boolean;
+  };
 }
 
 const textFieldSx = {
@@ -41,7 +49,10 @@ export const FindTripSearch: React.FC<Props> = ({
   fetchTrips,
   availableDepartureCities,
   availableArrivalCities,
+  isHome = false,
+  initialValues = {},
 }) => {
+  const navigate = useNavigate();
   const {
     departureCity,
     arrivalCity,
@@ -51,9 +62,23 @@ export const FindTripSearch: React.FC<Props> = ({
     setArrivalCity,
     setDate,
     setFlexible,
-    handleSearch,
+    handleSearch: originalHandleSearch,
     handleReset,
-  } = useFindTripSearch(fetchTrips);
+  } = useFindTripSearch(fetchTrips, initialValues);
+
+  const handleSearch = async (): Promise<void> => {
+    if (isHome) {
+      const searchParams = new URLSearchParams();
+      if (departureCity) searchParams.set('departureCity', departureCity);
+      if (arrivalCity) searchParams.set('arrivalCity', arrivalCity);
+      if (date) searchParams.set('departureDate', date.toISOString());
+      if (flexible) searchParams.set('flexible', 'true');
+
+      void navigate(`/findtrip?${searchParams.toString()}`);
+    } else {
+      await originalHandleSearch();
+    }
+  };
 
   return (
     <Box
@@ -196,15 +221,17 @@ export const FindTripSearch: React.FC<Props> = ({
             gap: 2,
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleReset}
-            sx={{ mt: 2, maxWidth: 240 }}
-            fullWidth
-          >
-            Reset recherche
-          </Button>
+          {!isHome && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleReset}
+              sx={{ mt: 2, maxWidth: 240 }}
+              fullWidth
+            >
+              Reset recherche
+            </Button>
+          )}
           <Button
             variant="contained"
             color="primary"

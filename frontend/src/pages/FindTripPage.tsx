@@ -1,5 +1,5 @@
 // frontend/src/pages/FindTripPage.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTrip } from '../hooks/useTrip';
 import { Sidebar } from '../components/sidebar/Sidebar';
@@ -7,7 +7,7 @@ import { FindTripCard } from '../components/findtrip/FindTripCard';
 import type { Trip } from '../types/trip';
 import { FindTripSearch } from '../components/findtrip/FindTripSearch';
 import { useFindTripFilters } from '../hooks/useFindTripFilters';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FindTripDialogContent } from '../components/findtrip/FindTripDialogContent';
 import { ConfirmDialog } from '../components/dailog/ConfirmDialog';
 import { useBookingsDialog } from '../hooks/useBookingsDialog';
@@ -15,6 +15,28 @@ import { useAverageRating } from '../hooks/useAverageRating';
 import { FindTripSidebarContent } from '../components/findtrip/FindTripSidebarContent';
 
 export const FindTripPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+
+  const initialDepartureCity = searchParams.get('departureCity') || '';
+  const initialArrivalCity = searchParams.get('arrivalCity') || '';
+  const initialDate = searchParams.get('departureDate')
+    ? new Date(searchParams.get('departureDate')!)
+    : null;
+  const initialFlexible = searchParams.get('flexible') === 'true';
+
+  useEffect(() => {
+    const hasQuery = searchParams.toString() !== '';
+    if (hasQuery) {
+      void fetchTrips({
+        departureCity: initialDepartureCity,
+        arrivalCity: initialArrivalCity,
+        departureDate: initialDate?.toISOString(),
+        flexible: initialFlexible,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   const navigate = useNavigate();
 
   const { allTrips, fetchTrips } = useTrip();
@@ -98,6 +120,12 @@ export const FindTripPage: React.FC = () => {
             fetchTrips={fetchTrips}
             availableDepartureCities={departureCities}
             availableArrivalCities={arrivalCities}
+            initialValues={{
+              departureCity: initialDepartureCity,
+              arrivalCity: initialArrivalCity,
+              date: initialDate,
+              flexible: initialFlexible,
+            }}
           />
         </Box>
         <Box

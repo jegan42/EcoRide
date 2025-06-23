@@ -9,7 +9,13 @@ export const useFindTripSearch = (
       departureDate: string;
       flexible: boolean;
     }>
-  ) => Promise<boolean>
+  ) => Promise<boolean>,
+  initialValues?: {
+    departureCity?: string;
+    arrivalCity?: string;
+    date?: Date | null;
+    flexible?: boolean;
+  }
 ): {
   departureCity: string;
   arrivalCity: string;
@@ -22,13 +28,26 @@ export const useFindTripSearch = (
   handleSearch: () => Promise<void>;
   handleReset: () => void;
 } => {
-  const [departureCity, setDepartureCity] = useState('');
-  const [arrivalCity, setArrivalCity] = useState('');
-  const [date, setDate] = useState<Date | null>(null);
-  const [flexible, setFlexible] = useState(false);
+  const [departureCity, setDepartureCity] = useState(
+    initialValues?.departureCity ?? ''
+  );
+  const [arrivalCity, setArrivalCity] = useState(
+    initialValues?.arrivalCity ?? ''
+  );
+  const [date, setDate] = useState<Date | null>(initialValues?.date ?? null);
+  const [flexible, setFlexible] = useState(initialValues?.flexible ?? false);
 
   useEffect(() => {
-    void fetchTrips({});
+    const hasInitialValues = !!(
+      initialValues?.departureCity ||
+      initialValues?.arrivalCity ||
+      initialValues?.date ||
+      initialValues?.flexible
+    );
+
+    if (!hasInitialValues) {
+      void fetchTrips({});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
