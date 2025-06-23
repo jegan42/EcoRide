@@ -1,3 +1,4 @@
+// frontend/src/pages/Home.tsx
 import { Box, Typography, Button, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/bg-home.jpg';
@@ -24,7 +25,6 @@ export const Home: React.FC = () => {
 
   return (
     <Box component="main">
-      {/* Block 1: Hero */}
       <Box
         component="header"
         sx={{
@@ -60,7 +60,6 @@ export const Home: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Block 2 */}
       <Box
         component="section"
         p={4}
@@ -93,7 +92,6 @@ export const Home: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Block 3 */}
       <Box component="section" p={4}>
         <Box width={{ xs: '100%', sm: '80%' }} mx={'auto'}>
           <Grid container spacing={4} alignItems="center">
@@ -120,7 +118,6 @@ export const Home: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Block 4: Recherche rapide */}
       <Box
         component="section"
         p={4}
@@ -136,28 +133,9 @@ export const Home: React.FC = () => {
             availableArrivalCities={arrivalCities}
             isHome={true}
           />
-          {/* <Grid container spacing={2}>
-            <Grid component={'div'} size={{ xs: 12, md: 4 }}>
-              <TextField fullWidth label="Départ" variant="outlined" />
-            </Grid>
-            <Grid component={'div'} size={{ xs: 12, md: 4 }}>
-              <TextField fullWidth label="Arrivée" variant="outlined" />
-            </Grid>
-            <Grid component={'div'} size={{ xs: 12, md: 4 }}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => navigate('/find-trips')}
-              >
-                Rechercher
-              </Button>
-            </Grid>
-          </Grid> */}
         </Box>
       </Box>
 
-      {/* Block 5: Avantages */}
       <Box component="section" p={4}>
         <Box width={{ xs: '100%', sm: '80%' }} mx={'auto'}>
           <Typography variant="h5" textAlign="center" mb={3}>

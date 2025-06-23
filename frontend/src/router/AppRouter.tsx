@@ -8,6 +8,8 @@ import { AppLayout } from '../layouts/AppLayout';
 import { FindTripPage } from '../pages/FindTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { Home } from '../pages/Home';
+import { LegalNotice } from '../pages/LegalNotice';
+import { About } from '../pages/About';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,8 @@ const router = createBrowserRouter([
       { path: 'signin', element: <Signin /> },
       { path: 'findtrip', element: <FindTripPage /> },
       { path: 'tripdetails/:id', element: <TripDetailsPage /> },
+      { path: 'notices', element: <LegalNotice /> },
+      { path: 'about', element: <About /> },
       {
         element: <ProtectedRoute />,
         children: [{ path: 'dashboard', element: <Dashboard /> }],

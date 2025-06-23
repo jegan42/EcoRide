@@ -11,14 +11,17 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 export const contactInfo = [
   {
     icon: <LocationOnIcon sx={{ fontSize: 20, color: 'secondary.main' }} />,
+    iconDark: <LocationOnIcon sx={{ fontSize: 20, color: 'primary.dark' }} />,
     text: '1 avenue Nature, 12 345 Eco-Town, France',
   },
   {
     icon: <LocalPhoneIcon sx={{ fontSize: 20, color: 'secondary.main' }} />,
+    iconDark: <LocalPhoneIcon sx={{ fontSize: 20, color: 'primary.dark' }} />,
     text: '(123) 456-7890',
   },
   {
     icon: <MailIcon sx={{ fontSize: 20, color: 'secondary.main' }} />,
+    iconDark: <MailIcon sx={{ fontSize: 20, color: 'primary.dark' }} />,
     text: 'contact@ecoride.fr',
   },
 ];
