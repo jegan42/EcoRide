@@ -20,6 +20,10 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
 
   const tripId = trip?.id;
 
+  const isPassedTrip = trip?.departureDate
+  ? new Date(trip.departureDate) < new Date()
+  : false;
+
   return (
     <Paper
       elevation={3}
@@ -71,7 +75,7 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
           </Typography>
         </Stack>
 
-        <Stack
+        {!isPassedTrip && <Stack
           direction="column"
           alignItems="center"
           justifyContent={'space-between'}
@@ -90,7 +94,7 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
           >
             <DeleteForeverIcon />
           </IconButton>
-        </Stack>
+        </Stack>}
       </Box>
 
       <ConfirmDialog
