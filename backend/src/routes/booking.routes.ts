@@ -28,6 +28,8 @@ router.delete(
   BookingController.cancel
 );
 
+router.get('/all', BookingController.getAll);
+
 router.get('/me', authenticate, BookingController.getAllByUser);
 
 router.get(

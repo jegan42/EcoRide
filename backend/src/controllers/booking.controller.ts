@@ -142,6 +142,29 @@ export class BookingController {
     }
   };
 
+  static readonly getAll = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const bookings = await prismaNewClient.booking.findMany({
+        include: {
+          user: true,
+          trip: {
+            include: {
+              driver: true,
+              vehicle: true,
+            },
+          },
+        },
+      });
+
+      successResponse(res, 'Bookings', 'getAllByUser', bookings);
+    } catch (error) {
+      errorResponse(res, 'Booking', 'failed to getAllByUser', error);
+    }
+  };
+
   static readonly getAllByDriver = async (
     req: Request,
     res: Response
