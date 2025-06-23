@@ -7,21 +7,20 @@ import Dashboard from '../pages/Dashboard';
 import { AppLayout } from '../layouts/AppLayout';
 import { FindTripPage } from '../pages/FindTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
+import { Home } from '../pages/Home';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
     children: [
+      { index: true, element: <Home /> },
       { path: 'signin', element: <Signin /> },
       { path: 'findtrip', element: <FindTripPage /> },
       { path: 'tripdetails/:id', element: <TripDetailsPage /> },
       {
         element: <ProtectedRoute />,
-        children: [
-          { index: true, element: <Dashboard /> },
-          { path: 'dashboard', element: <Dashboard /> },
-        ],
+        children: [{ path: 'dashboard', element: <Dashboard /> }],
       },
     ],
   },
