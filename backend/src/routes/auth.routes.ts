@@ -10,6 +10,7 @@ import {
 import { GoogleAuthController } from '../controllers/google.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { handleValidationErrors } from '../middleware/validator.middleware';
+import { authorize } from '../middleware/authorize.middleware';
 
 const router = Router();
 
@@ -36,6 +37,8 @@ router.put(
   handleValidationErrors,
   AuthController.update
 );
+
+router.get('/all', authenticate, authorize(['admin']), AuthController.getAllUsers);
 
 router.get('/me', authenticate, AuthController.getMe);
 

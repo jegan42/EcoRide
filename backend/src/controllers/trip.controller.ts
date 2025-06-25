@@ -226,7 +226,7 @@ export class TripController {
 
       const user = req.user as User;
 
-      if (user.id !== existingTrip.driverId) {
+      if (user.id !== existingTrip.driverId && !user.role.includes('admin')) {
         forbiddenResponse(res, 'Trip', 'not a driver');
         return;
       }

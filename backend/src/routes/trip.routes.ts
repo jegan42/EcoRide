@@ -43,7 +43,7 @@ router.post(
 router.put(
   '/:id',
   authenticate,
-  authorize(['driver']),
+  authorize(['driver', 'admin']),
   updateTripValidator,
   handleValidationErrors,
   TripController.update

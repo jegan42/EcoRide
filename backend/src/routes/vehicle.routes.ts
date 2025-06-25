@@ -23,6 +23,13 @@ router.post(
 router.get('/', authenticate, VehicleController.getByUser);
 
 router.get(
+  '/all/:id',
+  uuidParamValidator,
+  handleValidationErrors,
+  VehicleController.getByUserId
+);
+
+router.get(
   '/:id',
   uuidParamValidator,
   handleValidationErrors,

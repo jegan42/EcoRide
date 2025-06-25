@@ -137,9 +137,7 @@ export class AuthService {
     }
 
     if (currentUser.role.includes('admin')) {
-      updateData.role = role
-        ? Array.from(new Set([...user.role, ...role]))
-        : user.role;
+      updateData.role = role ? Array.from(new Set(role)) : user.role;
       updateData.credits = credits ?? user.credits;
       updateData.email = email ?? user.email;
       updateData.username = username ?? user.username;

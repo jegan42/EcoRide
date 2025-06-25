@@ -125,6 +125,27 @@ export class VehicleController {
     }
   };
 
+  static readonly getByUserId = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+
+      const vehicles = await prismaNewClient.vehicle.findMany({
+        where: { userId:id },
+      });
+      if (!vehicles) {
+        notFoundResponse(res, 'Vehicle', 'vehicles not found');
+        return;
+      }
+
+      successResponse(res, 'Vehicle', 'getByUserId', vehicles);
+    } catch (error) {
+      errorResponse(res, 'Vehicle', 'failed to getByUserId', error);
+    }
+  };
+
   static readonly update = async (
     req: Request,
     res: Response

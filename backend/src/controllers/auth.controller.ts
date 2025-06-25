@@ -112,6 +112,26 @@ export class AuthController {
     successResponse(res, 'Auth', 'getMe', AuthService.sanitizedUser(user));
   };
 
+  static readonly getAllUsers = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const users = await prismaNewClient.user.findMany();
+      if (!users.length) {
+        notFoundResponse(res, 'Auth', 'users not found');
+        return;
+      }
+      const usersWithoutAdmin = users.filter((u) => !u.role.includes('admin'));
+      const usersSanitized = usersWithoutAdmin.map((u) =>
+        AuthService.sanitizedUser(u)
+      );
+      successResponse(res, 'Auth', 'getAllUsers', usersSanitized);
+    } catch (error) {
+      errorResponse(res, 'Auth', 'failed to getAllUsers', error);
+    }
+  };
+
   static readonly getUserById = async (
     req: Request,
     res: Response
@@ -186,7 +206,9 @@ export class AuthController {
         data: updateData,
       });
 
-      updatedUser.jwtToken && setTokenCookie(res, updatedUser.jwtToken);
+      !currentUser.role.includes('admin') &&
+        updatedUser.jwtToken &&
+        setTokenCookie(res, updatedUser.jwtToken);
 
       successResponse(
         res,
