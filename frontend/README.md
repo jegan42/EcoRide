@@ -52,8 +52,6 @@ export default tseslint.config({
   },
 });
 ```
-Voici un **README.md** complet et structuré pour ton projet frontend **EcoRide**. Bien sûr, il faudra ajuster certains éléments — captures d’écran, URLs, tokens, etc. — une fois que tu les auras.
-
 ---
 
 ````markdown
@@ -215,7 +213,7 @@ Les options envisagées :
 
 ## 🧑‍💻 Contact
 
-Pour toute question, contact : **José (CTO EcoRide)** ou créateur·rice du projet.
+Pour toute question, contact : **Jyzee (CTO EcoRide)** ou créateur·rice du projet.
 
 ---
 
@@ -229,7 +227,4 @@ Pour toute question, contact : **José (CTO EcoRide)** ou créateur·rice du pro
 
 - Ajoute **captures d’écran** et remplace `<REPO_URL>`  
 - Confirme les instructions de déploiement (Netlify, Firebase, etc.)  
-- Si tu veux, je peux t’aider à rédiger la partie `.github/workflows/ci.yml`.
-
-N’hésite pas à me dire si tu veux que j’ajoute ou détaille un point particulier 😊
 ```
