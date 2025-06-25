@@ -8,16 +8,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
 import type { Booking } from '../types/booking';
-import {
-  addHistory,
-  addReview,
-  buildHistory,
-  buildReview,
-  hasAlreadyHistory,
-  hasAlreadyReviewedBooking,
-} from '../services';
+import { addHistory, buildHistory, hasAlreadyHistory } from '../services';
 import type { Review } from '../types/review';
 import type { History, HistoryStatusEnum } from '../types/history';
+import reviewsService from '../services/reviewsService';
 
 interface UseBookingsDialogValidateReturn {
   handleOpenBooking: (booking: Booking) => void;
@@ -77,7 +71,11 @@ export const useBookingsDialogValidate = (
         user?.id
       ) {
         const reviewed = Boolean(
-          booking.id && (await hasAlreadyReviewedBooking(user.id, booking.id))
+          booking.id &&
+            (await reviewsService.hasAlreadyReviewedBooking(
+              user.id,
+              booking.id
+            ))
         );
         setHasReviewed(reviewed);
         const history = Boolean(
@@ -134,7 +132,7 @@ export const useBookingsDialogValidate = (
           );
         }
       } else if (action === 'review') {
-        const newReview: Review = buildReview(
+        const newReview: Review = reviewsService.buildReview(
           user?.id ?? '',
           selectedBooking,
           action,
@@ -142,7 +140,7 @@ export const useBookingsDialogValidate = (
           comment
         );
 
-        const res = await addReview(newReview);
+        const res = await reviewsService.addReview(newReview);
 
         if (res.data) {
           enqueueSnackbarSuccess('Avis soumis avec succès.');

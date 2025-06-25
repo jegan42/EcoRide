@@ -1,11 +1,14 @@
 // frontend/src/utils/enqueueSnackbar.ts
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { enqueueSnackbar } from 'notistack';
 import { extractApiError } from './handleApiError';
 
 export const enqueueSnackbarSuccess = (message: string): void => {
-  enqueueSnackbar(message, { variant: 'success' });
+  console.info(message);
+  // enqueueSnackbar(message, { variant: 'success' });
 };
 
 export const enqueueSnackbarError = (error: unknown): void => {
-  enqueueSnackbar(extractApiError(error), { variant: 'error' });
+  console.error(extractApiError(error));
+  // enqueueSnackbar(extractApiError(error), { variant: 'error' });
 };

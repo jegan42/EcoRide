@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useProfile } from './useProfile';
 import type { AverageRating } from '../types/user';
 import type { Trip } from '../types/trip';
-import { getAverageRatingsByTargetUser } from '../services/reviewsService';
+import reviewsService from '../services/reviewsService';
 
 export const useAverageRating = (
   trips?: Trip[],
@@ -21,7 +21,8 @@ export const useAverageRating = (
   useEffect(() => {
     if (!idToFetch) return;
     const fetchRatings = async (): Promise<void> => {
-      const data = await getAverageRatingsByTargetUser(idToFetch);
+      const data =
+        await reviewsService.getAverageRatingsByTargetUser(idToFetch);
       setAverageRating(data);
     };
 
@@ -39,7 +40,9 @@ export const useAverageRating = (
 
       await Promise.all(
         driverIds.map(async (id) => {
-          const rating = await getAverageRatingsByTargetUser(id!);
+          const rating = await reviewsService.getAverageRatingsByTargetUser(
+            id!
+          );
           ratingsMap.set(id!, rating);
         })
       );

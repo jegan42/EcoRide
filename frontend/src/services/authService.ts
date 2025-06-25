@@ -11,9 +11,7 @@ import { cleanPayload } from '../utils/cleanPayload';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 
-const signup = async (
-  payload: Partial<User>
-): Promise<ApiResponse<Partial<User>>> => {
+const signup = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
   const response = await api.post(
     `${API_URL}/auth/signup`,
     cleanPayload(payload),
@@ -21,17 +19,15 @@ const signup = async (
       withCredentials: true,
     }
   );
-  return handleApiResponseSafe<Partial<User>>(response.data);
+  return handleApiResponseSafe<User>(response.data);
 };
 
-const signin = async (
-  payload: Partial<User>
-): Promise<ApiResponse<Partial<User>>> => {
+const signin = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
   const response = await api.post(`${API_URL}/auth/signin`, payload, {
     withCredentials: true,
   });
 
-  return handleApiResponseSafe<Partial<User>>(response.data);
+  return handleApiResponseSafe<User>(response.data);
 };
 
 const signout = async (): Promise<ApiResponse<void>> => {

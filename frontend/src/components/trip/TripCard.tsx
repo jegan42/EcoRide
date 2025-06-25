@@ -12,17 +12,23 @@ interface Props {
   trip?: Trip;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  isAdmin?: boolean;
 }
 
-export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
+export const TripCard: React.FC<Props> = ({
+  trip,
+  onEdit,
+  onDelete,
+  isAdmin = false,
+}) => {
   const { dialogOpen, setDialogOpen, handleDeleteClick, handleConfirmDelete } =
     useDialog();
 
   const tripId = trip?.id;
 
   const isPassedTrip = trip?.departureDate
-  ? new Date(trip.departureDate) < new Date()
-  : false;
+    ? new Date(trip.departureDate) < new Date()
+    : false;
 
   return (
     <Paper
@@ -40,6 +46,7 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
       <Box
         sx={{
           display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: 2,
@@ -75,37 +82,51 @@ export const TripCard: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
           </Typography>
         </Stack>
 
-        {!isPassedTrip && <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent={'space-between'}
-        >
-          <IconButton
-            aria-label="edit"
-            onClick={() => tripId && onEdit(tripId)}
-            sx={(theme) => ({ color: theme.palette.primary.main })}
+        {(!isPassedTrip || isAdmin) && (
+          <Stack
+            direction={{ xs: 'row', sm: 'column' }}
+            alignItems="center"
+            justifyContent={'space-between'}
+            width={{ xs: '100%', sm: '10%' }}
           >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            aria-label="cancel"
-            onClick={() => tripId && handleDeleteClick(tripId)}
-            sx={(theme) => ({ color: theme.palette.error.main })}
-          >
-            <DeleteForeverIcon />
-          </IconButton>
-        </Stack>}
+            <IconButton
+              aria-label="edit"
+              onClick={() => tripId && onEdit(tripId)}
+              sx={(theme) => ({ color: theme.palette.primary.main })}
+            >
+              <EditIcon />
+            </IconButton>
+            {trip?.status !== 'cancelled' && !isPassedTrip && (
+              <IconButton
+                aria-label="cancel"
+                onClick={() => {
+                  if (tripId)
+                    if (isAdmin) {
+                      onDelete(tripId);
+                    } else {
+                      handleDeleteClick(tripId);
+                    }
+                }}
+                sx={(theme) => ({ color: theme.palette.error.main })}
+              >
+                <DeleteForeverIcon />
+              </IconButton>
+            )}
+          </Stack>
+        )}
       </Box>
 
-      <ConfirmDialog
-        open={dialogOpen}
-        message={`Es-tu sûr de vouloir supprimer \
+      {!isAdmin && (
+        <ConfirmDialog
+          open={dialogOpen}
+          message={`Es-tu sûr de vouloir supprimer \
                 le voyage ${trip?.departureCity} → ${trip?.arrivalCity} \
                 du ${formatDateTime(trip?.departureDate)} au ${formatDateTime(trip?.arrivalDate)} ?`}
-        onClose={() => setDialogOpen(false)}
-        onConfirm={() => onDelete && handleConfirmDelete(onDelete)}
-        isDelete={true}
-      />
+          onClose={() => setDialogOpen(false)}
+          onConfirm={() => onDelete && handleConfirmDelete(onDelete)}
+          isDelete={true}
+        />
+      )}
     </Paper>
   );
 };

@@ -30,6 +30,13 @@ export const updateUser = async (
   return handleApiResponseSafe<User>(response.data);
 };
 
+export const fetchAllUsers = async (): Promise<ApiResponse<User[]>> => {
+  const response = await api.get(`${API_URL}/auth/all`, {
+    withCredentials: true,
+  });
+  return handleApiResponseSafe<User[]>(response.data);
+};
+
 export const fetchUser = async (): Promise<ApiResponse<User>> => {
   const response = await api.get(`${API_URL}/auth/me`, {
     withCredentials: true,
@@ -46,4 +53,5 @@ export default {
   updateUser,
   fetchUser,
   fetchUserById,
+  fetchAllUsers,
 };

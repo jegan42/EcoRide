@@ -1,5 +1,10 @@
 // frontend/src/types/user.ts
-export type RoleEnum = 'passenger' | 'driver' | 'admin' | 'employee';
+export type RoleEnum =
+  | 'passenger'
+  | 'driver'
+  | 'admin'
+  | 'employee'
+  | 'suspended';
 
 export interface User {
   id: string;
@@ -11,7 +16,7 @@ export interface User {
   phone?: string;
   address?: string;
   avatar?: string;
-  role: Array<RoleEnum>;
+  role: RoleEnum[];
   credits: number;
   lastLogin: string;
   createdAt: string;

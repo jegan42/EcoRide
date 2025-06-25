@@ -31,8 +31,8 @@ export const useTrip = (): {
     }>
   ) => Promise<boolean>;
   fetchTripById: (id: string) => Promise<boolean>;
-  onCreateTrip: (data: Trip) => Promise<boolean>;
-  onUpdateTrip: (id: string, tripData: Trip) => Promise<boolean>;
+  onCreateTrip: (data: Partial<Trip>) => Promise<boolean>;
+  onUpdateTrip: (id: string, tripData: Partial<Trip>) => Promise<boolean>;
   onCancelTrip: (id: string) => Promise<boolean>;
 } => {
   const [allTrips, setAllTrips] = useState<Trip[]>([]);
@@ -113,7 +113,7 @@ export const useTrip = (): {
     };
   }, []);
 
-  const onCreateTrip = async (tripData: Trip): Promise<boolean> => {
+  const onCreateTrip = async (tripData: Partial<Trip>): Promise<boolean> => {
     setIsSubmitting(true);
     try {
       const { data, message } = await tripService.createTrip({

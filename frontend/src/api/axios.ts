@@ -1,8 +1,8 @@
 // frontend/src/api/axios.ts
 import axios from 'axios';
-import { enqueueSnackbar } from 'notistack';
 import { API_URL } from '../constants/api';
 import { store } from '../store';
+import { enqueueSnackbarError } from '../utils/enqueueSnackbar';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -17,7 +17,7 @@ api.interceptors.response.use(
   (error) => {
     const message =
       error?.response?.data?.message || 'Erreur serveur inconnue.';
-    enqueueSnackbar(message, { variant: 'error' });
+    enqueueSnackbarError(new Error(message));
 
     return Promise.reject(error);
   }

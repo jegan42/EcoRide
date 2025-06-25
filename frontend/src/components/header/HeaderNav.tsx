@@ -38,8 +38,8 @@ export const HeaderNav = (): JSX.Element => {
       console.error('Erreur lors de la déconnexion:', error);
     }
   };
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const isAdmin = user && user.role.includes('admin');
   const navLinks = [
     { label: 'Accueil', to: '/' },
     { label: 'Trouver trajet', to: '/findtrip' },
@@ -47,6 +47,7 @@ export const HeaderNav = (): JSX.Element => {
     ...(isAuthenticated
       ? [{ label: 'Tableau de board', to: '/dashboard' }]
       : []),
+    ...(isAdmin ? [{ label: 'Administration', to: '/admin' }] : []),
   ];
   if (isMobile) {
     return (

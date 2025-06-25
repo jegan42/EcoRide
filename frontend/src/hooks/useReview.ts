@@ -1,7 +1,7 @@
 // frontend/src/hooks/useReview.ts
 import { useEffect, useState } from 'react';
-import { getReviewsByTarget } from '../services/reviewsService';
 import type { Review } from '../types/review';
+import reviewsService from '../services/reviewsService';
 
 export const useReview = (
   driverId?: string
@@ -22,7 +22,7 @@ export const useReview = (
       setLoading(true);
       setError(null);
       try {
-        const { data } = await getReviewsByTarget(driverId);
+        const { data } = await reviewsService.getReviewsByTarget(driverId);
         if (isMounted) setReviews(data);
       } catch (err) {
         if (isMounted) {

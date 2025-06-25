@@ -1,10 +1,7 @@
 // frontend/src/hooks/useReviewList.ts
 import { useState, useEffect } from 'react';
 import type { Review } from '../types/review';
-import {
-  getReviewsByAuthor,
-  getReviewsByTarget,
-} from '../services/reviewsService';
+import reviewsService from '../services/reviewsService';
 
 export const useReviewList = (
   userId?: string
@@ -22,10 +19,11 @@ export const useReviewList = (
   useEffect(() => {
     const fetchReviews = async (): Promise<void> => {
       if (!userId) return;
-      const { data: received } = await getReviewsByTarget(userId);
+      const { data: received } =
+        await reviewsService.getReviewsByTarget(userId);
       setAllReviewsReceived(received ?? []);
 
-      const { data: given } = await getReviewsByAuthor(userId);
+      const { data: given } = await reviewsService.getReviewsByAuthor(userId);
       setAllReviewsGiven(given ?? []);
     };
 

@@ -9,9 +9,15 @@ interface Props {
   trip?: Trip;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  isAdmin?: boolean;
 }
 
-export const TripInfo: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
+export const TripInfo: React.FC<Props> = ({
+  trip,
+  onEdit,
+  onDelete,
+  isAdmin = false,
+}) => {
   const isMobile = useIsMobile();
   const stackDirection = isMobile ? 'column' : 'row';
 
@@ -30,7 +36,7 @@ export const TripInfo: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
     >
       <Stack
         direction={stackDirection}
-        spacing={2}
+        spacing={{ xs: 5, sm: 2 }}
         alignItems="stretch"
         flexWrap="wrap"
       >
@@ -38,7 +44,12 @@ export const TripInfo: React.FC<Props> = ({ trip, onEdit, onDelete }) => {
           <VehicleCard vehicle={trip?.vehicle} />
         </Box>
         <Box flex={2} minWidth={0}>
-          <TripCard trip={trip} onEdit={onEdit} onDelete={onDelete} />
+          <TripCard
+            trip={trip}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            isAdmin={isAdmin}
+          />
         </Box>
       </Stack>
     </Paper>

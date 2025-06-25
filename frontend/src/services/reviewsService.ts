@@ -22,7 +22,7 @@ import type { Trip } from '../types/trip';
 import type { AverageRating } from '../types/user';
 import type { Booking } from '../types/booking';
 
-export const addReview = async (
+const addReview = async (
   review: Review
 ): Promise<ApiResponse<DocumentReference>> => {
   const alreadyReviewed = await hasAlreadyReviewedBooking(
@@ -47,7 +47,7 @@ export const addReview = async (
   });
 };
 
-export const getAllReviews = async (): Promise<ApiResponse<Review[]>> => {
+const getAllReviews = async (): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
   const snapshot = await getDocs(reviewsCollection);
   const reviews = snapshot.docs.map((doc) => ({
@@ -60,7 +60,7 @@ export const getAllReviews = async (): Promise<ApiResponse<Review[]>> => {
   });
 };
 
-export const getReviewsByAuthor = async (
+const getReviewsByAuthor = async (
   authorId: string
 ): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
@@ -76,7 +76,7 @@ export const getReviewsByAuthor = async (
   });
 };
 
-export const getReviewsByTarget = async (
+const getReviewsByTarget = async (
   targetId: string
 ): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
@@ -92,7 +92,7 @@ export const getReviewsByTarget = async (
   });
 };
 
-export const updateReview = async (
+const updateReview = async (
   id: string,
   data: Review
 ): Promise<ApiResponse<void>> => {
@@ -104,7 +104,7 @@ export const updateReview = async (
   });
 };
 
-export const deleteReview = async (id: string): Promise<ApiResponse<void>> => {
+const deleteReview = async (id: string): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
   await deleteDoc(reviewDoc);
   return handleApiResponseBasic<void>({
@@ -113,7 +113,7 @@ export const deleteReview = async (id: string): Promise<ApiResponse<void>> => {
   });
 };
 
-export const hasAlreadyReviewedBooking = async (
+const hasAlreadyReviewedBooking = async (
   authorId: string,
   bookingId: string
 ): Promise<boolean> => {
@@ -130,14 +130,14 @@ export const hasAlreadyReviewedBooking = async (
 let cachedTrips: Trip[] | null = null;
 let cachedTripsTimestamp = 0;
 
-export const clearTripCache = (): void => {
+const clearTripCache = (): void => {
   cachedTrips = null;
   cachedTripsTimestamp = 0;
 };
 
 const CACHE_TTL = 15 * 60 * 1000;
 
-export const getAverageRatingsByTargetUser = async (
+const getAverageRatingsByTargetUser = async (
   userId: string
 ): Promise<AverageRating> => {
   const { data: dataReviews } = await getReviewsByTarget(userId);
@@ -189,7 +189,7 @@ export const getAverageRatingsByTargetUser = async (
   };
 };
 
-export const buildReview = (
+const buildReview = (
   userId: string,
   booking: Booking,
   action: 'review' | 'no_show',
@@ -207,3 +207,16 @@ export const buildReview = (
   rating: action === 'review' ? rating : 0,
   comment: action === 'review' ? comment : 'Pas présent',
 });
+
+export default {
+  addReview,
+  getAllReviews,
+  getReviewsByAuthor,
+  getReviewsByTarget,
+  updateReview,
+  deleteReview,
+  hasAlreadyReviewedBooking,
+  clearTripCache,
+  getAverageRatingsByTargetUser,
+  buildReview,
+};

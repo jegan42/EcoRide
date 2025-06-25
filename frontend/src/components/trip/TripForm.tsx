@@ -32,6 +32,7 @@ interface TripFormProps {
   isSubmitting: boolean;
   onSubmit: (data: TripFormOutput) => void;
   onCancel: () => void;
+  isAdmin?: boolean;
 }
 
 export const TripForm: React.FC<TripFormProps> = ({
@@ -40,6 +41,7 @@ export const TripForm: React.FC<TripFormProps> = ({
   isSubmitting,
   onSubmit,
   onCancel,
+  isAdmin = false,
 }) => {
   const { vehicles } = useVehicle();
   const safeVehicles = vehicles.filter((v): v is Vehicle => v !== undefined);
@@ -287,14 +289,16 @@ export const TripForm: React.FC<TripFormProps> = ({
           </FormControl>
         )}
 
-        <Box mt={2} display="flex" justifyContent="space-between">
-          <Button variant="outlined" onClick={onCancel}>
-            Annuler
-          </Button>
-          <Button type="submit" variant="contained" disabled={isSubmitting}>
-            Sauvegarder
-          </Button>
-        </Box>
+        {!isAdmin && (
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <Button variant="outlined" onClick={onCancel}>
+              Annuler
+            </Button>
+            <Button type="submit" variant="contained" disabled={isSubmitting}>
+              Sauvegarder
+            </Button>
+          </Box>
+        )}
       </Box>
     </LocalizationProvider>
   );

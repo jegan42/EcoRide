@@ -8,3 +8,8 @@ export interface FirestoreTimestamp {
   seconds: number;
   nanoseconds: number;
 }
+
+export interface ChartDataType {
+  label: string;
+  count: number;
+}

@@ -36,6 +36,13 @@ const fetchVehicleById = async (id: string): Promise<ApiResponse<Vehicle>> => {
   return handleApiResponseSafe<Vehicle>(response.data);
 };
 
+const fetchVehicleByUserId = async (
+  id: string
+): Promise<ApiResponse<Vehicle[]>> => {
+  const response = await api.get(`${API_URL}/vehicles/all/${id}`);
+  return handleApiResponseSafe<Vehicle[]>(response.data);
+};
+
 const updateVehicle = async (
   id: string,
   vehicleData: Partial<Vehicle>
@@ -61,6 +68,7 @@ export default {
   createVehicle,
   fetchVehicles,
   fetchVehicleById,
+  fetchVehicleByUserId,
   updateVehicle,
   deleteVehicle,
 };

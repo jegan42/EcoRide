@@ -11,6 +11,8 @@ import { Home } from '../pages/Home';
 import { LegalNotice } from '../pages/LegalNotice';
 import { About } from '../pages/About';
 import { Contact } from '../pages/Contact';
+import { AdminDashboard } from '../pages/admin/AdminDashboard';
+import AdminRoute from './AdminRoute';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,10 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [{ path: 'dashboard', element: <Dashboard /> }],
+      },
+      {
+        element: <AdminRoute />,
+        children: [{ path: 'admin', element: <AdminDashboard /> }],
       },
     ],
   },
