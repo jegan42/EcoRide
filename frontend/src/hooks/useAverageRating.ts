@@ -61,7 +61,13 @@ export const useAverageRating = (
           },
         } as Trip;
       });
-      setEnrichedTrips(tripsWithRatings);
+      setEnrichedTrips((prev) => {
+        const hasChanged =
+          prev.length !== tripsWithRatings.length ||
+          prev.some((t, i) => JSON.stringify(t) !== JSON.stringify(tripsWithRatings[i]));
+
+        return hasChanged ? tripsWithRatings : prev;
+      });
     };
 
     void enrichTrips();

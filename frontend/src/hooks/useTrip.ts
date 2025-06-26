@@ -52,9 +52,9 @@ export const useTrip = (): {
           const tripsWithoutOwnTrip = data.filter(
             (trip: Trip) => trip.driverId !== user.id
           );
-          setAllTrips(tripsWithoutOwnTrip);
+          setAllTrips(tripService.enrichedTrip(tripsWithoutOwnTrip));
         } else {
-          setAllTrips(data);
+          setAllTrips(tripService.enrichedTrip(data));
         }
         enqueueSnackbarSuccess(message);
         return true;
@@ -73,7 +73,7 @@ export const useTrip = (): {
     setLoading(true);
     try {
       const { data, message } = await tripService.fetchTripById(id);
-      setSelectedTrip(data);
+      setSelectedTrip(tripService.enrichedTrip([data])[0]);
       enqueueSnackbarSuccess(message);
       return true;
     } catch (err) {

@@ -2,7 +2,7 @@
 import type { User } from './user';
 import type { Vehicle } from './vehicle';
 
-export type TripStatus = 'open' | 'full' | 'cancelled';
+export type TripStatus = 'open' | 'full' | 'cancelled' | 'start' | 'arrived';
 
 export interface Trip {
   id: string;
@@ -19,4 +19,5 @@ export interface Trip {
   updatedAt: string;
   driver?: User;
   vehicle?: Vehicle;
+  duration?:number;
 }

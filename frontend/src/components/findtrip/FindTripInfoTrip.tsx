@@ -27,12 +27,6 @@ export const FindTripInfoTrip: React.FC<Props> = ({
   const isMobile = useIsMobile();
   const stackDirection = allInfo ? 'row' : 'column';
   const stackWidth = allInfo ? '50%' : '100%';
-  const durationInMinutes =
-    trip?.departureDate && trip?.arrivalDate
-      ? (new Date(trip.arrivalDate).getTime() -
-          new Date(trip.departureDate).getTime()) /
-        (1000 * 60)
-      : null;
   const departureCity =
     allInfo && !isMobile
       ? formatField(trip?.departureCity)
@@ -129,7 +123,7 @@ export const FindTripInfoTrip: React.FC<Props> = ({
             </Stack>
           </Stack>
 
-          {allInfo && (
+          {(
             <TripInfoRow
               icon={
                 <AccessTimeIcon
@@ -138,7 +132,7 @@ export const FindTripInfoTrip: React.FC<Props> = ({
               }
               label="Durée :"
               value={formatField(
-                formatMinutesToHours(Number(durationInMinutes))
+                formatMinutesToHours(Number(trip?.duration))
               )}
             />
           )}

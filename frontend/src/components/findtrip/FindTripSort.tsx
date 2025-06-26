@@ -24,6 +24,7 @@ const sortOptions = [
   { value: 'departureDate', label: 'Date de départ' },
   { value: 'rating', label: 'Note' },
   { value: 'price', label: 'Prix' },
+  { value: 'duration', label: 'Durée' },
   { value: 'availableSeats', label: 'Places disponibles' },
 ];
 

@@ -10,11 +10,13 @@ interface Props {
   ecoFilter: string;
   ecoCounts: Record<string, number>;
   priceRange: [number, number];
+  durationRange: [number, number];
   selectedSeats: number[];
   seatCounts: Record<number, number>;
   starFilter: number;
   setEcoFilter: (value: string) => void;
   setPriceRange: (value: [number, number]) => void;
+  setDurationRange: (value: [number, number]) => void;
   setSelectedSeats: (value: number[]) => void;
   setStarFilter: (value: number) => void;
   resetFilters: () => void;
@@ -24,11 +26,13 @@ export const FindTripFilters: React.FC<Props> = ({
   ecoFilter,
   ecoCounts,
   priceRange,
+  durationRange,
   selectedSeats,
   seatCounts,
   starFilter,
   setEcoFilter,
   setPriceRange,
+  setDurationRange,
   setSelectedSeats,
   setStarFilter,
   resetFilters,
@@ -76,6 +80,14 @@ export const FindTripFilters: React.FC<Props> = ({
           selected={selectedSeats}
           setSelected={setSelectedSeats}
           counts={seatCounts}
+        />
+
+        <SliderInput
+          title="Durée (minutes)"
+          Range={durationRange}
+          setRange={setDurationRange}
+          min={0}
+          max={2000}
         />
 
         <SliderInput

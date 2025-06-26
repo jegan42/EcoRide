@@ -12,6 +12,7 @@ export const useFindTripFilters = (
   ecoFilter: string;
   ecoCounts: Record<number, number>;
   priceRange: [number, number];
+  durationRange: [number, number];
   selectedSeats: number[];
   seatCounts: Record<number, number>;
   starFilter: number;
@@ -19,6 +20,7 @@ export const useFindTripFilters = (
   sortOrder: 'asc' | 'desc';
   setEcoFilter: React.Dispatch<React.SetStateAction<string>>;
   setPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
+  setDurationRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSelectedSeats: React.Dispatch<React.SetStateAction<number[]>>;
   setStarFilter: React.Dispatch<React.SetStateAction<number>>;
   setSortKey: React.Dispatch<React.SetStateAction<string>>;
@@ -29,6 +31,7 @@ export const useFindTripFilters = (
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [ecoFilter, setEcoFilter] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
+  const [durationRange, setDurationRange] = useState<[number, number]>([0, 2000]);
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   const [starFilter, setStarFilter] = useState(0);
 
@@ -37,6 +40,7 @@ export const useFindTripFilters = (
     setSortOrder('desc');
     setEcoFilter('');
     setPriceRange([0, 100]);
+    setDurationRange([0, 2000]);
     setSelectedSeats([]);
     setStarFilter(0);
   };
@@ -60,6 +64,8 @@ export const useFindTripFilters = (
           return Number(trip.availableSeats);
         case 'rating':
           return Number(trip.driver?.averageRating?.asDriver?.rating);
+        case 'duration':
+          return Number(trip.duration);
         default:
           return 0;
       }
@@ -78,6 +84,14 @@ export const useFindTripFilters = (
       result = result.filter((t) => {
         const price = Number(t.price);
         return price >= min && price <= max;
+      });
+    }
+
+    if (durationRange) {
+      const [min, max] = durationRange;
+      result = result.filter((t) => {
+        const duration = Number(t.duration);
+        return duration >= min && duration <= max;
       });
     }
 
@@ -106,6 +120,7 @@ export const useFindTripFilters = (
     trips,
     ecoFilter,
     priceRange,
+    durationRange,
     selectedSeats,
     starFilter,
     sortKey,
@@ -159,6 +174,7 @@ export const useFindTripFilters = (
     ecoFilter,
     ecoCounts,
     priceRange,
+    durationRange,
     selectedSeats,
     seatCounts,
     starFilter,
@@ -166,6 +182,7 @@ export const useFindTripFilters = (
     sortOrder,
     setEcoFilter,
     setPriceRange,
+    setDurationRange,
     setSelectedSeats,
     setStarFilter,
     setSortKey,

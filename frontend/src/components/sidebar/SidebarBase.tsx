@@ -59,6 +59,7 @@ export const SidebarBase: React.FC<Props> = ({ sidebarContent }) => {
           color: theme.palette.primary.contrastText,
           height: '100%',
           p: 2,
+          overflowY: 'auto',
         })}
         aria-label="sidebar"
       >

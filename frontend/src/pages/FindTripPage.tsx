@@ -55,6 +55,7 @@ export const FindTripPage: React.FC = () => {
     ecoFilter,
     ecoCounts,
     priceRange,
+    durationRange,
     selectedSeats,
     seatCounts,
     starFilter,
@@ -62,6 +63,7 @@ export const FindTripPage: React.FC = () => {
     sortOrder,
     setEcoFilter,
     setPriceRange,
+    setDurationRange,
     setSelectedSeats,
     setStarFilter,
     setSortKey,
@@ -79,6 +81,7 @@ export const FindTripPage: React.FC = () => {
     handleOpenBooking,
   } = useBookingsDialog(() => fetchTrips({}));
 
+  console.log(filteredTrips);
   return (
     <Sidebar
       sidebarContent={
@@ -90,11 +93,13 @@ export const FindTripPage: React.FC = () => {
           ecoFilter={ecoFilter}
           ecoCounts={ecoCounts}
           priceRange={priceRange}
+          durationRange={durationRange}
           selectedSeats={selectedSeats}
           seatCounts={seatCounts}
           starFilter={starFilter}
           setEcoFilter={setEcoFilter}
           setPriceRange={setPriceRange}
+          setDurationRange={setDurationRange}
           setSelectedSeats={setSelectedSeats}
           setStarFilter={setStarFilter}
           resetFilters={resetFilters}
