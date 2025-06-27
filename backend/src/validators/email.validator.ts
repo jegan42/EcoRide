@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 
 export const sendMailValidator = [
   body('to')
+    .optional()
     .trim()
     .notEmpty()
     .withMessage('Recipient is required')
