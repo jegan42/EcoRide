@@ -38,6 +38,7 @@ export const useInitApp = (): void => {
       const initAuth = async (): Promise<void> => {
         dispatch(setAuthLoading(true));
         try {
+          if (!isAuthenticated) throw new Error('Utilisateur non connecté');
           const { message, data: user } = await userService.fetchUser();
           dispatch(signin({ user, isAuthenticated: true }));
           enqueueSnackbarSuccess(message);
