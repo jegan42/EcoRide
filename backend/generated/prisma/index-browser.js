@@ -223,7 +223,9 @@ exports.VehicleEnergy = exports.$Enums.VehicleEnergy = {
 exports.TripStatus = exports.$Enums.TripStatus = {
   open: 'open',
   full: 'full',
-  cancelled: 'cancelled'
+  cancelled: 'cancelled',
+  start: 'start',
+  arrived: 'arrived'
 };
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {

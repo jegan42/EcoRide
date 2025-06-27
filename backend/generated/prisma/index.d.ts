@@ -61,7 +61,9 @@ export type VehicleEnergy = (typeof VehicleEnergy)[keyof typeof VehicleEnergy]
 export const TripStatus: {
   open: 'open',
   full: 'full',
-  cancelled: 'cancelled'
+  cancelled: 'cancelled',
+  start: 'start',
+  arrived: 'arrived'
 };
 
 export type TripStatus = (typeof TripStatus)[keyof typeof TripStatus]

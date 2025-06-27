@@ -7,6 +7,7 @@ import tripRoutes from './trip.routes';
 import bookingRoutes from './booking.routes';
 import UserPreferencesRoutes from './userPreferences.routes';
 import firebaseRoutes from './firebase.route';
+import emailRoutes from './email.route';
 import { csrfProtection } from '../middleware/csrf.middleware';
 
 const router = Router();
@@ -18,5 +19,7 @@ router.use('/trips', tripRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/preferences', UserPreferencesRoutes);
 router.use('/firebase-token', firebaseRoutes);
+router.use('/sendemail', emailRoutes);
+
 
 export default router;

@@ -101,6 +101,8 @@ enum TripStatus {
   open
   full
   cancelled
+  start
+  arrived
 }
 
 // Modèle pour la table Reservation

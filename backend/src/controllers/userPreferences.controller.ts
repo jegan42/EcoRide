@@ -1,7 +1,6 @@
 // backend/src/controllers/userPreferences.controller.ts
 import { Request, Response } from 'express';
 import prismaNewClient from '../lib/prisma';
-import { assertOwnership } from '../utils/request';
 import {
   badRequestResponse,
   conflictResponse,
@@ -113,7 +112,9 @@ export class PreferencesController {
     const user = req.user as User;
 
     try {
-      await prismaNewClient.userPreferences.delete({ where: { userId: user.id } });
+      await prismaNewClient.userPreferences.delete({
+        where: { userId: user.id },
+      });
       successResponse(res, 'UserPreferences', 'deleted');
     } catch (error) {
       errorResponse(res, 'UserPreferences', 'failed to delete', error);
