@@ -41,12 +41,13 @@ export const useTrip = (): {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, csrfToken } = useAppSelector((state) => state.auth);
 
   const fetchTrips = useCallback(
     async (filters?: TripFilters): Promise<boolean> => {
-      setLoading(true);
       try {
+        if (!csrfToken) throw new Error('Pas de csrfToken');
+        setLoading(true);
         const { data, message } = await tripService.fetchTrips(filters);
         if (user) {
           const tripsWithoutOwnTrip = data.filter(
@@ -70,8 +71,9 @@ export const useTrip = (): {
   );
 
   const fetchTripById = async (id: string): Promise<boolean> => {
-    setLoading(true);
     try {
+      if (!user) throw new Error('Utilisateur non connecté');
+      setLoading(true);
       const { data, message } = await tripService.fetchTripById(id);
       setSelectedTrip(tripService.enrichedTrip([data])[0]);
       enqueueSnackbarSuccess(message);
@@ -89,8 +91,9 @@ export const useTrip = (): {
     let isMounted = true;
 
     const fetchTripByDriver = async (): Promise<void> => {
-      setLoading(true);
       try {
+        if (!user) throw new Error('Utilisateur non connecté');
+        setLoading(true);
         const { data, message } = await tripService.fetchTripsByDriver();
         if (isMounted) {
           setTrips(data);
@@ -114,8 +117,9 @@ export const useTrip = (): {
   }, []);
 
   const onCreateTrip = async (tripData: Partial<Trip>): Promise<boolean> => {
-    setIsSubmitting(true);
     try {
+      if (!user) throw new Error('Utilisateur non connecté');
+      setIsSubmitting(true);
       const { data, message } = await tripService.createTrip({
         ...tripData,
         status: 'open',
@@ -136,8 +140,9 @@ export const useTrip = (): {
     id: string,
     tripData: Partial<Trip>
   ): Promise<boolean> => {
-    setIsSubmitting(true);
     try {
+      if (!user) throw new Error('Utilisateur non connecté');
+      setIsSubmitting(true);
       const { data, message } = await tripService.updateTrip(id, tripData);
       enqueueSnackbarSuccess(message);
       setTrips((prev) => prev.map((t) => (t.id === id ? data : t)));
@@ -152,8 +157,9 @@ export const useTrip = (): {
   };
 
   const onCancelTrip = async (id: string): Promise<boolean> => {
-    setIsSubmitting(true);
     try {
+      if (!user) throw new Error('Utilisateur non connecté');
+      setIsSubmitting(true);
       const { data, message } = await tripService.cancelTrip(id);
       enqueueSnackbarSuccess(message);
       setTrips((prev) => prev.map((t) => (t.id === id ? data : t)));

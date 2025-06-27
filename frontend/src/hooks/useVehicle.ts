@@ -10,6 +10,7 @@ import type { VehicleFormOutput } from '../validations/vehicleSchema';
 import type { Vehicle } from '../types/vehicle';
 import userService from '../services/userService';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from './useAppSelector';
 
 export const useVehicle = (): {
   vehicles: Vehicle[];
@@ -21,6 +22,7 @@ export const useVehicle = (): {
   onUpdateVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
   onDeleteVehicle: (formData: VehicleFormOutput) => Promise<boolean>;
 } => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -47,8 +49,9 @@ export const useVehicle = (): {
   }, []);
 
   const onCreateVehicle = async (data: VehicleFormOutput): Promise<boolean> => {
-    setIsSubmitting(true);
     try {
+      if (!isAuthenticated) throw new Error('Utilisateur non connecté');
+    setIsSubmitting(true);
       const { data: newVehicle, message: vehicleMessage } =
         await vehicleService.createVehicle(data);
       setVehicle(newVehicle);
