@@ -17,9 +17,10 @@ import {
 
 export const useInitApp = (): void => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, csrfToken } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
+    if (csrfToken) throw new Error('csrfToken exist');
     const fetchCsrf = async (): Promise<void> => {
       try {
         const { message, data } = await getCsrfToken();

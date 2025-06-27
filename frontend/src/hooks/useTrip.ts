@@ -7,6 +7,7 @@ import {
 } from '../utils/enqueueSnackbar';
 import type { Trip } from '../types/trip';
 import { useAppSelector } from './useAppSelector';
+import bookingService from '../services/bookingService';
 
 export type TripFilters = Partial<{
   departureCity: string;
@@ -50,8 +51,12 @@ export const useTrip = (): {
         setLoading(true);
         const { data, message } = await tripService.fetchTrips(filters);
         if (user) {
+          const tripBooked = (await bookingService.fetchBookings()).data.map(
+            (b) => b.tripId
+          );
           const tripsWithoutOwnTrip = data.filter(
-            (trip: Trip) => trip.driverId !== user.id
+            (trip: Trip) =>
+              trip.driverId !== user.id && !tripBooked.includes(trip.id)
           );
           setAllTrips(tripService.enrichedTrip(tripsWithoutOwnTrip));
         } else {
