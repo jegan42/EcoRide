@@ -260,7 +260,7 @@ export const TripForm: React.FC<TripFormProps> = ({
           helperText={errors.price?.message}
         />
 
-        {defaultValues?.status && defaultValues?.status !== 'open' && (
+        {defaultValues?.status && defaultValues?.status === 'cancelled' && (
           <FormControl
             fullWidth
             margin="dense"

@@ -3,20 +3,18 @@ import React, { type JSX } from 'react';
 import { Typography, Button, Stack, Box } from '@mui/material';
 import { ProfileTabs, type ProfileTabsMode } from './ProfileTabs';
 import { useProfile } from '../../hooks/useProfile';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 
 interface Props {
   profileTabs: ProfileTabsMode;
   onSetProfileTabs: (mode: ProfileTabsMode) => void;
-  onSetProfileMode: (mode: FormMode) => void;
-  onSetVehicleMode: (mode: FormMode) => void;
+  setDashboardMode: (mode: DashboardMode) => void;
 }
 
 export const ProfileView: React.FC<Props> = ({
   profileTabs,
   onSetProfileTabs,
-  onSetProfileMode,
-  onSetVehicleMode,
+  setDashboardMode,
 }): JSX.Element => {
   const { user, isDriver } = useProfile();
   return (
@@ -51,7 +49,7 @@ export const ProfileView: React.FC<Props> = ({
         <Button
           variant="contained"
           sx={{ mt: 4, fontSize: { xs: '0.8rem', md: '1rem' } }}
-          onClick={() => onSetProfileMode('edit')}
+          onClick={() => setDashboardMode('profilEdit')}
         >
           Modifier mon profil
         </Button>
@@ -59,7 +57,7 @@ export const ProfileView: React.FC<Props> = ({
           <Button
             variant="contained"
             sx={{ mt: 4, fontSize: { xs: '0.8rem', md: '1rem' } }}
-            onClick={() => onSetVehicleMode('add')}
+            onClick={() => setDashboardMode('vehicleAdd')}
           >
             Ajouter un véhicule
           </Button>

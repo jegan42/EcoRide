@@ -1,6 +1,6 @@
 // frontend/src/component/trip/TripList.tsx
 import { Box, Button, Typography } from '@mui/material';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { TripInfo } from './TripInfo';
 import type { Trip } from '../../types/trip';
 import { useTrip } from '../../hooks/useTrip';
@@ -9,8 +9,8 @@ import { TripFilters } from './TripFilters';
 import { TripSort } from './TripSort';
 
 interface Props {
-  onSetTripMode: (mode: FormMode) => void;
-  onSetSelectedTrip: (trip: Trip) => void;
+  setDashboardMode: (mode: DashboardMode) => void;
+  setSelectedData: (data: Trip | null) => void;
 }
 
 const AddTripButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -29,8 +29,8 @@ const AddTripButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 );
 
 export const TripList: React.FC<Props> = ({
-  onSetTripMode,
-  onSetSelectedTrip,
+  setDashboardMode,
+  setSelectedData,
 }) => {
   const { error, trips, onCancelTrip } = useTrip();
 
@@ -73,7 +73,7 @@ export const TripList: React.FC<Props> = ({
           {message}
         </Typography>
 
-        <AddTripButton onClick={() => onSetTripMode('add')} />
+        <AddTripButton onClick={() => setDashboardMode('tripAdd')} />
       </Box>
     );
   }
@@ -120,7 +120,7 @@ export const TripList: React.FC<Props> = ({
           setSortOrder={setSortOrder}
         />
 
-        <AddTripButton onClick={() => onSetTripMode('add')} />
+        <AddTripButton onClick={() => setDashboardMode('tripAdd')} />
       </Box>
       {filteredTrips.map((trip) => {
         const { vehicle: _vehicle, driver: _driver, ...tripData } = trip;
@@ -129,8 +129,8 @@ export const TripList: React.FC<Props> = ({
             key={trip?.id}
             trip={trip}
             onEdit={() => {
-              onSetTripMode('edit');
-              onSetSelectedTrip(tripData as Trip);
+              setDashboardMode('tripEdit');
+              setSelectedData(tripData);
             }}
             onDelete={(id) => onCancelTrip(id)}
           />

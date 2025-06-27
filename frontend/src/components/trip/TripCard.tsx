@@ -82,38 +82,39 @@ export const TripCard: React.FC<Props> = ({
           </Typography>
         </Stack>
 
-        {(!isPassedTrip || isAdmin) && (
-          <Stack
-            direction={{ xs: 'row', sm: 'column' }}
-            alignItems="center"
-            justifyContent={'space-between'}
-            width={{ xs: '100%', sm: '10%' }}
-          >
-            <IconButton
-              aria-label="edit"
-              onClick={() => tripId && onEdit(tripId)}
-              sx={(theme) => ({ color: theme.palette.primary.main })}
+        {(!isPassedTrip || isAdmin) &&
+          !['start', 'arrived'].includes(trip?.status ?? '') && (
+            <Stack
+              direction={{ xs: 'row', sm: 'column' }}
+              alignItems="center"
+              justifyContent={'space-between'}
+              width={{ xs: '100%', sm: '10%' }}
             >
-              <EditIcon />
-            </IconButton>
-            {trip?.status !== 'cancelled' && !isPassedTrip && (
               <IconButton
-                aria-label="cancel"
-                onClick={() => {
-                  if (tripId)
-                    if (isAdmin) {
-                      onDelete(tripId);
-                    } else {
-                      handleDeleteClick(tripId);
-                    }
-                }}
-                sx={(theme) => ({ color: theme.palette.error.main })}
+                aria-label="edit"
+                onClick={() => tripId && onEdit(tripId)}
+                sx={(theme) => ({ color: theme.palette.primary.main })}
               >
-                <DeleteForeverIcon />
+                <EditIcon />
               </IconButton>
-            )}
-          </Stack>
-        )}
+              {trip?.status !== 'cancelled' && !isPassedTrip && (
+                <IconButton
+                  aria-label="cancel"
+                  onClick={() => {
+                    if (tripId)
+                      if (isAdmin) {
+                        onDelete(tripId);
+                      } else {
+                        handleDeleteClick(tripId);
+                      }
+                  }}
+                  sx={(theme) => ({ color: theme.palette.error.main })}
+                >
+                  <DeleteForeverIcon />
+                </IconButton>
+              )}
+            </Stack>
+          )}
       </Box>
 
       {!isAdmin && (

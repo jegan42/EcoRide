@@ -12,18 +12,10 @@ const DashboardPage: React.FC = () => {
   const isLoading = useFirebaseLogin();
 
   const {
-    profileMode,
-    setProfileMode,
-    preferencesMode,
-    setPreferencesMode,
-    vehicleMode,
-    setVehicleMode,
-    selectedVehicle,
-    setSelectedVehicle,
-    tripMode,
-    setTripMode,
-    selectedTrip,
-    setSelectedTrip,
+    dashboardMode,
+    setDashboardMode,
+    selectedData,
+    setSelectedData,
     profileTabs,
     setProfileTabs,
     isViewMode,
@@ -62,32 +54,21 @@ const DashboardPage: React.FC = () => {
           >
             <DashboardHeader />
             <DashboardFormSwitch
-              profileMode={profileMode}
-              onSetProfileMode={setProfileMode}
-              preferencesMode={preferencesMode}
-              onSetPreferencesMode={setPreferencesMode}
-              vehicleMode={vehicleMode}
-              onSetVehicleMode={setVehicleMode}
-              selectedVehicle={selectedVehicle}
-              onSetTripMode={setTripMode}
-              tripMode={tripMode}
-              selectedTrip={selectedTrip}
+              dashboardMode={dashboardMode}
+              setDashboardMode={setDashboardMode}
+              selectedData={selectedData}
             />
             {isViewMode && (
               <Collapse in={isViewMode} sx={{ minWidth: '100%' }}>
                 <ProfileView
                   profileTabs={profileTabs}
                   onSetProfileTabs={setProfileTabs}
-                  onSetProfileMode={setProfileMode}
-                  onSetVehicleMode={setVehicleMode}
+                  setDashboardMode={setDashboardMode}
                 />
                 <DashboardListSwitch
                   profileTabs={profileTabs}
-                  onSetPreferencesMode={setPreferencesMode}
-                  onSetVehicleMode={setVehicleMode}
-                  onSetSelectedVehicle={setSelectedVehicle}
-                  onSetTripMode={setTripMode}
-                  onSetSelectedTrip={setSelectedTrip}
+                  setDashboardMode={setDashboardMode}
+                  setSelectedData={setSelectedData}
                 />
               </Collapse>
             )}

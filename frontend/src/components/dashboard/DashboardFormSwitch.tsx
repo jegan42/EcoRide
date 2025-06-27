@@ -1,5 +1,5 @@
 // frontend/src/component/dashboard/DashboardFormSwitch.tsx
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { usePreferences } from '../../hooks/usePreferences';
 import { useProfile } from '../../hooks/useProfile';
 import { useTrip } from '../../hooks/useTrip';
@@ -12,29 +12,15 @@ import { TripFormSwitch } from '../trip/TripFormSwitch';
 import { VehicleFormSwitch } from '../vehicle/VehicleFormSwitch';
 
 interface Props {
-  profileMode: FormMode;
-  onSetProfileMode: (mode: FormMode) => void;
-  preferencesMode: FormMode;
-  onSetPreferencesMode: (mode: FormMode) => void;
-  vehicleMode: FormMode;
-  onSetVehicleMode: (mode: FormMode) => void;
-  selectedVehicle: Vehicle | null;
-  onSetTripMode: (mode: FormMode) => void;
-  tripMode: FormMode;
-  selectedTrip: Trip | null;
+  dashboardMode: DashboardMode;
+  setDashboardMode: (mode: DashboardMode) => void;
+  selectedData: Vehicle | Trip | null;
 }
 
 export const DashboardFormSwitch: React.FC<Props> = ({
-  profileMode,
-  onSetProfileMode,
-  preferencesMode,
-  onSetPreferencesMode,
-  vehicleMode,
-  onSetVehicleMode,
-  selectedVehicle,
-  onSetTripMode,
-  tripMode,
-  selectedTrip,
+  dashboardMode,
+  setDashboardMode,
+  selectedData,
 }) => {
   const { isSubmitting: isUserSubmitting } = useProfile();
 
@@ -44,44 +30,44 @@ export const DashboardFormSwitch: React.FC<Props> = ({
 
   const { isSubmitting: isTripSubmitting } = useTrip();
 
-  if (profileMode !== 'view') {
+  if (dashboardMode.includes('profil')) {
     return (
       <ProfileFormSwitch
         isSubmitting={isUserSubmitting}
-        profileMode={profileMode}
-        onSetProfileMode={onSetProfileMode}
+        dashboardMode={dashboardMode}
+        setDashboardMode={setDashboardMode}
       />
     );
   }
 
-  if (preferencesMode !== 'view') {
+  if (dashboardMode.includes('preferences')) {
     return (
       <PreferencesFormSwitch
         isSubmitting={isPreferencesSubmitting}
-        preferencesMode={preferencesMode}
-        onSetPreferencesMode={onSetPreferencesMode}
+        dashboardMode={dashboardMode}
+        setDashboardMode={setDashboardMode}
       />
     );
   }
 
-  if (vehicleMode !== 'view') {
+  if (dashboardMode.includes('vehicle')) {
     return (
       <VehicleFormSwitch
-        selectedVehicle={selectedVehicle}
         isSubmitting={isVehicleSubmitting}
-        vehicleMode={vehicleMode}
-        onSetVehicleMode={onSetVehicleMode}
+        dashboardMode={dashboardMode}
+        setDashboardMode={setDashboardMode}
+        selectedData={selectedData as Vehicle}
       />
     );
   }
 
-  if (tripMode !== 'view') {
+  if (dashboardMode.includes('trip')) {
     return (
       <TripFormSwitch
-        selectedTrip={selectedTrip}
         isSubmitting={isTripSubmitting}
-        tripMode={tripMode}
-        onSetTripMode={onSetTripMode}
+        dashboardMode={dashboardMode}
+        setDashboardMode={setDashboardMode}
+        selectedData={selectedData as Trip}
       />
     );
   }

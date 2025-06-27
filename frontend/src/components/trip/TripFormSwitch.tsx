@@ -2,27 +2,27 @@
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
 import { useTrip } from '../../hooks/useTrip';
 import type { Trip } from '../../types/trip';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { TripForm } from './TripForm';
 import { useProfile } from '../../hooks/useProfile';
 
 interface Props {
-  selectedTrip?: Trip | null;
   isSubmitting: boolean;
-  tripMode: FormMode;
-  onSetTripMode: (mode: FormMode) => void;
+  dashboardMode: DashboardMode;
+  setDashboardMode: (mode: DashboardMode) => void;
+  selectedData: Trip | null;
 }
 
 export const TripFormSwitch: React.FC<Props> = ({
-  selectedTrip,
   isSubmitting,
-  tripMode,
-  onSetTripMode,
+  dashboardMode,
+  setDashboardMode,
+  selectedData,
 }) => {
   const { user } = useProfile();
   const { onCreateTrip, onUpdateTrip } = useTrip();
 
-  if (user && tripMode === 'add') {
+  if (user && dashboardMode === 'tripAdd') {
     return (
       <DashboardSectionWrapper title="Ajouter un Voyage">
         <TripForm
@@ -31,26 +31,26 @@ export const TripFormSwitch: React.FC<Props> = ({
           isSubmitting={isSubmitting}
           onSubmit={async (data) => {
             const success = await onCreateTrip(data);
-            if (success) onSetTripMode('view');
+            if (success) setDashboardMode('tripView');
           }}
-          onCancel={() => onSetTripMode('view')}
+          onCancel={() => setDashboardMode('tripView')}
         />
       </DashboardSectionWrapper>
     );
   }
 
-  if (user && selectedTrip && tripMode === 'edit') {
+  if (user && selectedData && dashboardMode === 'tripEdit') {
     return (
       <DashboardSectionWrapper title="Modifier un Voyage">
         <TripForm
           driverId={user.id}
-          defaultValues={selectedTrip}
+          defaultValues={selectedData}
           isSubmitting={isSubmitting}
           onSubmit={async (data) => {
-            const success = await onUpdateTrip(selectedTrip.id, data);
-            if (success) onSetTripMode('view');
+            const success = await onUpdateTrip(selectedData.id, data);
+            if (success) setDashboardMode('tripView');
           }}
-          onCancel={() => onSetTripMode('view')}
+          onCancel={() => setDashboardMode('tripView')}
         />
       </DashboardSectionWrapper>
     );

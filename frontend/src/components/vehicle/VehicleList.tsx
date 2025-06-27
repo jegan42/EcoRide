@@ -2,20 +2,20 @@
 import { Box, Button, Typography } from '@mui/material';
 import { type Vehicle } from '../../types/vehicle';
 import { useVehicle } from '../../hooks/useVehicle';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { VehicleCard } from './VehicleCard';
 import { useFilterVehicle } from '../../hooks/useFilterVehicle';
 import { VehicleFilters } from './VehicleFilters';
 import { VehicleSort } from './VehicleSort';
 
 interface Props {
-  onSetVehicleMode: (mode: FormMode) => void;
-  onSetSelectedVehicle: (vehicle: Vehicle) => void;
+  setDashboardMode: (mode: DashboardMode) => void;
+  setSelectedData: (data: Vehicle | null) => void;
 }
 
 export const VehicleList: React.FC<Props> = ({
-  onSetVehicleMode,
-  onSetSelectedVehicle,
+  setDashboardMode,
+  setSelectedData,
 }) => {
   const { error, vehicles, onDeleteVehicle } = useVehicle();
 
@@ -86,7 +86,7 @@ export const VehicleList: React.FC<Props> = ({
             whiteSpace: 'nowrap',
             alignSelf: { xs: 'stretch', sm: 'center' },
           }}
-          onClick={() => onSetVehicleMode('add')}
+          onClick={() => setDashboardMode('vehicleAdd')}
         >
           Ajouter un véhicule
         </Button>
@@ -99,8 +99,8 @@ export const VehicleList: React.FC<Props> = ({
               key={vehicle.id}
               vehicle={vehicle}
               onEdit={() => {
-                onSetVehicleMode('edit');
-                onSetSelectedVehicle(vehicle);
+                setDashboardMode('vehicleEdit');
+                setSelectedData(vehicle);
               }}
               onDelete={(id) => onDeleteVehicle({ id })}
             />

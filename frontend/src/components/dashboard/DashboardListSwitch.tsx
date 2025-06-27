@@ -2,7 +2,7 @@
 import type { Vehicle } from '../../types/vehicle';
 import type { ProfileTabsMode } from '../profile/ProfileTabs';
 import { VehicleList } from '../vehicle/VehicleList';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { PreferencesView } from '../preferences/PreferencesView';
 import type { Trip } from '../../types/trip';
 import { TripList } from '../trip/TripList';
@@ -12,36 +12,30 @@ import { HistoryList } from '../history/HistoryList';
 
 interface Props {
   profileTabs: ProfileTabsMode;
-  onSetPreferencesMode: (mode: FormMode) => void;
-  onSetVehicleMode: (mode: FormMode) => void;
-  onSetSelectedVehicle: (vehicle: Vehicle) => void;
-  onSetTripMode: (mode: FormMode) => void;
-  onSetSelectedTrip: (trip: Trip) => void;
+  setDashboardMode: (mode: DashboardMode) => void;
+  setSelectedData: (data: Vehicle | Trip | null) => void;
 }
 
 export const DashboardListSwitch: React.FC<Props> = ({
   profileTabs,
-  onSetPreferencesMode,
-  onSetVehicleMode,
-  onSetSelectedVehicle,
-  onSetTripMode,
-  onSetSelectedTrip,
+  setDashboardMode,
+  setSelectedData,
 }) => {
   switch (profileTabs) {
     case 'preference':
-      return <PreferencesView onSetPreferencesMode={onSetPreferencesMode} />;
+      return <PreferencesView setDashboardMode={setDashboardMode} />;
     case 'vehicle':
       return (
         <VehicleList
-          onSetVehicleMode={onSetVehicleMode}
-          onSetSelectedVehicle={onSetSelectedVehicle}
+          setDashboardMode={setDashboardMode}
+          setSelectedData={setSelectedData}
         />
       );
     case 'trip':
       return (
         <TripList
-          onSetTripMode={onSetTripMode}
-          onSetSelectedTrip={onSetSelectedTrip}
+          setDashboardMode={setDashboardMode}
+          setSelectedData={setSelectedData}
         />
       );
     case 'booking':

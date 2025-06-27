@@ -12,14 +12,14 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { usePreferences } from '../../hooks/usePreferences';
 import { preferencesLabel } from '../../types/preferences';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import type { JSX } from 'react';
 
 interface Props {
-  onSetPreferencesMode: (mode: FormMode) => void;
+  setDashboardMode: (mode: DashboardMode) => void;
 }
 
-export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
+export const PreferencesView: React.FC<Props> = ({ setDashboardMode }) => {
   const theme = useTheme();
   const { preferences, error } = usePreferences();
 
@@ -41,7 +41,7 @@ export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
         <Button
           variant="contained"
           sx={{ mt: 3, fontSize: { xs: '0.85rem', md: '1rem' } }}
-          onClick={() => onSetPreferencesMode('add')}
+          onClick={() => setDashboardMode('preferencesAdd')}
         >
           Ajouter des préférences
         </Button>
@@ -54,7 +54,7 @@ export const PreferencesView: React.FC<Props> = ({ onSetPreferencesMode }) => {
       <Box display="flex" justifyContent="flex-end">
         <IconButton
           aria-label="Modifier les préférences"
-          onClick={() => onSetPreferencesMode('edit')}
+          onClick={() => setDashboardMode('preferencesEdit')}
           sx={{ color: theme.palette.primary.main }}
         >
           <EditIcon />

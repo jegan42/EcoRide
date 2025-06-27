@@ -1,52 +1,52 @@
 // frontend/src/component/preferences/PreferencesFormSwitch.tsx
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { PreferencesForm } from './PreferencesForm';
 import { usePreferences } from '../../hooks/usePreferences';
 
 interface Props {
   isSubmitting: boolean;
-  preferencesMode: FormMode;
-  onSetPreferencesMode: (mode: FormMode) => void;
+  dashboardMode: DashboardMode;
+  setDashboardMode: (mode: DashboardMode) => void;
 }
 
 export const PreferencesFormSwitch: React.FC<Props> = ({
   isSubmitting,
-  preferencesMode,
-  onSetPreferencesMode,
+  dashboardMode,
+  setDashboardMode,
 }) => {
   const { preferences, onCreatePreferences, onUpdatePreferences } =
     usePreferences();
 
-  switch (preferencesMode) {
-    case 'add':
+  switch (dashboardMode) {
+    case 'preferencesAdd':
       return (
         <DashboardSectionWrapper title="Ajouter les préférences">
           <PreferencesForm
-            key={preferencesMode}
+            key={dashboardMode}
             isSubmitting={isSubmitting}
             onSubmit={async (data) => {
               const success = await onCreatePreferences(data);
-              if (success) onSetPreferencesMode('view');
+              if (success) setDashboardMode('preferencesView');
             }}
-            onCancel={() => onSetPreferencesMode('view')}
+            onCancel={() => setDashboardMode('preferencesView')}
           />
         </DashboardSectionWrapper>
       );
 
-    case 'edit':
+    case 'preferencesEdit':
       if (!preferences) return null;
       return (
         <DashboardSectionWrapper title="Modifier les préférences">
           <PreferencesForm
-            key={preferencesMode}
+            key={dashboardMode}
             defaultValues={preferences}
             isSubmitting={isSubmitting}
             onSubmit={async (data) => {
               const success = await onUpdatePreferences(data);
-              if (success) onSetPreferencesMode('view');
+              if (success) setDashboardMode('preferencesView');
             }}
-            onCancel={() => onSetPreferencesMode('view')}
+            onCancel={() => setDashboardMode('preferencesView')}
           />
         </DashboardSectionWrapper>
       );

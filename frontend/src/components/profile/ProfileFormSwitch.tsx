@@ -1,31 +1,31 @@
 // frontend/src/component/profile/ProfileFormSwitch.tsx
 import { DashboardSectionWrapper } from '../dashboard/DashboardSectionWrapper';
 import { useProfile } from '../../hooks/useProfile';
-import type { FormMode } from '../../hooks/useDashboardState';
+import type { DashboardMode } from '../../hooks/useDashboardState';
 import { ProfileForm } from './ProfileForm';
 
 interface Props {
   isSubmitting: boolean;
-  profileMode: FormMode;
-  onSetProfileMode: (mode: FormMode) => void;
+  dashboardMode: DashboardMode;
+  setDashboardMode: (mode: DashboardMode) => void;
 }
 
 export const ProfileFormSwitch: React.FC<Props> = ({
   isSubmitting,
-  profileMode,
-  onSetProfileMode,
+  dashboardMode,
+  setDashboardMode,
 }) => {
   const { onUpdateUser } = useProfile();
-  if (profileMode === 'edit') {
+  if (dashboardMode.includes('Edit')) {
     return (
       <DashboardSectionWrapper title="Modifier le Profil">
         <ProfileForm
           isSubmitting={isSubmitting}
           onSubmit={async (data) => {
             const success = await onUpdateUser(data);
-            if (success) onSetProfileMode('view');
+            if (success) setDashboardMode('profilView');
           }}
-          onCancel={() => onSetProfileMode('view')}
+          onCancel={() => setDashboardMode('profilView')}
         />
       </DashboardSectionWrapper>
     );
