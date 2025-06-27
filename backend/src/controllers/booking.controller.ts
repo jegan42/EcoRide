@@ -143,7 +143,7 @@ export class BookingController {
   };
 
   static readonly getAll = async (
-    req: Request,
+    _req: Request,
     res: Response
   ): Promise<void> => {
     try {

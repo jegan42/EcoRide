@@ -15,7 +15,7 @@ interface User {
 
 const router = express.Router();
 router.get('/', authenticate, (req, res, next) => {
-  (async () => {
+  (async (): Promise<void> => {
     try {
       const user = req.user as User;
       if (!user?.id) {

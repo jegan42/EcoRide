@@ -1,5 +1,5 @@
 // backend/src/validators/userPreferences.validator.ts
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 
 export const createPreferencesValidator = [
   body('acceptsSmoker')

@@ -38,7 +38,12 @@ router.put(
   AuthController.update
 );
 
-router.get('/all', authenticate, authorize(['admin']), AuthController.getAllUsers);
+router.get(
+  '/all',
+  authenticate,
+  authorize(['admin']),
+  AuthController.getAllUsers
+);
 
 router.get('/me', authenticate, AuthController.getMe);
 

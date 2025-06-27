@@ -113,7 +113,7 @@ export class AuthController {
   };
 
   static readonly getAllUsers = async (
-    req: Request,
+    _req: Request,
     res: Response
   ): Promise<void> => {
     try {

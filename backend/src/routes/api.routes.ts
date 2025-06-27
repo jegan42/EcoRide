@@ -21,5 +21,4 @@ router.use('/preferences', UserPreferencesRoutes);
 router.use('/firebase-token', firebaseRoutes);
 router.use('/sendemail', emailRoutes);
 
-
 export default router;

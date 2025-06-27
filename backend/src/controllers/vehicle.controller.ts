@@ -133,7 +133,7 @@ export class VehicleController {
       const { id } = req.params;
 
       const vehicles = await prismaNewClient.vehicle.findMany({
-        where: { userId:id },
+        where: { userId: id },
       });
       if (!vehicles) {
         notFoundResponse(res, 'Vehicle', 'vehicles not found');
