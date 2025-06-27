@@ -206,6 +206,7 @@ const buildReview = (
   bookingId: booking.id,
   rating: action === 'review' ? rating : 0,
   comment: action === 'review' ? comment : 'Pas présent',
+  status: 'pending',
 });
 
 export default {

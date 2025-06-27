@@ -2,6 +2,8 @@
 
 import type { FirestoreTimestamp } from './common';
 
+export type ReviewStatusEnum = 'pending' | 'validate' | 'refused';
+
 export interface Review {
   id?: string;
   authorId: string;
@@ -11,6 +13,7 @@ export interface Review {
   bookingId: string;
   rating: number;
   comment: string;
+  status: ReviewStatusEnum;
   createdAt?: FirestoreTimestamp;
   updatedAt?: FirestoreTimestamp;
 }
