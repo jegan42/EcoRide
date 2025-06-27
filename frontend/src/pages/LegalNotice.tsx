@@ -32,7 +32,7 @@ export const LegalNotice: React.FC = () => {
           Directeur de la publication
         </Typography>
         <Typography variant="body1">
-          Jean Dupont, Président de EcoRide SAS
+          Jyzee, Président de EcoRide SAS
         </Typography>
 
         <Typography variant="h6" mt={4}>
@@ -69,7 +69,7 @@ export const LegalNotice: React.FC = () => {
           modifiée et au Règlement Général sur la Protection des Données (RGPD),
           vous disposez d’un droit d’accès, de rectification, de suppression et
           d’opposition aux données vous concernant. Pour toute demande, vous
-          pouvez écrire à : contact@ecoride.fr
+          pouvez écrire à : contact@ecoride.dedyn.io
         </Typography>
 
         <Typography variant="h6" mt={4}>

@@ -22,7 +22,7 @@ export const contactInfo = [
   {
     icon: <MailIcon sx={{ fontSize: 20, color: 'secondary.main' }} />,
     iconDark: <MailIcon sx={{ fontSize: 20, color: 'primary.dark' }} />,
-    text: 'contact@ecoride.fr',
+    text: 'contact@ecoride.dedyn.io',
   },
 ];
 
