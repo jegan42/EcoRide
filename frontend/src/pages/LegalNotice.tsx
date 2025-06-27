@@ -19,10 +19,11 @@ export const LegalNotice: React.FC = () => {
           Le site <strong>EcoRide</strong> est édité par :
           <br />
           EcoRide SAS
-          <br />
-          {contactInfo.map((item, index) => (
-            <ContactLine key={index} icon={item.iconDark} text={item.text} />
-          ))}
+        </Typography>
+        {contactInfo.map((item, index) => (
+          <ContactLine key={index} icon={item.iconDark} text={item.text} />
+        ))}
+        <Typography variant="body1">
           RCS Paris 123 456 789
           <br />
         </Typography>

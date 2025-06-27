@@ -43,7 +43,9 @@ export const FindTripPage: React.FC = () => {
 
   const safeTrips = allTrips.filter(
     (v): v is Trip =>
-      !!v?.id && new Date(v.departureDate).getTime() > new Date().getTime()
+      !!v?.id &&
+      new Date(v.departureDate).getTime() > new Date().getTime() &&
+      v.status !== 'cancelled'
   );
 
   const { enrichedTrips } = useAverageRating(safeTrips);
@@ -81,7 +83,6 @@ export const FindTripPage: React.FC = () => {
     handleOpenBooking,
   } = useBookingsDialog(() => fetchTrips({}));
 
-  console.log(filteredTrips);
   return (
     <Sidebar
       sidebarContent={
