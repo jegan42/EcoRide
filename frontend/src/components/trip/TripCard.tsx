@@ -2,6 +2,8 @@
 import { Paper, Box, Stack, Typography, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import FlagCircleIcon from '@mui/icons-material/FlagCircle';
 import type { Trip } from '../../types/trip';
 import { useDialog } from '../../hooks/useDialog';
 import { ConfirmDialog } from '../dailog/ConfirmDialog';
@@ -11,6 +13,8 @@ import { formatField } from '../../utils/formatField';
 interface Props {
   trip?: Trip;
   onEdit: (id: string) => void;
+  onStart: (id: string) => void;
+  onArrived: (id: string) => void;
   onDelete: (id: string) => void;
   isAdmin?: boolean;
 }
@@ -18,6 +22,8 @@ interface Props {
 export const TripCard: React.FC<Props> = ({
   trip,
   onEdit,
+  onStart,
+  onArrived,
   onDelete,
   isAdmin = false,
 }) => {
@@ -113,6 +119,31 @@ export const TripCard: React.FC<Props> = ({
                   <DeleteForeverIcon />
                 </IconButton>
               )}
+            </Stack>
+          )}
+        {(isPassedTrip || isAdmin) &&
+          !['cancelled', 'arrived'].includes(trip?.status ?? '') && (
+            <Stack
+              direction={{ xs: 'row', sm: 'column' }}
+              alignItems="center"
+              justifyContent={'space-between'}
+              width={{ xs: '100%', sm: '10%' }}
+            >
+              {trip?.status !== 'start' && <IconButton
+                aria-label="start"
+                onClick={() => tripId && onStart(tripId)}
+                sx={(theme) => ({ color: theme.palette.primary.main })}
+              >
+                <PlayCircleFilledWhiteIcon />
+              </IconButton>}
+
+              {trip?.status === 'start' && <IconButton
+                aria-label="arrived"
+                onClick={() => tripId && onArrived(tripId)}
+                sx={(theme) => ({ color: theme.palette.primary.main })}
+              >
+                <FlagCircleIcon />
+              </IconButton>}
             </Stack>
           )}
       </Box>

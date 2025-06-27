@@ -8,6 +8,8 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 interface Props {
   trip?: Trip;
   onEdit: (id: string) => void;
+  onStart: (id: string) => void;
+  onArrived: (id: string) => void;
   onDelete: (id: string) => void;
   isAdmin?: boolean;
 }
@@ -15,6 +17,8 @@ interface Props {
 export const TripInfo: React.FC<Props> = ({
   trip,
   onEdit,
+  onStart,
+  onArrived,
   onDelete,
   isAdmin = false,
 }) => {
@@ -47,6 +51,8 @@ export const TripInfo: React.FC<Props> = ({
           <TripCard
             trip={trip}
             onEdit={onEdit}
+            onStart={onStart}
+            onArrived={onArrived}
             onDelete={onDelete}
             isAdmin={isAdmin}
           />

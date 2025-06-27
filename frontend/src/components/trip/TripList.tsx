@@ -132,6 +132,14 @@ export const TripList: React.FC<Props> = ({
               setDashboardMode('tripEdit');
               setSelectedData(tripData);
             }}
+            onStart={() => {
+              setDashboardMode('tripStart');
+              setSelectedData(tripData);
+            }}
+            onArrived={() => {
+              setDashboardMode('tripArrived');
+              setSelectedData(tripData);
+            }}
             onDelete={(id) => onCancelTrip(id)}
           />
         );

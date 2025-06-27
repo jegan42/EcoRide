@@ -6,7 +6,7 @@ import type { Trip } from '../types/trip';
 
 export type DashboardMode =
   | ''
-  | 'view'
+  | 'View'
   | 'profilView'
   | 'preferencesView'
   | 'tripView'
@@ -36,12 +36,12 @@ export const useDashboardState = (): {
   resetModes: () => void;
   isViewMode: boolean;
 } => {
-  const [dashboardMode, setDashboardMode] = useState<DashboardMode>('view');
+  const [dashboardMode, setDashboardMode] = useState<DashboardMode>('View');
   const [selectedData, setSelectedData] = useState<Vehicle | Trip | null>(null);
   const [profileTabs, setProfileTabs] = useState<ProfileTabsMode>('preference');
 
   const resetModes = (): void => {
-    setDashboardMode('view');
+    setDashboardMode('View');
     setProfileTabs('preference');
   };
 
@@ -53,6 +53,6 @@ export const useDashboardState = (): {
     profileTabs,
     setProfileTabs,
     resetModes,
-    isViewMode: dashboardMode.includes('view')
+    isViewMode: dashboardMode.includes('View')
   };
 };
