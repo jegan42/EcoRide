@@ -50,10 +50,12 @@ const addReview = async (
 const getAllReviews = async (): Promise<ApiResponse<Review[]>> => {
   const reviewsCollection = collection(db, 'reviews');
   const snapshot = await getDocs(reviewsCollection);
-  const reviews = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Review),
-  }));
+  const reviews = snapshot.docs.map((doc) => {
+    return {
+      id: doc.id,
+      ...(doc.data() as Review),
+    };
+  });
   return handleApiResponseSafe<Review[]>({
     message: 'Avis récupérés',
     data: reviews,
@@ -94,7 +96,7 @@ const getReviewsByTarget = async (
 
 const updateReview = async (
   id: string,
-  data: Review
+  data: Partial<Review>
 ): Promise<ApiResponse<void>> => {
   const reviewDoc = doc(db, 'reviews', id);
   await updateDoc(reviewDoc, { ...data, updatedAt: new Date() });

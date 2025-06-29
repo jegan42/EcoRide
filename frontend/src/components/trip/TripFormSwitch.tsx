@@ -24,7 +24,7 @@ export const TripFormSwitch: React.FC<Props> = ({
   const { user } = useProfile();
   const { onCreateTrip, onUpdateTrip } = useTrip();
 
-  const handleConfirmStart = async () => {
+  const handleConfirmStart = async (): Promise<void> => {
     const { id, ...trip } = selectedData as Trip;
     const newStatus = dashboardMode === 'tripStart' ? 'start' : 'arrived';
     if (!id) return;

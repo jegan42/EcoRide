@@ -31,6 +31,8 @@ import type { ChartDataType } from '../types/common';
 import emailService from '../services/emailService';
 import type { Booking } from '../types/booking';
 import bookingService from '../services/bookingService';
+import type { Review } from '../types/review';
+import reviewsService from '../services/reviewsService';
 
 export interface ChartData {
   tripsThisWeek: number;
@@ -55,15 +57,23 @@ export const useAdmin = (
   setViewMode: React.Dispatch<React.SetStateAction<AdminFormMode>>;
   submitting: boolean;
   handleClose: () => void;
-  handleConfirm: (viewMode: AdminFormMode, data: User | Trip | Contact) => void;
-  selectedData: User | Trip | Contact | null;
+  handleConfirm: (
+    viewMode: AdminFormMode,
+    data: User | Trip | Contact | Review
+  ) => void;
+  selectedData: User | Trip | Contact | Review | null;
   setSelectedData: React.Dispatch<
-    React.SetStateAction<User | Trip | Contact | null>
+    React.SetStateAction<User | Trip | Contact | Review | null>
   >;
-  dataToUpdate: Partial<User> | Partial<Trip> | Partial<Contact> | null;
+  dataToUpdate:
+    | Partial<User>
+    | Partial<Trip>
+    | Partial<Contact>
+    | Partial<Review>
+    | null;
   setDataToUpdate: React.Dispatch<
     React.SetStateAction<
-      Partial<User> | Partial<Trip> | Partial<Contact> | null
+      Partial<User> | Partial<Trip> | Partial<Contact> | Partial<Review> | null
     >
   >;
   loading: boolean;
@@ -71,6 +81,7 @@ export const useAdmin = (
   allTrips: Trip[];
   allBookings: Booking[];
   allContacts: Contact[];
+  allReviews: Review[];
   chartDataToSet: ChartData;
 } => {
   const [viewMode, setViewMode] = useState<AdminFormMode>('');
@@ -79,18 +90,21 @@ export const useAdmin = (
   const [allTrips, setAllTrips] = useState<Trip[]>([]);
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [selectedData, setSelectedData] = useState<
-    User | Trip | Contact | null
+    User | Trip | Contact | Review | null
   >(null);
   const [dataToUpdate, setDataToUpdate] = useState<
-    Partial<User> | Partial<Trip> | Partial<Contact> | null
+    Partial<User> | Partial<Trip> | Partial<Contact> | Partial<Review> | null
   >(null);
 
   const refreshData = (): void => {
     void fetchAllUsers();
     void fetchAllTrips();
-    void fetchAllBookings(), void fetchAllContacts();
+    void fetchAllBookings();
+    void fetchAllContacts();
+    void fetchAllReviews();
   };
 
   useEffect(() => {
@@ -100,13 +114,13 @@ export const useAdmin = (
       fetchAllTrips(),
       fetchAllBookings(),
       fetchAllContacts(),
+      fetchAllReviews(),
     ]).finally(() => {
       setLoading(false);
     });
   }, []);
 
   const handleClose = (): void => {
-    // console.log('viewMode', viewMode);
     const mode = viewMode.replace(/(Edit|Delete|Start|Arrived)$/, 'List');
     setSelectedData(null);
     setViewMode(mode as AdminFormMode);
@@ -145,7 +159,6 @@ export const useAdmin = (
           } as Partial<User>);
           enqueueSnackbarSuccess(message);
         }
-        refreshData();
       }
       if (viewMode.includes('trip')) {
         const {
@@ -160,31 +173,26 @@ export const useAdmin = (
           enqueueSnackbarSuccess(message);
         }
         if (viewMode.includes('Delete')) {
-          const { message, data } = await tripService.updateTrip(tripId, {
+          const { message } = await tripService.updateTrip(tripId, {
             status: 'cancelled',
           });
-          console.log('Delete', data);
           enqueueSnackbarSuccess(message);
         }
         if (viewMode.includes('Start')) {
-          const { message, data } = await tripService.updateTrip(tripId, {
+          const { message } = await tripService.updateTrip(tripId, {
             status: 'start',
           });
-          console.log('Start', data);
           enqueueSnackbarSuccess(message);
         }
         if (viewMode.includes('Arrived')) {
-          const { message, data } = await tripService.updateTrip(tripId, {
+          const { message } = await tripService.updateTrip(tripId, {
             status: 'arrived',
           });
-          console.log('Arrived', data);
           enqueueSnackbarSuccess(message);
         }
-        refreshData();
       }
       if (viewMode.includes('contact')) {
         const { id: contactId, email, subject, message } = dataSet as Contact;
-        console.log('dataSet', dataSet);
         if (!contactId) {
           enqueueSnackbarError(new Error('Erreur, aucune donnée.'));
           return;
@@ -207,8 +215,28 @@ export const useAdmin = (
           });
           enqueueSnackbarSuccess(message);
         }
-        refreshData();
       }
+      if (viewMode.includes('review')) {
+        const { id: reviewId } = dataSet as Review;
+        if (!reviewId) {
+          enqueueSnackbarError(new Error('Erreur, aucune donnée.'));
+          return;
+        }
+        if (viewMode.includes('Edit')) {
+          const { message: responseMessage } =
+            await reviewsService.updateReview(reviewId, {
+              status: 'validate',
+            });
+          enqueueSnackbarSuccess(responseMessage);
+        }
+        if (viewMode.includes('Delete')) {
+          const { message } = await reviewsService.updateReview(reviewId, {
+            status: 'refused',
+          });
+          enqueueSnackbarSuccess(message);
+        }
+      }
+      setTimeout(() => refreshData(), 1000);
       handleClose();
       if (onConfirmed) onConfirmed();
     } catch (error) {
@@ -258,16 +286,25 @@ export const useAdmin = (
     }
   };
 
+  const fetchAllReviews = async (): Promise<void> => {
+    try {
+      const { data } = await reviewsService.getAllReviews();
+      if (data) setAllReviews(data);
+      enqueueSnackbarSuccess('fetchAllReviews success');
+    } catch (error) {
+      enqueueSnackbarError(error);
+    }
+  };
+
   const monthlyUsers = useMemo(() => {
     const counts: Record<string, number> = {};
 
     allUsers.forEach((user) => {
       const date = parseISO(user.createdAt);
-      const monthKey = format(date, 'yyyy-MM'); // ex : "2025-06"
+      const monthKey = format(date, 'yyyy-MM');
       counts[monthKey] = (counts[monthKey] || 0) + 1;
     });
 
-    // Trie chronologiquement et convertit en tableau
     return Object.entries(counts)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([month, count]) => ({
@@ -277,8 +314,8 @@ export const useAdmin = (
   }, [allUsers]);
 
   const tripsThisWeek = useMemo(() => {
-    return allTrips.filter(
-      (trip) => isThisWeek(parseISO(trip.createdAt), { weekStartsOn: 1 }) // semaine qui commence lundi
+    return allTrips.filter((trip) =>
+      isThisWeek(parseISO(trip.createdAt), { weekStartsOn: 1 })
     ).length;
   }, [allTrips]);
 
@@ -295,7 +332,7 @@ export const useAdmin = (
   }, []);
 
   const tripsThisWeekByDay = useMemo(() => {
-    const start = startOfWeek(new Date(), { weekStartsOn: 1 }); // lundi
+    const start = startOfWeek(new Date(), { weekStartsOn: 1 });
 
     return daysOfWeek.map((day, index) => {
       const dayDate = addDays(start, index);
@@ -331,7 +368,7 @@ export const useAdmin = (
 
       return { label: day, count };
     });
-  }, [allContacts, daysOfWeek]);
+  }, [allBookings, daysOfWeek]);
 
   const bookingsThisMonthByDay = useMemo(() => {
     const start = startOfMonth(new Date());
@@ -351,43 +388,37 @@ export const useAdmin = (
   const commissionThisMonthByDay = useMemo(() => {
     const start = startOfMonth(new Date());
     const end = endOfMonth(new Date());
-  
+
     const daysInMonth = eachDayOfInterval({ start, end });
-  
-    // Filtrer les réservations éligibles à commission
+
     const comissionBookings = allBookings.filter(
       (b) =>
         (b.status === 'cancelled' && b.userId === b.trip?.driverId) ||
         b.status === 'confirmed'
     );
-  
-    // Regrouper les commissions par jour
+
     return daysInMonth.map((date) => {
       const totalCommission = comissionBookings
         .filter((booking) => isSameDay(parseISO(booking.createdAt), date))
         .reduce((sum, booking) => sum + booking.totalPrice * 0.01, 0);
-  
+
       return {
-        label: date.getDate().toString(), // ex: "1", "2", ...
-        count: Number(totalCommission.toFixed(2)), // valeur arrondie à 2 décimales
+        label: date.getDate().toString(),
+        count: Number(totalCommission.toFixed(2)),
       };
     });
   }, [allBookings]);
 
   const commissionTotal = useMemo(() => {
-    // Filtrer les réservations éligibles à commission
     const comissionBookings = allBookings.filter(
       (b) =>
         (b.status === 'cancelled' && b.userId === b.trip?.driverId) ||
         b.status === 'confirmed'
     );
-  console.log('comissionBookings', comissionBookings);
-    // Calculer la somme totale des commissions (1% du totalPrice)
     const total = comissionBookings.reduce((sum, booking) => {
       return sum + booking.totalPrice * 0.01;
     }, 0);
-  
-    // Arrondi à 2 décimales
+
     return Number(total.toFixed(2));
   }, [allBookings]);
 
@@ -460,7 +491,6 @@ export const useAdmin = (
     let passengerCount = 0;
 
     allUsers.forEach((user) => {
-      // On ignore ceux avec un rôle admin, employee ou suspended
       if (
         user.role.includes('admin') ||
         user.role.includes('employee') ||
@@ -513,6 +543,7 @@ export const useAdmin = (
     allTrips,
     allBookings,
     allContacts,
+    allReviews,
     chartDataToSet,
   };
 };

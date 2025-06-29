@@ -19,6 +19,7 @@ const getDialogTitle = (viewMode: AdminFormMode): string => {
   if (viewMode.includes('contactDelete')) return 'Ne pas répondre au message';
   if (viewMode.includes('tripStart')) return 'Démarrage du voyage';
   if (viewMode.includes('tripArrived')) return 'Fin du voyage';
+  if (viewMode.includes('reviewEdit')) return 'Valider ou refuser un avis';
   return '';
 };
 
@@ -37,7 +38,10 @@ export const AdminDashboard: React.FC = () => {
     loading,
   } = useAdmin();
 
-  if (!user || !user.role.includes('admin')) {
+  const isAdmin = user?.role?.includes('admin') ?? false;
+  const isEmployee = user?.role?.includes('employee') ?? false;
+
+  if (!(user && (isAdmin || isEmployee))) {
     return <Navigate to="/" replace />;
   }
 
@@ -48,7 +52,11 @@ export const AdminDashboard: React.FC = () => {
           Tableau de bord administrateur
         </Typography>
 
-        <AdminMenu viewMode={viewMode} setViewMode={setViewMode} />
+        <AdminMenu
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          isAdmin={isAdmin}
+        />
 
         {loading && <Typography>Chargement...</Typography>}
 

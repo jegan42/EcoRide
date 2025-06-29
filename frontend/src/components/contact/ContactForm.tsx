@@ -33,7 +33,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     mode: 'onChange',
     defaultValues: {
       id: defaultData.id,
-      email: `Re:${defaultData.email}` || user?.email || '',
+      email:
+        (defaultData.email && `Re:${defaultData.email}`) || user?.email || '',
       subject: defaultData.subject || '',
       message: '',
     },
@@ -41,14 +42,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
   const watchedValues = useWatch({ control });
 
-  // Reset email when user changes
   useEffect(() => {
     if (user?.email) {
       reset((prev) => ({ ...prev, email: user.email }));
     }
   }, [user, reset]);
 
-  // Auto-submit if enabled (for admin form)
   useEffect(() => {
     if (autoSubmit) {
       onSubmit(watchedValues as Contact);

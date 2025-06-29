@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { AdminStatHeadInfo } from './AdminStatHeadInfo';
 
 interface Props {
-  commissionTotal:number;
+  commissionTotal: number;
   nbUsers: number;
   nbDrivers: number;
   nbPassengers: number;

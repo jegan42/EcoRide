@@ -13,7 +13,6 @@ import { About } from '../pages/About';
 import { Contact } from '../pages/Contact';
 import { AdminDashboard } from '../pages/admin/AdminDashboard';
 import AdminRoute from './AdminRoute';
-
 const router = createBrowserRouter([
   {
     path: '/',

@@ -52,7 +52,7 @@ export const useVehicle = (
     };
 
     void fetchVehicles();
-  }, []);
+  }, [isAdmin, driverId]);
 
   const onCreateVehicle = async (data: VehicleFormOutput): Promise<boolean> => {
     try {

@@ -53,6 +53,6 @@ export const useDashboardState = (): {
     profileTabs,
     setProfileTabs,
     resetModes,
-    isViewMode: dashboardMode.includes('View')
+    isViewMode: dashboardMode.includes('View'),
   };
 };

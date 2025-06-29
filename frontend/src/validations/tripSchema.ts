@@ -2,7 +2,13 @@
 import { z } from 'zod';
 import type { Trip, TripStatus } from '../types/trip';
 
-export const tripStatusValue = ['open', 'full', 'cancelled', 'start', 'arrived'] as const;
+export const tripStatusValue = [
+  'open',
+  'full',
+  'cancelled',
+  'start',
+  'arrived',
+] as const;
 
 export const tripStatusEnum = z.enum(tripStatusValue, {
   errorMap: () => ({ message: 'Statut de trajet invalide' }),

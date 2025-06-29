@@ -95,7 +95,7 @@ export const TripCard: React.FC<Props> = ({
           </Typography>
         </Stack>
 
-        {(!isPassedTrip) &&
+        {!isPassedTrip &&
           !['start', 'arrived'].includes(trip?.status ?? '') && (
             <Stack
               direction={{ xs: 'row', sm: 'column' }}
@@ -132,7 +132,7 @@ export const TripCard: React.FC<Props> = ({
               )}
             </Stack>
           )}
-        {(isPassedTrip) &&
+        {isPassedTrip &&
           !['cancelled', 'arrived'].includes(trip?.status ?? '') && (
             <Stack
               direction={{ xs: 'row', sm: 'column' }}

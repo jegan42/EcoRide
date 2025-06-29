@@ -56,11 +56,7 @@ export const ContactCard: React.FC<Props> = ({
       >
         <Box>
           <Stack direction={'row'} spacing={4} alignItems="center">
-            <Chip
-              label={label}
-              color={color}
-              size="small"
-            />
+            <Chip label={label} color={color} size="small" />
             <Typography variant="body2" color="text.secondary">
               De : <strong>{contact.email}</strong>
             </Typography>
@@ -73,7 +69,11 @@ export const ContactCard: React.FC<Props> = ({
             <Typography variant="body1">Message : {contact.message}</Typography>
           </Box>
         </Box>
-        <Stack direction={{ xs: 'row', sm: 'column' }} spacing={1} width={{xs:'100%', sm:'10rem'}}>
+        <Stack
+          direction={{ xs: 'row', sm: 'column' }}
+          spacing={1}
+          width={{ xs: '100%', sm: '10rem' }}
+        >
           {onAnswer && contact.status !== 'answered' && (
             <Button
               variant="outlined"

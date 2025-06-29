@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import type { User } from '../../types/user'; // à adapter si nom différent
+import type { User } from '../../types/user';
 import type { AdminFormMode } from '../../types/admin';
 
 interface Props {

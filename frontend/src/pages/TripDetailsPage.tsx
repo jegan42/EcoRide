@@ -20,9 +20,9 @@ export const TripDetailsPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { fetchTripById, selectedTrip, loading } = useTrip();
-console.log('TripDetailsPage id', id);
+  console.log('TripDetailsPage id', id);
   useEffect(() => {
-console.log('TripDetailsPage selectedTrip', selectedTrip);
+    console.log('TripDetailsPage selectedTrip', selectedTrip);
     if (id) void fetchTripById(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

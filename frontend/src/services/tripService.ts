@@ -32,7 +32,7 @@ const fetchTrips = async (
       withCredentials: true,
     }
   );
-  return handleApiResponseSafe<Trip[]>((response.data));
+  return handleApiResponseSafe<Trip[]>(response.data);
 };
 
 const fetchAllTrips = async (): Promise<ApiResponse<Trip[]>> => {
@@ -84,16 +84,18 @@ const cancelTrip = async (id: string): Promise<ApiResponse<Trip>> => {
   return handleApiResponseSafe<Trip>(response.data);
 };
 
-const enrichedTrip = (trips: Trip[]) => {
-  return trips.map((trip)=>{
+const enrichedTrip = (
+  trips: Trip[]
+): (Trip & { duration: number | undefined })[] => {
+  return trips.map((trip) => {
     const durationInMinutes =
       trip.departureDate && trip.arrivalDate
         ? (new Date(trip.arrivalDate).getTime() -
             new Date(trip.departureDate).getTime()) /
           (1000 * 60)
         : undefined;
-        return {...trip, duration:durationInMinutes};
-  })
+    return { ...trip, duration: durationInMinutes };
+  });
 };
 
 export default {

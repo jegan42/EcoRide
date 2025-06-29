@@ -19,5 +19,5 @@ export interface Trip {
   updatedAt: string;
   driver?: User;
   vehicle?: Vehicle;
-  duration?:number;
+  duration?: number;
 }

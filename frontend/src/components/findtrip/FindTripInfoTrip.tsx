@@ -123,7 +123,7 @@ export const FindTripInfoTrip: React.FC<Props> = ({
             </Stack>
           </Stack>
 
-          {(
+          {
             <TripInfoRow
               icon={
                 <AccessTimeIcon
@@ -131,11 +131,9 @@ export const FindTripInfoTrip: React.FC<Props> = ({
                 />
               }
               label="Durée :"
-              value={formatField(
-                formatMinutesToHours(Number(trip?.duration))
-              )}
+              value={formatField(formatMinutesToHours(Number(trip?.duration)))}
             />
-          )}
+          }
 
           {!minInfo && (
             <TripInfoRow

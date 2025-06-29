@@ -29,7 +29,7 @@ export const Contact: React.FC = () => {
 
         if (result.data) {
           enqueueSnackbarSuccess('Votre message a bien été envoyé !');
-          navigate('/');
+          void navigate('/');
         } else {
           enqueueSnackbarError(new Error("Erreur lors de l'envoi"));
         }

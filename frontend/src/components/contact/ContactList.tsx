@@ -16,7 +16,7 @@ export const ContactList: React.FC<Props> = ({
   setSelectedContact,
 }) => {
   const { allContacts } = useAdmin();
-  const noop = () => {};
+  const noop = (): void => {};
 
   const hasActions = setViewMode && setSelectedContact;
 

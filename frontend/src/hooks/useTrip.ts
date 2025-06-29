@@ -72,14 +72,14 @@ export const useTrip = (): {
         setLoading(false);
       }
     },
-    [user]
+    [user, csrfToken]
   );
 
   const fetchTripById = async (id: string): Promise<boolean> => {
     try {
       setLoading(true);
       const { data, message } = await tripService.fetchTripById(id);
-      console.log('useTrip fetchTripById data' , data);
+      console.log('useTrip fetchTripById data', data);
       setSelectedTrip(tripService.enrichedTrip([data])[0]);
       enqueueSnackbarSuccess(message);
       return true;
@@ -119,7 +119,7 @@ export const useTrip = (): {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [user]);
 
   const onCreateTrip = async (tripData: Partial<Trip>): Promise<boolean> => {
     try {

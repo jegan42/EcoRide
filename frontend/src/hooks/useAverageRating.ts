@@ -64,7 +64,9 @@ export const useAverageRating = (
       setEnrichedTrips((prev) => {
         const hasChanged =
           prev.length !== tripsWithRatings.length ||
-          prev.some((t, i) => JSON.stringify(t) !== JSON.stringify(tripsWithRatings[i]));
+          prev.some(
+            (t, i) => JSON.stringify(t) !== JSON.stringify(tripsWithRatings[i])
+          );
 
         return hasChanged ? tripsWithRatings : prev;
       });

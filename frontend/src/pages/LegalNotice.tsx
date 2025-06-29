@@ -31,9 +31,7 @@ export const LegalNotice: React.FC = () => {
         <Typography variant="h6" mt={4}>
           Directeur de la publication
         </Typography>
-        <Typography variant="body1">
-          Jyzee, Président de EcoRide SAS
-        </Typography>
+        <Typography variant="body1">Jyzee, Président de EcoRide SAS</Typography>
 
         <Typography variant="h6" mt={4}>
           Hébergeur

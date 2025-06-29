@@ -39,7 +39,8 @@ export const HeaderNav = (): JSX.Element => {
     }
   };
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-  const isAdmin = user && user.role.includes('admin');
+  const isWorker =
+    user && (user.role.includes('admin') || user.role.includes('employee'));
   const navLinks = [
     { label: 'Accueil', to: '/' },
     { label: 'Trouver trajet', to: '/findtrip' },
@@ -47,7 +48,7 @@ export const HeaderNav = (): JSX.Element => {
     ...(isAuthenticated
       ? [{ label: 'Tableau de board', to: '/dashboard' }]
       : []),
-    ...(isAdmin ? [{ label: 'Administration', to: '/admin' }] : []),
+    ...(isWorker ? [{ label: 'Administration', to: '/admin' }] : []),
   ];
   if (isMobile) {
     return (

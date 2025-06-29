@@ -21,10 +21,12 @@ export const useReviewList = (
       if (!userId) return;
       const { data: received } =
         await reviewsService.getReviewsByTarget(userId);
-      setAllReviewsReceived(received ?? []);
+      const retReceived = received.filter((r) => r.status === 'validate');
+      setAllReviewsReceived(retReceived ?? []);
 
       const { data: given } = await reviewsService.getReviewsByAuthor(userId);
-      setAllReviewsGiven(given ?? []);
+      const retGiven = given.filter((r) => r.status === 'validate');
+      setAllReviewsGiven(retGiven ?? []);
     };
 
     void fetchReviews();

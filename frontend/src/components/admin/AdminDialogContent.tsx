@@ -9,12 +9,13 @@ import type { Contact } from '../../types/contact';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { ContactForm } from '../contact/ContactForm';
 import { TripForm } from '../trip/TripForm';
+import type { Review } from '../../types/review';
 
 interface Props {
   viewMode: AdminFormMode;
-  selectedData: User | Trip | Contact;
+  selectedData: User | Trip | Contact | Review;
   setDataToUpdate: (
-    data: Partial<User> | Partial<Trip> | Partial<Contact>
+    data: Partial<User> | Partial<Trip> | Partial<Contact> | Partial<Review>
   ) => void;
 }
 

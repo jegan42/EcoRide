@@ -32,6 +32,7 @@ export const useInitApp = (): void => {
     };
 
     void fetchCsrf();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {

@@ -123,7 +123,7 @@ export const TripForm: React.FC<TripFormProps> = ({
     if (!isAdmin) return;
     const parsed = parseTripForm(watchedValues as TripFormData);
     onSubmit({ ...defaultValues, ...parsed });
-  }, [watchedValues, isAdmin, onSubmit]);
+  }, [watchedValues, isAdmin, onSubmit, defaultValues]);
 
   const handleVehicleChange = (
     vehicleId: string,

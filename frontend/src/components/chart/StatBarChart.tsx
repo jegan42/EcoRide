@@ -27,18 +27,14 @@ export const StatBarChart: React.FC<Props> = ({ title, chartDataToSet }) => {
         justifyContent: 'space-between',
         p: 2,
         height: '100%',
-        width: '100%'
+        width: '100%',
       }}
     >
       <Typography variant="h5" gutterBottom>
         {title}
       </Typography>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          width={500}
-          height={300}
-          data={chartDataToSet}
-        >
+        <BarChart width={500} height={300} data={chartDataToSet}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" />
           <YAxis />

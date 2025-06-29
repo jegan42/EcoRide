@@ -14,9 +14,11 @@ const AdminRoute = (): JSX.Element => {
     return <div>Chargement...</div>;
   }
 
-  const isAdmin = user ? hasRole(user, 'admin') : false;
+  const isAutorized = user
+    ? hasRole(user, 'admin') || hasRole(user, 'employee')
+    : false;
 
-  return isAuthenticated && isAdmin ? (
+  return isAuthenticated && isAutorized ? (
     <Outlet />
   ) : (
     <Navigate to="/signin" replace />

@@ -31,7 +31,9 @@ export const useFindTripFilters = (
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [ecoFilter, setEcoFilter] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
-  const [durationRange, setDurationRange] = useState<[number, number]>([0, 2000]);
+  const [durationRange, setDurationRange] = useState<[number, number]>([
+    0, 2000,
+  ]);
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   const [starFilter, setStarFilter] = useState(0);
 
