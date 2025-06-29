@@ -1,6 +1,6 @@
 // frontend/src/component/trip/TripForm.tsx
-import React, { useState, type JSX } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState, type JSX } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import {
   TextField,
   Button,
@@ -10,12 +10,14 @@ import {
   InputLabel,
   Select,
   FormHelperText,
+  Typography,
 } from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   type TripFormData,
   type TripFormOutput,
   parseTripForm,
+  statusOptions,
   tripSchemaBase,
 } from '../../validations/tripSchema';
 
@@ -35,6 +37,43 @@ interface TripFormProps {
   isAdmin?: boolean;
 }
 
+const FormDateTimePicker = ({
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  inputTestId,
+}: {
+  label: string;
+  value: string | null;
+  onChange: (value: string) => void;
+  error: boolean;
+  helperText?: string;
+  inputTestId?: string;
+}): JSX.Element => {
+  return (
+    <DateTimePicker
+      label={label}
+      value={value ? new Date(value) : null}
+      onChange={(date) => onChange(date?.toISOString() || '')}
+      slotProps={{
+        textField: {
+          fullWidth: true,
+          size: 'small',
+          variant: 'outlined',
+          margin: 'dense',
+          error,
+          helperText,
+          inputProps: {
+            'data-testid': inputTestId,
+          },
+        },
+      }}
+    />
+  );
+};
+
 export const TripForm: React.FC<TripFormProps> = ({
   driverId,
   defaultValues,
@@ -43,7 +82,11 @@ export const TripForm: React.FC<TripFormProps> = ({
   onCancel,
   isAdmin = false,
 }) => {
-  const { vehicles } = useVehicle();
+  const { vehicles, loading, error } = useVehicle(
+    isAdmin,
+    defaultValues?.driverId
+  );
+
   const safeVehicles = vehicles.filter((v): v is Vehicle => v !== undefined);
 
   const [maxSeats, setMaxSeats] = useState(9);
@@ -64,14 +107,23 @@ export const TripForm: React.FC<TripFormProps> = ({
     resolver: zodResolver(tripSchemaBase),
     defaultValues: {
       ...defaultValues,
-      driverId,
+      driverId: driverId ?? defaultValues?.driverId,
       departureDate:
         defaultValues?.departureDate ?? defaultDateAdd1h.toISOString(),
       arrivalDate: defaultValues?.arrivalDate ?? defaultDateAdd2h.toISOString(),
       availableSeats: defaultValues?.availableSeats?.toString() ?? '',
       price: defaultValues?.price?.toString() ?? '',
+      status: defaultValues?.status,
     },
   });
+
+  const watchedValues = useWatch({ control });
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const parsed = parseTripForm(watchedValues as TripFormData);
+    onSubmit({ ...defaultValues, ...parsed });
+  }, [watchedValues, isAdmin, onSubmit]);
 
   const handleVehicleChange = (
     vehicleId: string,
@@ -81,7 +133,7 @@ export const TripForm: React.FC<TripFormProps> = ({
   ): void => {
     onChange(vehicleId);
     const selectedVehicle = vehicles.find((v) => v?.id === vehicleId);
-    setMaxSeats(Number(selectedVehicle?.seatCount));
+    setMaxSeats(Number(selectedVehicle?.seatCount ?? 9));
   };
 
   const onSubmitHandler = (data: TripFormData): void => {
@@ -89,42 +141,17 @@ export const TripForm: React.FC<TripFormProps> = ({
     onSubmit(cleanedData);
   };
 
-  const FormDateTimePicker = ({
-    label,
-    value,
-    onChange,
-    error,
-    helperText,
-    inputTestId,
-  }: {
-    label: string;
-    value: string | null;
-    onChange: (value: string) => void;
-    error: boolean;
-    helperText?: string;
-    inputTestId?: string;
-  }): JSX.Element => {
+  const isPassedTrip = defaultValues?.departureDate
+    ? new Date(defaultValues.departureDate) < new Date()
+    : false;
+
+  if (loading || error || !vehicles.length) {
     return (
-      <DateTimePicker
-        label={label}
-        value={value ? new Date(value) : null}
-        onChange={(date) => onChange(date?.toISOString() || '')}
-        slotProps={{
-          textField: {
-            fullWidth: true,
-            size: 'small',
-            variant: 'outlined',
-            margin: 'dense',
-            error,
-            helperText,
-            inputProps: {
-              'data-testid': inputTestId,
-            },
-          },
-        }}
-      />
+      <Typography>
+        {loading || !vehicles.length ? 'Chargement...' : error}
+      </Typography>
     );
-  };
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={fr}>
@@ -260,34 +287,38 @@ export const TripForm: React.FC<TripFormProps> = ({
           helperText={errors.price?.message}
         />
 
-        {defaultValues?.status && defaultValues?.status === 'cancelled' && (
-          <FormControl
-            fullWidth
-            margin="dense"
-            size="small"
-            error={!!errors.status}
-          >
-            <InputLabel id="status-label">Statut</InputLabel>
-            <Controller
-              name="status"
-              control={control}
-              defaultValue="open"
-              render={({ field }) => (
-                <Select labelId="status-label" label="Statut" {...field}>
-                  <MenuItem value="open">Ouvert</MenuItem>
-                  {/* {statusOptions.map(({ value, label }) => (
-                  <MenuItem key={value} value={value}>
-                    {label}
-                  </MenuItem>
-                ))} */}
-                </Select>
+        {!isPassedTrip &&
+          (isAdmin || defaultValues?.status === 'cancelled') && (
+            <FormControl
+              fullWidth
+              margin="dense"
+              size="small"
+              error={!!errors.status}
+            >
+              <InputLabel id="status-label">Statut</InputLabel>
+              <Controller
+                name="status"
+                control={control}
+                defaultValue="open"
+                render={({ field }) => (
+                  <Select labelId="status-label" label="Statut" {...field}>
+                    {!isAdmin ? (
+                      <MenuItem value="open">Ouvert</MenuItem>
+                    ) : (
+                      statusOptions.map(({ value, label }) => (
+                        <MenuItem key={value} value={value}>
+                          {label}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                )}
+              />
+              {errors.status && (
+                <FormHelperText>{errors.status.message}</FormHelperText>
               )}
-            />
-            {errors.status && (
-              <FormHelperText>{errors.status.message}</FormHelperText>
-            )}
-          </FormControl>
-        )}
+            </FormControl>
+          )}
 
         {!isAdmin && (
           <Box mt={2} display="flex" justifyContent="space-between">

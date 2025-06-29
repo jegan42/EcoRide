@@ -77,9 +77,9 @@ export const useTrip = (): {
 
   const fetchTripById = async (id: string): Promise<boolean> => {
     try {
-      if (!user) throw new Error('Utilisateur non connecté');
       setLoading(true);
       const { data, message } = await tripService.fetchTripById(id);
+      console.log('useTrip fetchTripById data' , data);
       setSelectedTrip(tripService.enrichedTrip([data])[0]);
       enqueueSnackbarSuccess(message);
       return true;

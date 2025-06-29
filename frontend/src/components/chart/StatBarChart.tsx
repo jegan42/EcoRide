@@ -1,7 +1,6 @@
 // frontend/src/components/chart/StatBarChart.tsx
 import React from 'react';
 import { Typography, Paper } from '@mui/material';
-import type { ChartData } from '../../hooks/useAdmin';
 import {
   BarChart,
   CartesianGrid,
@@ -12,12 +11,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import type { ChartDataType } from '../../types/common';
 
 interface Props {
-  chartDataToSet: ChartData;
+  title: string;
+  chartDataToSet: ChartDataType[];
 }
 
-export const StatBarChart: React.FC<Props> = ({ chartDataToSet }) => {
+export const StatBarChart: React.FC<Props> = ({ title, chartDataToSet }) => {
   return (
     <Paper
       sx={{
@@ -26,16 +27,17 @@ export const StatBarChart: React.FC<Props> = ({ chartDataToSet }) => {
         justifyContent: 'space-between',
         p: 2,
         height: '100%',
+        width: '100%'
       }}
     >
       <Typography variant="h5" gutterBottom>
-        Connexion de la semaine
+        {title}
       </Typography>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           width={500}
           height={300}
-          data={chartDataToSet.loginsThisWeekByDay}
+          data={chartDataToSet}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" />

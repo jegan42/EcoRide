@@ -13,8 +13,7 @@ const sendMail = async (
   const response = await api.post(`${API_URL}/sendemail`, emailBody, {
     withCredentials: true,
   });
-  console.log('sendResponse', response)
-  return handleApiResponseSafe<void>(response.data);
+  return handleApiResponseSafe<void>(response);
 };
 
 export default {

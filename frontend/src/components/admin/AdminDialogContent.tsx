@@ -6,8 +6,9 @@ import type { User } from '../../types/user';
 import type { AdminFormMode } from '../../types/admin';
 import type { Trip } from '../../types/trip';
 import type { Contact } from '../../types/contact';
-import { AdminTripForm } from '../../components/admin/AdminTripForm';
 import { formatDateTime } from '../../utils/formatDateTime';
+import { ContactForm } from '../contact/ContactForm';
+import { TripForm } from '../trip/TripForm';
 
 interface Props {
   viewMode: AdminFormMode;
@@ -31,9 +32,12 @@ export const AdminDialogContent: React.FC<Props> = ({
         <Typography>{`Êtes-vous sûr de vouloir suspendre ${(selectedData as User).username}`}</Typography>
       )}
       {viewMode.includes('tripEdit') && (
-        <AdminTripForm
+        <TripForm
           defaultValues={selectedData as Trip}
+          isSubmitting={false}
           onSubmit={setDataToUpdate}
+          onCancel={() => {}}
+          isAdmin={true}
         />
       )}
       {viewMode.includes('tripDelete') && (
@@ -42,6 +46,32 @@ export const AdminDialogContent: React.FC<Props> = ({
                 le voyage ${(selectedData as Trip).departureCity} → ${(selectedData as Trip).arrivalCity} \
                 du ${formatDateTime((selectedData as Trip).departureDate)} au ${formatDateTime((selectedData as Trip).arrivalDate)} ?`}
         </Typography>
+      )}
+      {viewMode.includes('tripStart') && (
+        <Typography>
+          {`Êtes-vous sûr de vouloir commencer \
+                le voyage ${(selectedData as Trip).departureCity} → ${(selectedData as Trip).arrivalCity} \
+                du ${formatDateTime((selectedData as Trip).departureDate)} au ${formatDateTime((selectedData as Trip).arrivalDate)} ?`}
+        </Typography>
+      )}
+      {viewMode.includes('tripArrived') && (
+        <Typography>
+          {`Êtes-vous sûr de vouloir finir \
+                le voyage ${(selectedData as Trip).departureCity} → ${(selectedData as Trip).arrivalCity} \
+                du ${formatDateTime((selectedData as Trip).departureDate)} au ${formatDateTime((selectedData as Trip).arrivalDate)} ?`}
+        </Typography>
+      )}
+      {viewMode.includes('contactEdit') && (
+        <ContactForm
+          onSubmit={setDataToUpdate}
+          defaultData={selectedData as Contact}
+          showEmail={false}
+          showSubmitButton={false}
+          autoSubmit={true}
+        />
+      )}
+      {viewMode.includes('contactDelete') && (
+        <Typography>{`Êtes-vous sûr de vouloir ne pas répondre au message.`}</Typography>
       )}
     </>
   );

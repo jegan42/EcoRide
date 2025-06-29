@@ -15,6 +15,10 @@ import { AdminDialogContent } from '../../components/admin/AdminDialogContent';
 
 const getDialogTitle = (viewMode: AdminFormMode): string => {
   if (viewMode.includes('userEdit')) return 'Modification d’un utilisateur';
+  if (viewMode.includes('contactEdit')) return 'Répondre au message';
+  if (viewMode.includes('contactDelete')) return 'Ne pas répondre au message';
+  if (viewMode.includes('tripStart')) return 'Démarrage du voyage';
+  if (viewMode.includes('tripArrived')) return 'Fin du voyage';
   return '';
 };
 
@@ -31,10 +35,6 @@ export const AdminDashboard: React.FC = () => {
     dataToUpdate,
     setDataToUpdate,
     loading,
-    allUsers,
-    allTrips,
-    allContacts,
-    chartDataToSet,
   } = useAdmin();
 
   if (!user || !user.role.includes('admin')) {
@@ -55,11 +55,7 @@ export const AdminDashboard: React.FC = () => {
         <AdminSwitchViewList
           viewMode={viewMode}
           setViewMode={setViewMode}
-          allUsers={allUsers}
-          allTrips={allTrips}
-          allContacts={allContacts}
           setSelectedData={setSelectedData}
-          chartDataToSet={chartDataToSet}
         />
       </Container>
 
@@ -71,6 +67,9 @@ export const AdminDashboard: React.FC = () => {
           onClose={handleClose}
           onConfirm={() =>
             handleConfirm(viewMode, dataToUpdate as User | Trip | Contact)
+          }
+          confirmName={
+            viewMode.includes('contactEdit') ? 'Répondre' : undefined
           }
         >
           <AdminDialogContent

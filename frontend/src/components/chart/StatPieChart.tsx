@@ -10,13 +10,12 @@ import {
   PieChart,
 } from 'recharts';
 import type { ChartDataType } from '../../types/common';
+import { COLORS_CHART } from './ColorsChart';
 
 interface Props {
   title: string;
   dataToSet: ChartDataType[];
 }
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export const StatPieChart: React.FC<Props> = ({ title, dataToSet }) => {
   return (
@@ -39,7 +38,7 @@ export const StatPieChart: React.FC<Props> = ({ title, dataToSet }) => {
             {dataToSet.map((_entry, index) => (
               <Cell
                 key={`cell-driver-${index}`}
-                fill={COLORS[index % COLORS.length]}
+                fill={COLORS_CHART[index % COLORS_CHART.length]}
               />
             ))}
           </Pie>

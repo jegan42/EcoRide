@@ -12,4 +12,6 @@ export type AdminFormMode =
   | 'userDelete'
   | 'contactDelete'
   | 'tripDelete'
-  | 'statDelete';
+  | 'statDelete'
+  | 'tripStart'
+  | 'tripArrived';

@@ -40,6 +40,7 @@ export const FindTripPage: React.FC = () => {
   const navigate = useNavigate();
 
   const { allTrips, fetchTrips } = useTrip();
+  // console.log('FindTripPage allTrips', allTrips);
 
   const safeTrips = allTrips.filter(
     (v): v is Trip =>
@@ -47,8 +48,10 @@ export const FindTripPage: React.FC = () => {
       new Date(v.departureDate).getTime() > new Date().getTime() &&
       v.status !== 'cancelled'
   );
+  // console.log('FindTripPage safeTrips', safeTrips);
 
   const { enrichedTrips } = useAverageRating(safeTrips);
+  // console.log('FindTripPage enrichedTrips', enrichedTrips);
 
   const {
     filteredTrips,
@@ -82,7 +85,7 @@ export const FindTripPage: React.FC = () => {
     setSeats,
     handleOpenBooking,
   } = useBookingsDialog(() => fetchTrips({}));
-
+// console.log('FindTripPage filteredTrips', filteredTrips);
   return (
     <Sidebar
       sidebarContent={

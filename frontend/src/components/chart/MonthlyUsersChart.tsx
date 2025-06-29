@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const MonthlyUsersChart: React.FC<Props> = ({ data }) => (
-  <Paper sx={{ p: 2 }}>
+  <Paper sx={{ p: 2, width: '100%' }}>
     <Typography variant="h6" gutterBottom>
       Nouveaux utilisateurs (mois)
     </Typography>

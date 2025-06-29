@@ -4,18 +4,18 @@ import { Box, Typography, Stack } from '@mui/material';
 import { AdminUserCard } from './AdminUserCard';
 import type { User } from '../../types/user';
 import type { AdminFormMode } from '../../types/admin';
+import { useAdmin } from '../../hooks/useAdmin';
 
 interface Props {
   setViewMode: (mode: AdminFormMode) => void;
-  allUsers: User[];
   setSelectedUser: (user: User) => void;
 }
 
 export const AdminUserList: React.FC<Props> = ({
   setViewMode,
-  allUsers,
   setSelectedUser,
 }) => {
+  const { allUsers } = useAdmin();
   return (
     <Stack spacing={2} mt={4}>
       <Typography variant="h5" gutterBottom>

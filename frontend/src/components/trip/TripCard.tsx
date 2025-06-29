@@ -1,5 +1,12 @@
 // frontend/src/component/trip/TripCard.tsx
-import { Paper, Box, Stack, Typography, IconButton } from '@mui/material';
+import {
+  Paper,
+  Box,
+  Stack,
+  Typography,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
@@ -88,7 +95,7 @@ export const TripCard: React.FC<Props> = ({
           </Typography>
         </Stack>
 
-        {(!isPassedTrip || isAdmin) &&
+        {(!isPassedTrip) &&
           !['start', 'arrived'].includes(trip?.status ?? '') && (
             <Stack
               direction={{ xs: 'row', sm: 'column' }}
@@ -96,32 +103,36 @@ export const TripCard: React.FC<Props> = ({
               justifyContent={'space-between'}
               width={{ xs: '100%', sm: '10%' }}
             >
-              <IconButton
-                aria-label="edit"
-                onClick={() => tripId && onEdit(tripId)}
-                sx={(theme) => ({ color: theme.palette.primary.main })}
-              >
-                <EditIcon />
-              </IconButton>
-              {trip?.status !== 'cancelled' && !isPassedTrip && (
+              <Tooltip title={'Modifier le voyage'}>
                 <IconButton
-                  aria-label="cancel"
-                  onClick={() => {
-                    if (tripId)
-                      if (isAdmin) {
-                        onDelete(tripId);
-                      } else {
-                        handleDeleteClick(tripId);
-                      }
-                  }}
-                  sx={(theme) => ({ color: theme.palette.error.main })}
+                  aria-label="edit"
+                  onClick={() => tripId && onEdit(tripId)}
+                  sx={(theme) => ({ color: theme.palette.primary.main })}
                 >
-                  <DeleteForeverIcon />
+                  <EditIcon />
                 </IconButton>
+              </Tooltip>
+              {trip?.status !== 'cancelled' && !isPassedTrip && (
+                <Tooltip title={'Annuler le voyage'}>
+                  <IconButton
+                    aria-label="cancel"
+                    onClick={() => {
+                      if (tripId)
+                        if (isAdmin) {
+                          onDelete(tripId);
+                        } else {
+                          handleDeleteClick(tripId);
+                        }
+                    }}
+                    sx={(theme) => ({ color: theme.palette.error.main })}
+                  >
+                    <DeleteForeverIcon />
+                  </IconButton>
+                </Tooltip>
               )}
             </Stack>
           )}
-        {(isPassedTrip || isAdmin) &&
+        {(isPassedTrip) &&
           !['cancelled', 'arrived'].includes(trip?.status ?? '') && (
             <Stack
               direction={{ xs: 'row', sm: 'column' }}
@@ -129,21 +140,29 @@ export const TripCard: React.FC<Props> = ({
               justifyContent={'space-between'}
               width={{ xs: '100%', sm: '10%' }}
             >
-              {trip?.status !== 'start' && <IconButton
-                aria-label="start"
-                onClick={() => tripId && onStart(tripId)}
-                sx={(theme) => ({ color: theme.palette.primary.main })}
-              >
-                <PlayCircleFilledWhiteIcon />
-              </IconButton>}
+              {trip?.status !== 'start' && (
+                <Tooltip title={'Démarrer le voyage'}>
+                  <IconButton
+                    aria-label="start"
+                    onClick={() => tripId && onStart(tripId)}
+                    sx={(theme) => ({ color: theme.palette.primary.main })}
+                  >
+                    <PlayCircleFilledWhiteIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
 
-              {trip?.status === 'start' && <IconButton
-                aria-label="arrived"
-                onClick={() => tripId && onArrived(tripId)}
-                sx={(theme) => ({ color: theme.palette.primary.main })}
-              >
-                <FlagCircleIcon />
-              </IconButton>}
+              {trip?.status === 'start' && (
+                <Tooltip title={'Terminer le voyage'}>
+                  <IconButton
+                    aria-label="arrived"
+                    onClick={() => tripId && onArrived(tripId)}
+                    sx={(theme) => ({ color: theme.palette.primary.main })}
+                  >
+                    <FlagCircleIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           )}
       </Box>

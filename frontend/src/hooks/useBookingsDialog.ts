@@ -8,6 +8,8 @@ import {
 } from '../utils/enqueueSnackbar';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from './useAppSelector';
+import emailService from '../services/emailService';
+import { formatDateTime } from '../utils/formatDateTime';
 
 export const useBookingsDialog = (
   onBookingConfirmed?: () => void
@@ -58,6 +60,12 @@ export const useBookingsDialog = (
         seatCount: seats,
       });
       enqueueSnackbarSuccess(message ?? 'Réservation effectuée.');
+      const { message: emailMessage } = await emailService.sendMail({
+        to: trip.driver?.email ?? '',
+        subject: 'Réservation à valider',
+        html: `Réseravation de ${trip.departureCity} à ${trip.arrivalCity} au départ le ${formatDateTime(trip.departureDate)} est à valider.`,
+      });
+      enqueueSnackbarSuccess(emailMessage);
       handleCloseBooking();
       if (onBookingConfirmed) onBookingConfirmed();
     } catch (error) {

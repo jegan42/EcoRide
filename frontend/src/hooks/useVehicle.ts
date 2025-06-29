@@ -12,7 +12,10 @@ import userService from '../services/userService';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from './useAppSelector';
 
-export const useVehicle = (): {
+export const useVehicle = (
+  isAdmin?: boolean,
+  driverId?: string
+): {
   vehicles: Vehicle[];
   vehicle: Vehicle | undefined;
   loading: boolean;
@@ -34,7 +37,10 @@ export const useVehicle = (): {
     const fetchVehicles = async (): Promise<void> => {
       setLoading(true);
       try {
-        const { data, message } = await vehicleService.fetchVehicles();
+        const { data, message } =
+          isAdmin && driverId
+            ? await vehicleService.fetchVehicleByUserId(driverId)
+            : await vehicleService.fetchVehicles();
         setVehicles(data);
         enqueueSnackbarSuccess(message);
       } catch (error) {
@@ -51,7 +57,7 @@ export const useVehicle = (): {
   const onCreateVehicle = async (data: VehicleFormOutput): Promise<boolean> => {
     try {
       if (!isAuthenticated) throw new Error('Utilisateur non connecté');
-    setIsSubmitting(true);
+      setIsSubmitting(true);
       const { data: newVehicle, message: vehicleMessage } =
         await vehicleService.createVehicle(data);
       setVehicle(newVehicle);

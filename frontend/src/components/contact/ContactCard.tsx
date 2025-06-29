@@ -1,8 +1,9 @@
-// frontend/src/components/admin/AdminContactCard.tsx
+// frontend/src/components/contact/ContactCard.tsx
 import React from 'react';
 import { Box, Paper, Typography, Stack, Button, Chip } from '@mui/material';
 import type { Contact } from '../../types/contact';
 import { formatTimestampToDate } from '../../utils/formatDateTime';
+import theme from '../../styles/theme';
 
 interface Props {
   contact: Contact;
@@ -10,11 +11,32 @@ interface Props {
   onDelete?: (id: string) => void;
 }
 
-export const AdminContactCard: React.FC<Props> = ({
+export const ContactCard: React.FC<Props> = ({
   contact,
   onAnswer,
   onDelete,
 }) => {
+  const paperBorderLeft =
+    contact.status === 'unread'
+      ? `5px solid ${theme.palette.warning.main}`
+      : contact.status === 'answered'
+        ? `5px solid ${theme.palette.primary.main}`
+        : `5px solid ${theme.palette.error.main}`;
+
+  const label =
+    contact.status === 'unread'
+      ? 'Non lu'
+      : contact.status === 'answered'
+        ? 'Répondu'
+        : 'Ne pas répondre';
+
+  const color =
+    contact.status === 'unread'
+      ? 'warning'
+      : contact.status === 'answered'
+        ? 'success'
+        : 'error';
+
   return (
     <Paper
       elevation={3}
@@ -24,7 +46,7 @@ export const AdminContactCard: React.FC<Props> = ({
         mt: 4,
         borderRadius: 3,
         border: `2px solid ${theme.palette.primary.main}`,
-        borderLeft: `${contact.status === 'unread' ? '5px solid #f44336' : ''}`,
+        borderLeft: paperBorderLeft,
       })}
     >
       <Stack
@@ -35,8 +57,8 @@ export const AdminContactCard: React.FC<Props> = ({
         <Box>
           <Stack direction={'row'} spacing={4} alignItems="center">
             <Chip
-              label={contact.status === 'unread' ? 'Non lu' : 'Répondu'}
-              color={contact.status === 'unread' ? 'warning' : 'success'}
+              label={label}
+              color={color}
               size="small"
             />
             <Typography variant="body2" color="text.secondary">
@@ -51,19 +73,19 @@ export const AdminContactCard: React.FC<Props> = ({
             <Typography variant="body1">Message : {contact.message}</Typography>
           </Box>
         </Box>
-        <Stack direction={{ xs: 'row', sm: 'column' }} spacing={1}>
-          {onAnswer && contact.status === 'unread' && (
+        <Stack direction={{ xs: 'row', sm: 'column' }} spacing={1} width={{xs:'100%', sm:'10rem'}}>
+          {onAnswer && contact.status !== 'answered' && (
             <Button
               variant="outlined"
               size="small"
               fullWidth
               onClick={() => onAnswer(contact)}
             >
-              Marquer comme répondu
+              Répondre
             </Button>
           )}
 
-          {onDelete && (
+          {onDelete && contact.status === 'unread' && (
             <Button
               variant="outlined"
               color="error"
@@ -71,7 +93,7 @@ export const AdminContactCard: React.FC<Props> = ({
               fullWidth
               onClick={() => onDelete(contact.id!)}
             >
-              Supprimer
+              Ne pas répondre
             </Button>
           )}
         </Stack>

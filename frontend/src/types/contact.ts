@@ -2,14 +2,14 @@
 
 import type { FirestoreTimestamp } from './common';
 
-export type ContactStatus = 'unread' | 'answered';
+export type ContactStatus = 'unread' | 'answered' | 'no-reply';
 
 export interface Contact {
   id?: string;
   email: string;
   subject: string;
   message: string;
-  status: ContactStatus;
+  status?: ContactStatus;
   sentAt?: FirestoreTimestamp;
   createdAt?: FirestoreTimestamp;
   updatedAt?: FirestoreTimestamp;

@@ -1,6 +1,6 @@
 // frontend/src/components/footer/FooterNav.tsx
 import { Stack, Typography, Link } from '@mui/material';
-import { type JSX } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const navLinks = [
   { href: '/notices', label: 'Mentions légales' },
@@ -8,7 +8,7 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ];
 
-export const FooterNav = (): JSX.Element => {
+export const FooterNav: React.FC = () => {
   return (
     <Stack
       spacing={0.5}
@@ -24,7 +24,8 @@ export const FooterNav = (): JSX.Element => {
       {navLinks.map((item, index) => (
         <Link
           key={index}
-          href={item.href}
+          component={RouterLink}
+          to={item.href}
           underline="none"
           sx={{
             fontWeight: 'medium',

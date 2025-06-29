@@ -4,18 +4,18 @@ import { Box, Typography, Stack } from '@mui/material';
 import { TripInfo } from '../../components/trip/TripInfo';
 import type { Trip } from '../../types/trip';
 import type { AdminFormMode } from '../../types/admin';
+import { useAdmin } from '../../hooks/useAdmin';
 
 interface Props {
   setViewMode: (mode: AdminFormMode) => void;
-  allTrips: Trip[];
   setSelectedTrip: (trip: Trip) => void;
 }
 
 export const AdminTripList: React.FC<Props> = ({
   setViewMode,
-  allTrips,
   setSelectedTrip,
 }) => {
+  const { allTrips } = useAdmin();
   return (
     <Stack spacing={2} mt={4}>
       <Typography variant="h5" gutterBottom>
@@ -33,6 +33,14 @@ export const AdminTripList: React.FC<Props> = ({
               }}
               onDelete={() => {
                 setViewMode('tripDelete');
+                setSelectedTrip(trip);
+              }}
+              onStart={() => {
+                setViewMode('tripStart');
+                setSelectedTrip(trip);
+              }}
+              onArrived={() => {
+                setViewMode('tripArrived');
                 setSelectedTrip(trip);
               }}
               isAdmin={true}
