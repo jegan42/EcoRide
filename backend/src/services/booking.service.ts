@@ -126,7 +126,13 @@ export class BookingService {
       });
       await tx.user.update({
         where: { id: userToCreditId },
-        data: { credits: { increment: booking.totalPrice } },
+        data: {
+          credits: {
+            increment:
+              booking.totalPrice *
+              this.getComission(action === 'accept', action !== 'reject'),
+          },
+        },
       });
 
       return action === 'accept' ? 'Booking accepted' : 'Booking rejected';
@@ -156,7 +162,8 @@ export class BookingService {
 
       const isDriver = userId === trip.driverId;
       const isPending = booking.status === BookingStatus.pending;
-      const penalty = booking.totalPrice * this.getPenalty(isDriver, isPending);
+      const penalty =
+        booking.totalPrice * this.getComission(isDriver, isPending);
       const refund = booking.totalPrice - penalty;
 
       await tx.user.update({
@@ -175,7 +182,7 @@ export class BookingService {
     });
   };
 
-  static readonly getPenalty = (
+  static readonly getComission = (
     isDriver: boolean,
     isPending: boolean
   ): number => {
