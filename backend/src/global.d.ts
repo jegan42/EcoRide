@@ -1,0 +1,9 @@
+declare module 'express';
+declare module 'cookie-parser';
+declare module 'passport';
+declare module 'express-session';
+declare module 'cors';
+declare module 'morgan';
+declare module 'csurf';
+declare module 'bcrypt';
+declare module 'passport-google-oauth20';
