@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "noEmit": false, // ou supprime cette ligne si elle existe
+    "noEmit": false,
     "types": ["vitest", "jsdom"]
   },
   "files": [],
