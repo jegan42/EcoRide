@@ -6,7 +6,7 @@
 
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "target": "ES2024",
+    "target": "ESNext",
   },
   "files": [],
   "references": [
