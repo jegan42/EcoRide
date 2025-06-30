@@ -18,6 +18,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
+    "jsx": "react-jsx",
     "esModuleInterop": true
   },
   "include": ["vite.config.ts"]

@@ -2,7 +2,11 @@
   "compilerOptions": {
     "composite": true,
     "noEmit": false,
-    "types": ["vitest", "jsdom"]
+    "types": ["vitest", "jsdom"],
+
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "target": "ES2020",
   },
   "files": [],
   "references": [
