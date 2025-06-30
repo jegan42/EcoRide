@@ -24,6 +24,7 @@ export const FindTripCard: React.FC<Props> = ({ trip, onBook, onDetails }) => {
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
+        minWidth={{ xs: '300px', sm: '100%' }}
         alignItems="stretch"
         flexWrap="wrap"
       >

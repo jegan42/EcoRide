@@ -72,7 +72,8 @@ export const useTrip = (): {
         setLoading(false);
       }
     },
-    [user, csrfToken]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user]
   );
 
   const fetchTripById = async (id: string): Promise<boolean> => {
