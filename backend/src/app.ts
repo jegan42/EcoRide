@@ -60,7 +60,7 @@ app.use(
     cookie: {
       secure: mode === 'production',
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: mode === 'production' ? 'none' : 'lax',
     },
   })
 );
