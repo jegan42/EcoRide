@@ -5,7 +5,9 @@ import type { ApiResponse } from '../types/api';
 import { handleApiResponseSafe } from '../utils/handleApiResponse';
 
 export const getCsrfToken = async (): Promise<ApiResponse<string>> => {
-  const response = await api.get(`${API_URL}/csrf-token`);
+  const response = await api.get(`${API_URL}/csrf-token`, {
+    withCredentials: true,
+  });
 
   return handleApiResponseSafe<string>(response.data);
 };
