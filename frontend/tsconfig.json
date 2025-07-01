@@ -2,7 +2,6 @@
   "compilerOptions": {
     "composite": true,
     "noEmit": false,
-    "types": ["vitest", "jsdom"],
 
     "jsx": "react-jsx",
     "esModuleInterop": true,
