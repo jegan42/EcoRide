@@ -99,6 +99,7 @@ export class AuthController {
         AuthService.sanitizedUser(updatedUser)
       );
     } catch (error) {
+      console.error('🔴 Prisma signin Error:', error);
       errorResponse(res, 'Auth', 'failed to signin', error);
     }
   };

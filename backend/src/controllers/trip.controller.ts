@@ -177,9 +177,10 @@ export class TripController {
         }
       }
 
-      successResponse(res, 'Trips', 'getAll', trips);
+      successResponse(res, 'Trips', 'getWithFilter', trips);
     } catch (error) {
-      errorResponse(res, 'Trip', 'failed to getAll', error);
+      console.error('🔴 Prisma getWithFilter Error:', error);
+      errorResponse(res, 'Trip', 'failed to getWithFilter', error);
     }
   };
 
