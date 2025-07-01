@@ -5,6 +5,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vitest", "jsdom"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -27,6 +28,10 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    
+    "outDir": "dist",
+    "declaration": true,
+    "declarationDir": "./dist/types",
   },
   "include": ["src"],
   "exclude": ["src/__tests__"]
