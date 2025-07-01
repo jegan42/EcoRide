@@ -40,6 +40,7 @@ app.use(
     origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
   })
 );
 app.use(morgan('dev'));
