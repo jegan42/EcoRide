@@ -2,6 +2,9 @@
 import csrf from 'csurf';
 import { Request, Response, NextFunction } from 'express';
 import { forbiddenResponse } from '../utils/response';
+import { getNodeEnv } from '../utils/env';
+
+const mode = getNodeEnv();
 
 const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
 
@@ -11,7 +14,7 @@ export const csrfProtection =
         cookie: {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production', // Render is HTTPS, so required
-          sameSite: 'lax', // Important when using cross-origin (front/back separated)
+          sameSite: mode === 'production' ? 'none' : 'lax', // Important when using cross-origin (front/back separated)
         },
       })
     : (_req: Request, _res: Response, next: NextFunction): void => next();
