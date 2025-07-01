@@ -22,7 +22,7 @@ export const useSign = (): {
   const navigate = useNavigate();
   const [signin, setSignin] = useState(true);
 
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, csrfToken } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -48,7 +48,7 @@ export const useSign = (): {
 
   const handleSigninSubmit = async (data: SigninFormData): Promise<void> => {
     try {
-      const { message, data: user } = await authService.signin(data);
+      const { message, data: user } = await authService.signin(data, csrfToken ?? '');
       dispatch(signinAction({ user, isAuthenticated: true }));
       enqueueSnackbarSuccess(message);
       void navigate('/');

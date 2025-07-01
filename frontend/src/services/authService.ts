@@ -10,9 +10,6 @@ import {
 import { cleanPayload } from '../utils/cleanPayload';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import { useAppSelector } from '../hooks/useAppSelector';
-
-const { csrfToken } = useAppSelector((state) => state.auth);
 
 const signup = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
   const response = await api.post(
@@ -25,7 +22,7 @@ const signup = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
   return handleApiResponseSafe<User>(response.data);
 };
 
-const signin = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
+const signin = async (payload: Partial<User>, csrfToken: string): Promise<ApiResponse<User>> => {
   const response = await api.post(`${API_URL}/auth/signin`, payload, {
     withCredentials: true,
     headers: {
