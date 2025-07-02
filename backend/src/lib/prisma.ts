@@ -7,14 +7,14 @@ dns
   .then((r) => console.log('🔍 DNS resolved:', r))
   .catch((e) => console.error('❌ DNS ERR', e));
 
-async function testLookup() {
-  const res = await dns.lookup('db.bfxafnzrvkxesttgjqqk.supabase.co', {
-    family: 4,
-  });
-  console.log('IPv4 address:', res.address);
-}
-
-testLookup();
+(async () => {
+  try {
+    const res = await dns.lookup('db.bfxafnzrvkxesttgjqqk.supabase.co');
+    console.log('✅ Resolved DNS OK ✅ :', res);
+  } catch (err) {
+    console.error('❌ ERROR DNS ❌ :', err);
+  }
+})();
 
 console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL);
 
