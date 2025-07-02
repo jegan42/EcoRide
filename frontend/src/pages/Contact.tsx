@@ -15,8 +15,6 @@ export const Contact: React.FC = () => {
   const navigate = useNavigate();
 
   const handleContactSubmit = (data: ContactFormData): void => {
-    console.log('handleContactSubmit', data);
-
     const contactSubmit = async (): Promise<void> => {
       try {
         const { id: _, ...dataToSet } = data;

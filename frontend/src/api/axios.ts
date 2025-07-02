@@ -16,10 +16,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const message =
-      error?.response?.data?.message || 'Erreur serveur inconnue.';
+      error?.response?.data?.message ?? 'Erreur serveur inconnue.';
     enqueueSnackbarError(new Error(message));
 
-    return Promise.reject(error);
+    return Promise.reject(
+      new Error(error?.message ?? 'Unknown error occurred.')
+    );
   }
 );
 

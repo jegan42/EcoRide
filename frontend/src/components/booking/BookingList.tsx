@@ -13,7 +13,7 @@ import { BookingSort } from './BookingSort';
 export const BookingList = (): JSX.Element => {
   const isDriver = useIsDriver();
   const { bookings, driverBookings, loading, refetchAll } = useBookings();
-  const [isDriverBookings, setIsDriversBookings] = useState(false);
+  const [isDriverBookings, setIsDriverBookings] = useState(false);
   const [onUpdate, setOnUpdate] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const BookingList = (): JSX.Element => {
 
   const safeBookings = (isDriverBookings ? driverBookings : bookings).filter(
     (v): v is Booking => !!v?.id
-  ) as Booking[];
+  );
 
   const {
     filteredBookings,
@@ -85,7 +85,7 @@ export const BookingList = (): JSX.Element => {
       {isDriver && (
         <SwitchButton
           checked={isDriverBookings}
-          onChange={setIsDriversBookings}
+          onChange={setIsDriverBookings}
           switchOn="Chauffeur"
           switchOff="Passager"
         />

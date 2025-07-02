@@ -15,6 +15,11 @@ export const FindTripDialogContent = ({
   seats: number;
   setSeats: (seats: number) => void;
 }): JSX.Element => {
+  let helperText: string = '';
+  if (seats > maxSeats)
+    helperText = `Vous ne pouvez réserver plus de ${maxSeats} place${maxSeats > 1 ? 's' : ''}.`;
+  else if (seats < 1) helperText = 'Au moins une place doit être réservée.';
+
   return (
     <>
       <TripDetails trip={trip} />
@@ -35,13 +40,7 @@ export const FindTripDialogContent = ({
             },
           }}
           error={seats > maxSeats || seats < 1}
-          helperText={
-            seats > maxSeats
-              ? `Vous ne pouvez réserver plus de ${maxSeats} place${maxSeats > 1 ? 's' : ''}.`
-              : seats < 1
-                ? 'Au moins une place doit être réservée.'
-                : ''
-          }
+          helperText={helperText}
         />
       </DialogContent>
     </>

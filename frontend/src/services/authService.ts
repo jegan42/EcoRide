@@ -22,7 +22,10 @@ const signup = async (payload: Partial<User>): Promise<ApiResponse<User>> => {
   return handleApiResponseSafe<User>(response.data);
 };
 
-const signin = async (payload: Partial<User>, csrfToken: string): Promise<ApiResponse<User>> => {
+const signin = async (
+  payload: Partial<User>,
+  csrfToken: string
+): Promise<ApiResponse<User>> => {
   const response = await api.post(`${API_URL}/auth/signin`, payload, {
     withCredentials: true,
     headers: {

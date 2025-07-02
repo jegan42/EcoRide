@@ -48,7 +48,10 @@ export const useSign = (): {
 
   const handleSigninSubmit = async (data: SigninFormData): Promise<void> => {
     try {
-      const { message, data: user } = await authService.signin(data, csrfToken ?? '');
+      const { message, data: user } = await authService.signin(
+        data,
+        csrfToken ?? ''
+      );
       dispatch(signinAction({ user, isAuthenticated: true }));
       enqueueSnackbarSuccess(message);
       void navigate('/');

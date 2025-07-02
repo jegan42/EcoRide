@@ -35,9 +35,9 @@ export const StatPieChart: React.FC<Props> = ({ title, dataToSet }) => {
             outerRadius={100}
             label
           >
-            {dataToSet.map((_entry, index) => (
+            {dataToSet.map((entry, index) => (
               <Cell
-                key={`cell-driver-${index}`}
+                key={`cell-driver-${entry.label}`}
                 fill={COLORS_CHART[index % COLORS_CHART.length]}
               />
             ))}

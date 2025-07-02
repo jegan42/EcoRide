@@ -28,10 +28,10 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    
+
     "outDir": "dist",
     "declaration": true,
-    "declarationDir": "./dist/types",
+    "declarationDir": "./dist/types"
   },
   "include": ["src"],
   "exclude": ["src/__tests__"]

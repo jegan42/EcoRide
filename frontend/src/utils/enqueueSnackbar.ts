@@ -1,5 +1,5 @@
 // frontend/src/utils/enqueueSnackbar.ts
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 // import { enqueueSnackbar } from 'notistack';
 import { extractApiError } from './handleApiError';
 

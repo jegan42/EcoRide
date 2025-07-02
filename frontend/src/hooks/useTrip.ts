@@ -80,7 +80,6 @@ export const useTrip = (): {
     try {
       setLoading(true);
       const { data, message } = await tripService.fetchTripById(id);
-      console.log('useTrip fetchTripById data', data);
       setSelectedTrip(tripService.enrichedTrip([data])[0]);
       enqueueSnackbarSuccess(message);
       return true;

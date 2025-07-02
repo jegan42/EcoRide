@@ -16,26 +16,28 @@ export const ContactCard: React.FC<Props> = ({
   onAnswer,
   onDelete,
 }) => {
-  const paperBorderLeft =
-    contact.status === 'unread'
-      ? `5px solid ${theme.palette.warning.main}`
-      : contact.status === 'answered'
-        ? `5px solid ${theme.palette.primary.main}`
-        : `5px solid ${theme.palette.error.main}`;
+  let borderColor: string = theme.palette.error.main;
+  if (contact.status === 'unread') {
+    borderColor = theme.palette.warning.main;
+  } else if (contact.status === 'answered') {
+    borderColor = theme.palette.primary.main;
+  }
 
-  const label =
-    contact.status === 'unread'
-      ? 'Non lu'
-      : contact.status === 'answered'
-        ? 'Répondu'
-        : 'Ne pas répondre';
+  const paperBorderLeft = `5px solid ${borderColor}`;
 
-  const color =
-    contact.status === 'unread'
-      ? 'warning'
-      : contact.status === 'answered'
-        ? 'success'
-        : 'error';
+  let label: string = 'Ne pas répondre';
+  if (contact.status === 'unread') {
+    label = 'Non lu';
+  } else if (contact.status === 'answered') {
+    label = 'Répondu';
+  }
+
+  let color: 'error' | 'success' | 'warning' = 'error';
+  if (contact.status === 'unread') {
+    color = 'warning';
+  } else if (contact.status === 'answered') {
+    color = 'success';
+  }
 
   return (
     <Paper

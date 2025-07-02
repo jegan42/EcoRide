@@ -34,8 +34,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     defaultValues: {
       id: defaultData.id,
       email:
-        (defaultData.email && `Re:${defaultData.email}`) || user?.email || '',
-      subject: defaultData.subject || '',
+        (defaultData.email && `Re:${defaultData.email}`) ?? user?.email ?? '',
+      subject: defaultData.subject ?? '',
       message: '',
     },
   });
@@ -76,8 +76,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           })}
           error={!!errors.email}
           helperText={errors.email?.message}
-          inputProps={{
-            readOnly: !!user?.email,
+          slotProps={{
+            input: {
+              readOnly: !!user?.email,
+            },
           }}
         />
       )}

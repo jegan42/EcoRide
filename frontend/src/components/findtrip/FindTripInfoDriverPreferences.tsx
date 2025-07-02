@@ -1,5 +1,5 @@
 // frontend/src/component/findtrip/FindTripInfoDriverPreferences.tsx
-import { Stack } from '@mui/material';
+import { Stack, Skeleton } from '@mui/material';
 import { formatField } from '../../utils/formatField';
 import { TripInfoRow } from './TripInfoRow';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import userPreferencesService from '../../services/userPreferencesService';
 import type { UserPreferences } from '../../types/preferences';
 import { enqueueSnackbarError } from '../../utils/enqueueSnackbar';
-import { Skeleton } from '@mui/material';
 
 interface Props {
   id?: string;
@@ -47,8 +46,12 @@ export const FindTripInfoDriverPreferences: React.FC<Props> = ({ id }) => {
   if (loading) {
     return (
       <Stack spacing={2}>
-        {[...Array(4)].map((_, idx) => (
-          <Skeleton variant="rectangular" height={40} key={idx} />
+        {[...Array(4)].map(() => (
+          <Skeleton
+            variant="rectangular"
+            height={40}
+            key={crypto.randomUUID()}
+          />
         ))}
       </Stack>
     );
