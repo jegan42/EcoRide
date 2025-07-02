@@ -16,6 +16,18 @@ dns
   }
 })();
 
+(async () => {
+  try {
+    const res = await dns.lookup('db.bfxafnzrvkxesttgjqqk.supabase.co', {
+      family: 4,
+    });
+    console.log('IPv4 address:', res.address);
+    // Remplace process.env.DATABASE_URL dynamiquement ici en remplaçant le hostname par res.address
+  } catch (err) {
+    console.error('DNS lookup IPv4 error:', err);
+  }
+})();
+
 console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL);
 
 const prismaNewClient = new PrismaClient();
