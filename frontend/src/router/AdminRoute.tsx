@@ -15,15 +15,14 @@ const AdminRoute = (): JSX.Element => {
     return <div>Chargement...</div>;
   }
 
-  const isAutorized = user
-    ? hasRole(user, 'admin') || hasRole(user, 'employee')
-    : false;
+  if (loading) return <div>Chargement...</div>;
 
-  return isAuthenticated && isAutorized ? (
-    <Outlet />
-  ) : (
-    <Signin />
-  );
+  if (!isAuthenticated || !user) return <Signin />;
+
+  const isAuthorized = hasRole(user, 'admin') || hasRole(user, 'employee');
+  if (!isAuthorized) return <Signin />;
+
+  return <Outlet />;
 };
 
 export default AdminRoute;
