@@ -7,7 +7,7 @@ const main = async () => {
   await prisma.user.create({
     data: {
       email: 'adminfortest@ecoride.dedyn.io',
-      password: await AuthService.hashPassword('admin'),
+      password: await AuthService.hashPassword('Mon@email.123'),
       role: ['admin'],
       firstName: 'Admin',
       lastName: 'Test',
