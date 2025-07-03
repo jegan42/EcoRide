@@ -250,7 +250,7 @@ npm run dev
 During DB seed (`prisma/seed.ts`), a default admin is created:
 
 -   **Email**: `adminfortest@ecoride.dedyn.io`
--   **Password**: `admin`
+-   **Password**: `Mon@email.123`
 
 > 🔒 Password is hashed via **bcrypt**. Change it after first login.
 
