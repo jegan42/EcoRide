@@ -1,9 +1,10 @@
 // frontend/src/router/ProtectedRoute.tsx
 import { useSelector } from 'react-redux';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import type { RootState } from '../store';
 import type { JSX } from 'react';
 import { hasRole } from '../utils/hasRole';
+import Signin from '../pages/SigninPage';
 
 const ProtectedRoute = (): JSX.Element => {
   const { isAuthenticated, loading, user } = useSelector(
@@ -19,7 +20,7 @@ const ProtectedRoute = (): JSX.Element => {
   return isAuthenticated && isAuthorized ? (
     <Outlet />
   ) : (
-    <Navigate to="/signin" replace />
+    <Signin />
   );
 };
 

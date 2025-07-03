@@ -1,9 +1,10 @@
 // frontend/src/router/AdminRoute.tsx
 import { useSelector } from 'react-redux';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import type { RootState } from '../store';
 import type { JSX } from 'react';
 import { hasRole } from '../utils/hasRole';
+import Signin from '../pages/SigninPage';
 
 const AdminRoute = (): JSX.Element => {
   const { isAuthenticated, loading, user } = useSelector(
@@ -21,7 +22,7 @@ const AdminRoute = (): JSX.Element => {
   return isAuthenticated && isAutorized ? (
     <Outlet />
   ) : (
-    <Navigate to="/signin" replace />
+    <Signin />
   );
 };
 
