@@ -8,7 +8,7 @@ import prettier from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage/**', '**/*.d.ts'] },
+  { ignores: ['dist', 'coverage/**', '**/*.d.ts', '**/__tests__/**'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -16,7 +16,11 @@ export default tseslint.config(
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        project: ['./tsconfig.json'], // 👈 Chemin vers ton fichier tsconfig
+        project: [
+          './tsconfig.json',
+          './tsconfig.app.json',
+          './tsconfig.node.json',
+        ], // 👈 Chemin vers ton fichier tsconfig
         tsconfigRootDir: process.cwd(), // 👈 Important si ESLint ne trouve pas le fichier
         sourceType: 'module',
       },
@@ -42,6 +46,7 @@ export default tseslint.config(
       ],
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
+      '@typescript-eslint/no-void': 'off',
       'no-unused-vars': 'off', // désactive la version JS
       '@typescript-eslint/no-unused-vars': [
         'warn',
