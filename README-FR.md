@@ -251,7 +251,7 @@ npm run dev
 Lors de la création de la base (`prisma/seed.ts`), un compte admin est injecté :
 
 -   **Email** : `adminfortest@ecoride.dedyn.io`
--   **Mot de passe** : `admin`
+-   **Mot de passe** : `Mon@email.123`
 
 > 🔒 Le mot de passe est hashé avec **bcrypt**, et ne peut être récupéré. Modifiez-le après la première connexion.
 
