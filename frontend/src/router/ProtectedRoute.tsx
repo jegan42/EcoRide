@@ -11,17 +11,13 @@ const ProtectedRoute = (): JSX.Element => {
     (state: RootState) => state.auth
   );
 
-  if (loading) {
-    return <div>Chargement...</div>;
-  }
+  if (loading) return <div>Chargement...</div>;
 
-  const isAuthorized = user ? !hasRole(user, 'suspended') : true;
+  if (!isAuthenticated || !user) return <Signin />;
 
-  return isAuthenticated && isAuthorized ? (
-    <Outlet />
-  ) : (
-    <Signin />
-  );
+  if (hasRole(user, 'suspended')) return <Signin />;
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
