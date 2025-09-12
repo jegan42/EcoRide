@@ -292,8 +292,8 @@ Lors de la création de la base (`prisma/seed.ts`), un compte admin est injecté
 ### ✅ Cas d'utilisation
 
 -   [Scénario 1 – Connexion](./doc/DATABASE_7A_Diagramme_de_séquence.png)
--   [Scénario 2 – Publication d’un trajet par un chauffeur](./doc/DATABASE_7B_Diagramme_de_séquence)
--   [Scénario 3 – Réservation d’un trajet](./doc/DATABASE_7C_Diagramme_de_séquence)
+-   [Scénario 2 – Publication d’un trajet par un chauffeur](./doc/DATABASE_7B_Diagramme_de_séquence.png)
+-   [Scénario 3 – Réservation d’un trajet](./doc/DATABASE_7C_Diagramme_de_séquence.png)
 
 ### 🗃️ Modélisation des données
 
