@@ -291,8 +291,8 @@ During DB seed (`prisma/seed.ts`), a default admin is created:
 ### ✅ Use Case Scenarios
 
 -   [Scenario 1 – Login](./doc/DATABASE_7A_Diagramme_de_séquence.png)
--   [Scenario 2 – Driver posts a trip](./doc/DATABASE_7B_Diagramme_de_séquence)
--   [Scenario 3 – Trip reservation](./doc/DATABASE_7C_Diagramme_de_séquence)
+-   [Scenario 2 – Driver posts a trip](./doc/DATABASE_7B_Diagramme_de_séquence.png)
+-   [Scenario 3 – Trip reservation](./doc/DATABASE_7C_Diagramme_de_séquence.png)
 
 ### 🗃️ Data Modeling
 
